@@ -185,9 +185,9 @@ boxplot(data.GSE15744, col = rainbow(15),
         cex.axis=0.5,
         las=2,                                            # Vertical x-axis text
         ylab="Relative expression",
-        main="Raw Gene expression in human embryo (GSE27830, raw data)")
+        main="Raw Gene expression in human embryo (GSE15744, raw data)")
 
-dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Boxplot_GSE27830_Raw-Data.pdf")
+dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Boxplot_GSE15744_Raw-Data.pdf")
 
 ## After
 
@@ -195,9 +195,9 @@ boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
         cex.axis=0.5,
         las=2,                                            # Vertical x-axis text
         ylab="Relative expression",
-        main="Raw Gene expression in human embryo (GSE27830, normalized)")
+        main="Raw Gene expression in human embryo (GSE15744, normalized)")
 
-dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Boxplot_GSE27830_normalized.pdf")
+dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Boxplot_GSE15744_normalized.pdf")
 ```
 
 # Plot: Histogramm
@@ -210,7 +210,7 @@ hist(data.GSE15744,
      xlab="Log Intensity",
      main = "Density function of log intensity in human embryo (raw data)")
 
-dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Histogramm_GSE27830_Raw-Data.pdf")
+dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/Histogramm_GSE15744_Raw-Data.pdf")
 
 # After
 eset <- exprs(GSE15744.vsnrma)
@@ -225,7 +225,7 @@ for(i in 1:ncol(eset)){
   lines(density(eset[,i]), col=rainbow(10)[i])
 }
 
-dev.copy2pdf(file = "C:/Users/david/Documents/Data Analysis Lokal/Plots/Histogramm_GSE27830_vsnnormalized.pdf")
+dev.copy2pdf(file = "C:/Users/david/Documents/Data Analysis Lokal/Plots/Histogramm_GSE15744_vsnnormalized.pdf")
 ```
 
 
@@ -234,15 +234,15 @@ dev.copy2pdf(file = "C:/Users/david/Documents/Data Analysis Lokal/Plots/Histogra
 rnadeg.raw <- AffyRNAdeg(data.GSE15744)
 
 plotAffyRNAdeg(rnadeg.raw, col=rainbow(10))
-title(sub="Human embryo (GSE27830, Raw data)")
+title(sub="Human embryo (GSE15744, Raw data)")
 
-dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/RNAdeg_GSE27830_raw.pdf")
+dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/RNAdeg_GSE15744_raw.pdf")
 
 # Not scaled
 plotAffyRNAdeg(rnadeg.raw, col=rainbow(10), transform = "shift.only")
-title(sub="Human embryo (GSE27830, Raw data)")
+title(sub="Human embryo (GSE15744, Raw data)")
 
-dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/RNAdeg_GSE27830_raw_unscaled.pdf")
+dev.copy2pdf(file="C:/Users/david/Documents/Data Analysis Lokal/Plots/RNAdeg_GSE15744_raw_unscaled.pdf")
 
 # Samples look good: Lines don't cross
 ```
@@ -260,7 +260,7 @@ for(i in 1:17){
                      substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1])), 
                      sep=" ", collapse = NULL))
   
-  file.name <- paste("C:/Users/david/Documents/Data Analysis Lokal/Plots/Scatterplots/Scatterplot_GSE27830.pdf", 
+  file.name <- paste("C:/Users/david/Documents/Data Analysis Lokal/Plots/Scatterplots/Scatterplot_GSE15744.pdf", 
                      as.character(substr(colnames(GSE15744.vsnrma)[i], 1, nchar(colnames(GSE15744.vsnrma)[i]))), "_",
                      as.character(substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1]))),
                      ".pdf", sep="")
