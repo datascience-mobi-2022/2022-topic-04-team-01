@@ -1,0 +1,190 @@
+---
+title: "Exploratory Data Analysis"
+author: "Paul Christmann"
+date: '2022-05-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load potentially useful libraries
+
+library(Rcpp)
+library(tidyverse)
+library(affy)
+library(vsn)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
+```
+
+
+```{r}
+#Load Normalized Data (wihtout Affy control genes)
+
+setwd("C:/Data Analysis")
+load("data.vsnrma.rda")
+
+```
+
+
+```{r}
+#Convert to dataframe and cut of Affymetrix Control genes
+
+temp_embryo_df = as.data.frame(exprs(embryo.vsnrma))
+embryo_df = temp_embryo_df[63:95721,]
+```
+
+
+```{r}
+#Create a new data frames with the mean expression for each week
+
+embryo_df_means = data.frame(week4=rowMeans(embryo_df[,1:3]),week5=rowMeans(embryo_df[,4:6]), week6=rowMeans(embryo_df[,7:9]),week7=rowMeans(embryo_df[,10:12]), week8=rowMeans(embryo_df[,13:15]), week9=rowMeans(embryo_df[,16:18]))
+
+```
+
+```{r}
+#Calculate the standard deviation for each gene
+
+embryo_expr_genes_sd = data.frame(sd = apply(X =embryo_df_means, 1, sd))
+
+
+```
+
+
+```{r}
+#Work with the Standard Deviation Values: Histogram
+
+ggplot(embryo_expr_genes_sd, aes(sd)) + geom_histogram()
+
+```
+
+
+```{r}
+#Work with the Standard Deviation Values: Boxplot
+
+ggplot(embryo_expr_genes_sd, aes(sd)) + geom_boxplot()
+
+```
+
+
+```{r}
+#Work with the Standard Deviation Values: Histogram
+
+ggplot(embryo_expr_genes_sd, aes(sd)) + geom_histogram()
+
+```
+
+
+```{r}
+#Annotate the dataset
+setwd("C:/Data Analysis/TRAdata")
+ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # Load the ensembl annotation data
+
+TranscriptID_orig = rownames(embryo_df)
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
+
+embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+
+
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
+rownames(embryo_df_ann) = embryo_df_ann$TranscriptID_orig
+
+setwd("C:/Data Analysis")
+save(embryo_df_ann, file = "embryo_df_ann.RData")
+
+```
+
+
+```{r}
+#Check the annotated dataset
+
+summary(embryo_df_ann)
+head(embryo_df_ann)
+
+```
+
+```{r}
+#Import the TRAs
+
+setwd("C:/Data Analysis/TRAdata")
+tra_gtex = as.data.frame(read.csv(file = 'tra.2017.human.gtex.5x.table.tsv', sep = "\t"))
+
+```
+
+
+```{r}
+#Analyse the TRAs
+
+summary(tra_gtex)
+head(tra_gtex)
+
+```
+
+```{r}
+#Rename the Columns
+
+colnames(embryo_df_ann) = c("Week4_1", "Week4_2", "Week4_3", "Week5_1", "Week5_2", "Week5_3", "Week6_1", "Week6_2", "Week6_3", "Week7_1", "Week7_2", "Week7_3", "Week8_1", "Week8_2", "Week8_3", "Week9_1", "Week9_2", "Week9_3", "Transcript.stable.ID", "Gene.stable.ID", "Chromosome.scaffold.name", "HGNC.symbol", "AFFY.HG.U133.Plus.2.probe")
+#week = c(4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9)
+#replicate = c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3)
+
+
+```
+
+
+```{r}
+#Differential gene expression: Limma Analysis
+
+design = model.matrix(~ 0+factor(c(rep(1,1), rep(2,1), rep(3,1), rep(4,1), rep(5,1), rep(6,1))))
+colnames(design) = c("week4", "week5", "week6", "week7", "week8", "week9")
+design
+fit = lmFit(embryo_df_ann[1:6], design)
+contrast.matrix = makeContrasts(week5-week4, week6-week5, week7-week6, week8-week7, week9-week8, levels = design)
+fit2 = contrasts.fit(fit, contrast.matrix)
+fit2 = eBayes(fit2)
+topTable(fit2)
+```
+
+
+```{r}
+#Differential gene expression: Limma Analysis
+Comparisons = data.frame(week=c(1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6), replicate = c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3))
+Time = factor(Comparisons$week)
+Probe = factor(Comparisons$replicate)
+design = model.matrix(~Probe+Time)
+fit = lmFit(embryo_df_ann[1:18], design)
+fit = eBayes(fit, trend=TRUE, robust = TRUE)
+results = decideTests(fit)
+summary(results)
+```
+
+
+```{r}
+#Limma results
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
