@@ -16,5 +16,7 @@ Hier gibt es die [Rohdaten extrahiert](https://we.tl/t-ieP3IMkgk4)!
 
 TRA Daten: https://gtexportal.org/home/tissueSummaryPage#tissuesPerDonor
 
+Script vom Master: https://www.dropbox.com/home/TRA%20Daten?preview=GSE39897.R
+
 ## R Packages
 
