@@ -1,0 +1,568 @@
+---
+title: "Annotation and Differential Gene Expression"
+author: "Paul Christmann"
+date: '2022-05-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Basics:
+
+```{r}
+# Load potentially useful libraries
+library(Rcpp)
+library(tidyverse)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
+```
+
+```{r}
+# Import Data 
+
+library(affy)
+setwd("C:/Data Analysis/Raw Data")
+gse.exp = ReadAffy()
+#gse.exp@cdfName <- "HGU133Plus2_Hs_ENST"
+                   
+library(vsn)
+GSE15744.vsnrma <- vsnrma(gse.exp)
+save(GSE15744.vsnrma, file = "GSE15744.vsnrma.rda")
+
+```
+```{r}
+# Import Data 
+
+library(affy)
+setwd("C:/Data Analysis/Raw Data")
+gse.exp_a = ReadAffy()
+gse.exp_a@cdfName <- "HGU133Plus2_Hs_ENST"
+```
+
+```{r}
+
+#Load Normalized Data 
+
+setwd("C:/Data Analysis/R Scripts")
+#load("GSE15744.vsnrma.rda")
+
+#Clean up the names
+
+colnames(pData(GSE15744.vsnrma)) = substr(colnames(pData(GSE15744.vsnrma)), 1, 8)
+
+filenames <- rownames(pData(gse.exp))
+samples <- substr(filenames, 1,9)                                   # Only keeps 1st to 9th character in the string
+rownames(pData(gse.exp)) = samples
+
+
+
+filenames <- rownames(pData(GSE15744.vsnrma))
+samples <- substr(filenames, 1,9)                                   
+rownames(pData(GSE15744.vsnrma)) = samples
+
+colnames(pData(GSE15744.vsnrma))
+#Convert to dataframe and cut of Affymetrix Control genes
+
+temp_embryo_df = as.data.frame(exprs(GSE15744.vsnrma))
+colnames(temp_embryo_df) = rownames(pData(GSE15744.vsnrma))
+temp_embryo_df
+#embryo_df = temp_embryo_df[63:54675,]
+
+```
+
+
+
+Annotation:
+
+```{r}
+#Annotate the dataset
+setwd("C:/Data Analysis/TRAdata")
+ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # Load the ensembl annotation data
+
+TranscriptID_orig = rownames(embryo_df)
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
+
+embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+
+
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
+rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
+
+setwd("C:/Data Analysis")
+save(embryo_df_ann, file = "embryo_df_ann.RData")
+
+```
+
+
+Exploratory Data Analysis: 
+
+```{r}
+#Create a new data frames with the mean expression for each week
+
+embryo_df_means = data.frame(week4=rowMeans(embryo_df[,1:3]),week5=rowMeans(embryo_df[,4:6]), week6=rowMeans(embryo_df[,7:9]),week7=rowMeans(embryo_df[,10:12]), week8=rowMeans(embryo_df[,13:15]), week9=rowMeans(embryo_df[,16:18]))
+
+
+#Calculate the standard deviation for each gene
+
+embryo_expr_genes_sd = data.frame(sd = apply(X =embryo_df_means, 1, sd))
+
+```
+
+```{r}
+#Work with the Standard Deviation Values: Histogram
+
+ggplot(embryo_expr_genes_sd, aes(sd)) + geom_histogram()
+
+
+#Work with the Standard Deviation Values: Boxplot
+
+ggplot(embryo_expr_genes_sd, aes(sd)) + geom_boxplot()
+
+```
+
+
+
+
+TRAs:
+
+```{r}
+#Import the TRAs
+
+setwd("C:/Data Analysis/TRAdata")
+tra_gtex = as.data.frame(read.csv(file = 'tra.2017.human.gtex.5x.table.tsv', sep = "\t"))
+
+```
+
+```{r}
+#Analyse the TRAs
+
+summary(tra_gtex)
+head(tra_gtex)
+
+```
+
+
+
+Daten verschönern:
+
+```{r}
+#Rename the Columns
+
+colnames(embryo_df_ann) = c("Week4_1", "Week4_2", "Week4_3", "Week5_1", "Week5_2", "Week5_3", "Week6_1", "Week6_2", "Week6_3", "Week7_1", "Week7_2", "Week7_3", "Week8_1", "Week8_2", "Week8_3", "Week9_1", "Week9_2", "Week9_3", "Transcript.stable.ID", "Gene.stable.ID", "Chromosome.scaffold.name", "HGNC.symbol", "AFFY.HG.U133.Plus.2.probe")
+#week = c(4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9)
+#replicate = c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3)
+
+
+```
+
+
+
+
+Limma Analysis
+
+
+```{r}
+#Differential gene expression: Limma Analysis with better comparisons
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(embryo_df_ann[1:18], design)
+#contrast.matrix = makeContrasts(for(x in weeks) for (y in weeks) paste(x, "-", y), levels = design)
+contrast.matrix = makeContrasts(week5-week4, week6-week5, week7-week6, week8-week7, week9-week8, levels = design)
+fit_2b = contrasts.fit(fit_2, contrast.matrix)
+fit_2b = eBayes(fit_2b)
+
+```
+
+
+```{r}
+#Differential gene expression: Limma Analysis 2 Results
+
+results = decideTests(fit_2b, adjust.method = "BH")
+vennDiagram(results)
+topTable(fit_2b, coef = 4, n=100)
+
+
+
+```
+
+
+```{r}
+#Differential gene expression: Limma Analysis 2, week5 and 4
+contrast_5.4 = makeContrasts(week6-week4, levels = design)
+fit5.4 = contrasts.fit(fit_2, contrast_5.4)
+fit5.4 = eBayes(fit5.4)
+results5.4 = decideTests(fit5.4)
+vennDiagram(results5.4)
+summary(results5.4)
+topTable(fit5.4, n=30)
+
+```
+
+```{r}
+#Differential gene expression: Limma Analysis 2, between weeks
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+summary(results_all)
+
+```
+
+
+```{r}
+#Differential gene expression: Limma Analysis analog Nazli
+
+M = cbind(embryo_df_ann[,1]-embryo_df_ann[,4], 
+          embryo_df_ann[,2]-embryo_df_ann[,5], 
+          embryo_df_ann[,3]-embryo_df_ann[,6])
+
+colnames(M) = paste(rep("Week5 vs Week4",3), as.character(1:3), "M", sep=".")
+
+# Create and empty matrix, 
+design=as.matrix(rep(1,3))
+colnames(design)= "Week5-Week4"
+
+#calculate the fit and thus p-values
+fit_n= lmFit(M,design)
+fit_n= eBayes(fit_n)
+
+pvalue01= sum(p.adjust(fit_n$p.value,"BH")< 0.01)
+pvalue01 #0
+
+pvalue05= sum(p.adjust(fit_n$p.value,"BH")< 0.05)
+pvalue05 #20
+
+pvalue1= sum(p.adjust(fit_n$p.value,"BH")< 0.1)
+pvalue1 #28
+
+pvalue2= sum(p.adjust(fit_n$p.value,"BH")< 0.2)
+pvalue2 #225
+
+pvalue3= sum(p.adjust(fit_n$p.value,"BH")< 0.3)
+pvalue3 #811
+
+pvalue4= sum(p.adjust(fit_n$p.value,"BH")< 0.4)
+pvalue4 #1719
+
+pvalue5= sum(p.adjust(fit_n$p.value,"BH")< 0.5)
+pvalue5 #5387
+
+
+
+```
+
+
+
+
+Compare differentially expressed Geenes Week9 - Week4
+
+```{r}
+#Cheating for good table in the project proposal -> Find differentially expressed genes
+
+contrast_9.4 = makeContrasts(week9-week4, levels = design)
+fit9.4 = contrasts.fit(fit_2, contrast_9.4)
+fit9.4 = eBayes(fit9.4)
+results9.4 = decideTests(fit9.4)
+vennDiagram(results9.4)
+summary(results9.4)
+diff_transcripts = topTable(fit9.4, n= 9022)
+
+```
+
+
+```{r}
+#Create List of different tissues
+library(plyr)
+z = list()
+tra_diff = tra_gtex[tra_gtex$ensembl.transcript %in% rownames(diff_transcripts), ]
+#count(tra_diff$tissues)
+#tra_diff$tissues
+for (x in (1:length(tra_diff$tissues))) {
+  z[x] = strsplit(tra_diff$tissues[x], "/")
+}
+
+```
+
+```{r}
+
+a = c()
+for (x in (1:length(z))) {
+ for (y in (1:lengths(z[x]))) {
+     a = c(a, z[[x]][y])
+ }
+}
+```
+
+```{r}
+library(plyr)
+
+diff_tissue_count = count(a)
+
+rownames(diff_tissue_count) = diff_tissue_count[,1]
+
+```
+
+```{r}
+split = list()
+for (g in (1:length(diff_tissue_count$x))) {
+  split[g] = strsplit(diff_tissue_count$x[g], " - ")
+}
+head_tissue = c()
+for (x in (1:length(split))) {
+     head_tissue = c(head_tissue, split[[x]][1])
+
+}
+
+diff_tissue_count = cbind(diff_tissue_count, head_tissue)
+
+diff_tissue_count
+```
+
+```{r}
+library(ggplot2)
+
+ q <- ggplot(diff_tissue_count, aes(x = x, y = freq, fill = head_tissue))  + geom_bar(stat = "identity")
+ q + labs(x = "Tissue", y = "Number of Genes", title = "Differentially expressed TRAs between week 4 and 9 by tissue")  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+```
+
+
+
+
+Create TRA Plot:
+
+```{r}
+#Create List of different tissues
+library(plyr)
+z = list()
+for (x in (1:length(tra_gtex$tissues))) {
+  z[x] = strsplit(tra_gtex$tissues[x], "/")
+}
+
+
+a = c()
+for (x in (1:length(z))) {
+ for (y in (1:lengths(z[x]))) {
+     a = c(a, z[[x]][y])
+ }
+}
+
+
+tra_tissue_count = count(a)
+
+rownames(tra_tissue_count) = tra_tissue_count[,1]
+
+
+
+split = list()
+for (g in (1:length(tra_tissue_count$x))) {
+  split[g] = strsplit(tra_tissue_count$x[g], " - ")
+}
+head_tissue = c()
+for (x in (1:length(split))) {
+     head_tissue = c(head_tissue, split[[x]][1])
+
+}
+
+tra_tissue_count = cbind(tra_tissue_count, head_tissue)
+
+
+
+library(ggplot2)
+
+ q <- ggplot(tra_tissue_count, aes(x = x, y = freq, fill = head_tissue))  + geom_bar(stat = "identity")
+ q + labs(x = "Tissue", y = "Number of TRAs", title = "TRAs from the GTEx Database by tissue")  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+```
+
+
+
+
+
+Limma analysis gene expression difference:
+
+```{r}
+#Differential gene expression: for Project Proposal, week 9-7
+contrast_9.7 = makeContrasts(week9-week8, week8-week7, levels = design)
+fit9.7 = contrasts.fit(fit_2, contrast_9.7)
+fit9.7 = eBayes(fit9.7)
+results9.7 = decideTests(fit9.7)
+vennDiagram(results9.7, circle.col = c("red", "blue"))
+summary(results9.7)
+topTable(fit9.7, n=30)
+
+```
+
+
+```{r}
+#Find the 6 genes
+
+week98 = rownames(topTable(fit9.7, coef=1,  n=218))
+week87 = rownames(topTable(fit9.7, coef = 2,  n=18))
+
+goi = intersect(week98, week87)
+goi
+
+```
+
+```{r}
+library(ggplot2)
+library(ggsci)
+
+#ENST00000373031.val = data.frame(replicate1 = c(embryo_df_ann["ENST00000373031",1], embryo_df_ann["ENST00000373031",4], embryo_df_ann["ENST00000373031",7], embryo_df_ann["ENST00000373031", 10], embryo_df_ann["ENST00000373031",13], embryo_df_ann["ENST00000373031",16]), replicate2 = c(embryo_df_ann["ENST00000373031",2], embryo_df_ann["ENST00000373031",5], embryo_df_ann["ENST00000373031",8], embryo_df_ann["ENST00000373031",11], embryo_df_ann["ENST00000373031",14], embryo_df_ann["ENST00000373031",17]), replicate3 = c(embryo_df_ann["ENST00000373031",3], embryo_df_ann["ENST00000373031",6], embryo_df_ann["ENST00000373031",9], embryo_df_ann["ENST00000373031",12], embryo_df_ann["ENST00000373031",15], embryo_df_ann["ENST00000373031",18]), Week = c(4,5,6,7,8,9))
+
+ENST00000373031.dat = data.frame(Replicate = factor(c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3), levels = c(1,2,3)), Expression_Level = c, Week = c(4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9))
+
+ENST00000373031.dat
+ a <- ggplot(ENST00000373031.dat, aes(x = Week, y= Expression_Level, group = Replicate))  + geom_line(aes(colour = Replicate)) + geom_point(aes(colour =   Replicate, shape = Replicate)) + labs(title = "Expression of ENST00000373031") + scale_color_npg() + theme_classic()
+
+```
+
+
+
+```{r}
+c = c()
+for(x in 1:18) {
+  c = c(c,embryo_df_ann["ENST00000373031",x])
+}
+
+```
+
+```{r}
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+for (transcriptname in c("ENST00000373031", "ENST00000297267", "ENST00000329629", "ENST00000375543", "ENST00000506143", "ENST00000375544")) {
+  c = c()
+  for(x in 1:18) {
+   c = c(c,embryo_df_ann[transcriptname,x])
+  }
+  frame = data.frame(Replicate = factor(c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3), levels = c(1,2,3)), Expression_Level = c, Week = c(4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9))
+  assign(paste(transcriptname, ".plot", sep=""), ggplot(frame, aes(x = Week, y= Expression_Level, group = Replicate))  + geom_line(aes(colour = Replicate)) + geom_point(aes(colour =   Replicate, shape = Replicate)) + labs(title = paste("Expression of ", transcriptname, sep="")) + scale_color_npg() + theme_classic())
+}
+grid.arrange(ENST00000373031.plot, ENST00000297267.plot, ENST00000329629.plot, ENST00000375543.plot, ENST00000506143.plot, ENST00000375544.plot)
+```
+
+
+
+```{r}
+tra_gtex[tra_gtex$ensembl.transcript %in% c("ENST00000373031", "ENST00000297267", "ENST00000329629", "ENST00000375543", "ENST00000506143", "ENST00000375544"),]
+embryo_df_ann[embryo_df_ann$Transcript.stable.ID %in% c("ENST00000373031", "ENST00000297267", "ENST00000329629", "ENST00000375543", "ENST00000506143", "ENST00000375544"),19:23]
+
+```
+
+i=!duplicated(rownames(eset_EggTS01))&!is.na(rownames(eset_EggTS01))
+eset_EggTS01_1= eset_EggTS01[i,]
+
+
+
+
+
+
+Exploratory Plots: 
+
+
+```{r}
+library(ggplot2)
+library(ggsci)
+
+  c = c()
+  for(x in 1:18) {
+   c = c(c, median(embryo_df_ann[,x]))
+  }
+  median_expression_level = data.frame(Replicate = factor(c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3), levels = c(1,2,3)), Expression_Level = c, Week = c(4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9))
+
+ median_exp_plot <- ggplot(median_expression_level, aes(x = Week, y= Expression_Level, group = Replicate))  + geom_line(aes(colour = Replicate)) + geom_point(aes(colour =   Replicate, shape = Replicate)) + labs(title = paste("Median expression level of each chip")) + scale_color_npg() + theme_classic()
+  
+median_exp_plot
+```
+
+```{r}
+library(ggplot2)
+library(ggsci)
+
+  c = c()
+  for(x in 1:18) {
+   c = c(c, mean(embryo_df_ann[,x]))
+  }
+  mean_expression_level = data.frame(Replicate = factor(c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3), levels = c(1,2,3)), Expression_Level = c, Week = c(4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9))
+
+ mean_exp_plot <- ggplot(mean_expression_level, aes(x = Week, y= Expression_Level, group = Replicate))  + geom_line(aes(colour = Replicate)) + geom_point(aes(colour =   Replicate, shape = Replicate)) + labs(title = paste("Mean expression level of each chip")) + scale_color_npg() + theme_classic()
+  
+mean_exp_plot
+```
+
+
+```{r}
+# Make combined TRA and embryo_df_ann Dataset
+library(tidyverse)
+embryo_df_tra = embryo_df_ann[embryo_df_ann$Transcript.stable.ID %in% tra_gtex$ensembl.transcript ,]
+embryo_df_tra = embryo_df_tra %>%  rename(ensembl.transcript = "Transcript.stable.ID")
+embryo_df_tra =  left_join(embryo_df_tra, tra_gtex, by="ensembl.transcript") 
+```
+
+
+```{r}
+# Brain genes 
+
+embryo_df_brain = embryo_df_tra[grepl("Brain", embryo_df_tra$tissues),]
+
+library(ggplot2)
+library(ggsci)
+
+  c = c()
+  for(x in 1:18) {
+   c = c(c, median(embryo_df_brain[,x]))
+  }
+  median_brain = data.frame(Replicate = factor(c(1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,1,2,3), levels = c(1,2,3)), Expression_Level = c, Week = c(4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9))
+
+ median_brain_plot <- ggplot(median_brain, aes(x = Week, y= Expression_Level, group = Replicate))  + geom_line(aes(colour = Replicate)) + geom_point(aes(colour =   Replicate, shape = Replicate)) + labs(title = paste("Median expression level of all brain-related genes")) + scale_color_npg() + theme_classic()
+  
+median_brain_plot
+```
+
+
+```{r}
+# THE Brain Plot
+  c = c()
+  for(x in 1:18) {
+   c = c(c, median(embryo_df_brain[,x]))
+  }
+  median_mean_brain = data.frame(Expression_Level = c(sum(c[1:3])/3,sum(c[4:6])/3, sum(c[7:9])/3, sum(c[10:12])/3, sum(c[13:15])/3, sum(c[16:18])/3), Week = c(4,5,6,7,8,9))
+
+ median_mean_brain_plot <- ggplot(median_mean_brain, aes(x = Week, y= Expression_Level))  + geom_line() + geom_point() + labs(title = paste("Median expression level of all brain-related genes")) + scale_color_npg() + theme_classic()
+  
+median_mean_brain_plot
+
+
+
+
+```
+
+
+```{r}
+# IGNORIEREN, ist ein Schrott plot
+  c = c()
+  for(x in 1:6) {
+   c = c(c, median(mean(embryo_df_brain[,x:x+2])))
+  }
+  median_mean_brain = data.frame(Expression_Level = c, Week = c(4,5,6,7,8,9))
+
+ median_mean_brain_plot <- ggplot(median_mean_brain, aes(x = Week, y= Expression_Level))  + geom_line() + geom_point() + labs(title = paste("Median expression level of all brain-related genes")) + scale_color_npg() + theme_classic()
+  
+median_mean_brain_plot
+
+
+
+
+```
+
+
