@@ -69,3 +69,105 @@ save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
 
 ```
 
+
+
+## Limma Analysis for all different Combinations
+
+```{r}
+#Differential gene expression: Limma Analysis 2, between weeks
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+summary(results_all)
+
+```
+
+
+```{r}
+# Ausgabe mit Gennamen für einen Vergleich
+
+top.table = topTable(fit_all,1, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+})
+row.names(top.table) = n
+top.table[which(top.table$adj.P.Val < 0.01), ]
+```
+
+
+```{r}
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+
+```
+
+
+
+```{r}
+
+length(diff_genes_list_0.01)
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01)
+
+```
+
+
+```{r}
+#List with 5%
+
+diff_genes_list_0.05 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.05 = c(diff_genes_list_0.05, rownames(top.table[which(top.table$adj.P.Val < 0.05), ]))
+}
+diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
+
+```
+
+
+```{r}
+length(diff_genes_list_0.05)
+```
+
+
+
+
+#Final list of differentially expressed genes with an adjusted p-valuelower than 0.01:
+
+```{r}
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
+```
+
+```{r}
+diff_genes_ann_0.01
+```
+
+
+
+
+
+
