@@ -1,0 +1,28 @@
+---
+title: "Data Analysis"
+author: "Paul Christmann"
+date: '2022-05-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Uses Annotated Dataset with only TRA Genes
+
+
+```{r}
+#Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tra.RData")
+```
+
+
+
+```{r}
+#Overview over the dataset
+colnames(embryo_df_tra)
+dim(embryo_df_tra)
+
+```
