@@ -1,0 +1,50 @@
+---
+title: "test"
+author: "Joshua Eigenmann"
+date: "5/6/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+das ist ein test markdown
+
+```{r}
+x=rnorm(5000,mean=0,sd=1)
+y=rnorm(5000,mean=5,sd=1)
+plot(x,y)
+```
+
+```{r}
+if(!requireNamespace("BiocManager",quietly=TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version="3.15")
+BiocManager::install("vsn")
+BiocManager::install("affy")
+BiocManager::install("AnnotationDbi")
+install.packages("limma")
+install.packages("maps")
+install.packages("mapproj")
+install.packages("tidyverse")
+install.packages("RSQLite")
+```
+
+```{r}
+#install.packages("~/Documents/hgu133plus2hsenstcdf/hgu133plus2hsenstcdf_14.1.0.tar", repos = NULL, type = "source")
+#install.packages("~/Documents/hgu133plus2hsenstcdf/hgu133plus2hsenstprobs_14.1.0.tar", repos = NULL, type = "source")
+
+library(RSQLite)
+library(affy)
+library(vsn)
+library(AnnotationDbi)
+#library(hgu133plus2hsenstcdf)
+#library(hgu133plus2hsenstprobe)
+library(limma)
+library(pheatmap)
+library(tidyverse)
+ 
+```
+
+
