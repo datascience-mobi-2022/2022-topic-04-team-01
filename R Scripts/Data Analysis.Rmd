@@ -19,10 +19,53 @@ load("embryo_df_tra.RData")
 ```
 
 
-
 ```{r}
 #Overview over the dataset
 colnames(embryo_df_tra)
 dim(embryo_df_tra)
 
 ```
+
+
+
+
+
+
+## Changing the Tissues into a vector
+```{r}
+#Make Tissue names more accessible
+ a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+
+embryo_df_tissues = a
+```
+
+```{r}
+save(embryo_df_tissues, file="embryo_df_tissues.RData")
+```
+
+
+
+## Modify expression data from Week9 to 4 comparison with accessible tissue vector
+```{r}
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("week9-4_diff.RData")
+
+week9_4_diff_tra = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% tra_diff$ensembl.transcript, ]
+
+save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
+
+```
+
