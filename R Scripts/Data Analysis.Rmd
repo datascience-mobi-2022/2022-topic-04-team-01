@@ -11,7 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load useful Libraries
 ```{r}
-
+library(Rcpp)
+library(tidyverse)
+library(affy)
+library(vsn)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
 ```
 
 
@@ -33,12 +43,11 @@ colnames(embryo_df_tra)
 dim(embryo_df_tra)
 head(embryo_df_tra)
 str(embryo_df_tra)
-filter(embryo_df_tra, tissues == "Liver")
 ```
 
 
 ```{r}
-sum(apply(embryo_df_tra, 1, fun))
+#sum(apply(embryo_df_tra, 1, fun))
 ```
 
 
@@ -137,9 +146,9 @@ for (i in 1:15) {
 
 ```{r}
 
-length(diff_genes_list_0.01)
+length(diff_genes_list_0.01) #4538
 diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
-length(diff_genes_list_0.01)
+length(diff_genes_list_0.01) #1818
 
 ```
 
@@ -211,5 +220,58 @@ frontal_cortex_plot = ggplot(frontal_cortex_graph, aes(x = Week, y= Expression_L
 frontal_cortex_plot
 frontal_cortex_mean
 ```
+
+## Data cleaning
+```{r}
+glimpse(embryo_df_tra) #Chromosome.scaffold.name should be a factor data type
+summary(embryo_df_tra)
+
+embryo_df_tra <- embryo_df_tra %>%
+  mutate(Chromosome.scaffold.name.fct = as.factor(Chromosome.scaffold.name))
+summary(embryo_df_tra$Chromosome.scaffold.name.fct)
+
+
+#lv = levels(embryo_df_tra$Chromosome.scaffold.name.fct) # weirde Chromosomennamen
+#"CHR_HSCHR10_1_CTG2", "CHR_HSCHR11_1_CTG7", "CHR_HSCHR15_4_CTG8", "CHR_HSCHR22_1_CTG3", "CHR_HSCHR22_1_CTG7",  "CHR_HSCHR4_6_CTG12", "CHR_HSCHR7_2_CTG4_4", "CHR_HSCHR7_2_CTG6"
+#sum(lv== "CHR_HSCHR10_1_CTG2" | lv== "CHR_HSCHR11_1_CTG7"| lv== "CHR_HSCHR15_4_CTG8"| lv== "CHR_HSCHR22_1_CTG3"| lv== "CHR_HSCHR22_1_CTG7"| lv==  "CHR_HSCHR4_6_CTG12"| lv== "CHR_HSCHR7_2_CTG4_4"| lv==  "CHR_HSCHR7_2_CTG6") # 8
+
+embry_df_tra <- embryo_df_tra %>%
+  filter(Chromosome.scaffold.name.fct != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name.fct != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name.fct!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name.fct!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name.fct!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name.fct!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name.fct!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name.fct!=  "CHR_HSCHR7_2_CTG6" )
+embry_df_tra$Chromosome.scaffold.name.fct <- droplevels(embry_df_tra$Chromosome.scaffold.name.fct)
+embry_df_tra$Chromosome.scaffold.name.fct <- factor(embry_df_tra$Chromosome.scaffold.name.fct, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y", "empty"))
+embry_df_tra$Chromosome.scaffold.name.fct <- droplevels(embry_df_tra$Chromosome.scaffold.name.fct)
+
+summary(embry_df_tra$Chromosome.scaffold.name.fct)
+
+
+```
+Data cleaning tissue
+
+```{r}
+embryo_test <- embryo_df_tra %>%
+  mutate(tiss.fct = as.factor(max.tissue))
+
+summary(embryo_test$tiss.fct)
+levels(embryo_test$tiss.fct)
+head(embryo_df_tissues$tissues)
+```
+
+
+
+
+```{r}
+glimpse(diff_genes_ann_0.01)
+
+diff_genes_ann_0.01 %>%
+  count(ensembl.transcript) %>%
+  filter(n>1) # Es sind keine Dublikate mehr vorhanden
+
+summary(as.factor(diff_genes_ann_0.01$max.tissue)) # von jedem tissue existiert noch min 1 differentiell exprimiertes Gen
+
+
+```
+
+
+
 
 
