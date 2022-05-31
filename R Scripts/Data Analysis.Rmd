@@ -25,7 +25,9 @@ load("embryo_df_tra.RData")
 ```
 
 
+
 Overview over the dataset
+
 ```{r}
 colnames(embryo_df_tra)
 dim(embryo_df_tra)
@@ -38,4 +40,176 @@ filter(embryo_df_tra, tissues == "Liver")
 ```{r}
 sum(apply(embryo_df_tra, 1, fun))
 ```
+
+
+
+
+
+## Changing the Tissues into a vector
+```{r}
+#Make Tissue names more accessible
+ a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+
+embryo_df_tissues = a
+```
+
+```{r}
+save(embryo_df_tissues, file="embryo_df_tissues.RData")
+```
+
+
+
+## Modify expression data from Week9 to 4 comparison with accessible tissue vector
+```{r}
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("week9-4_diff.RData")
+
+week9_4_diff_tra = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% tra_diff$ensembl.transcript, ]
+
+save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
+
+```
+
+
+
+## Limma Analysis for all different Combinations
+
+```{r}
+#Differential gene expression: Limma Analysis 2, between weeks
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+summary(results_all)
+
+```
+
+
+```{r}
+# Ausgabe mit Gennamen für einen Vergleich
+
+top.table = topTable(fit_all,1, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+})
+row.names(top.table) = n
+top.table[which(top.table$adj.P.Val < 0.01), ]
+```
+
+
+```{r}
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+
+```
+
+
+
+```{r}
+
+length(diff_genes_list_0.01)
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01)
+
+```
+
+
+```{r}
+#List with 5%
+
+diff_genes_list_0.05 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.05 = c(diff_genes_list_0.05, rownames(top.table[which(top.table$adj.P.Val < 0.05), ]))
+}
+diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
+
+```
+
+
+```{r}
+length(diff_genes_list_0.05)
+```
+
+
+
+
+#Final list of differentially expressed genes with an adjusted p-valuelower than 0.01:
+
+```{r}
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
+```
+
+
+
+
+
+
+
+
+
+## Run graphs for brain genes
+
+
+```{r}
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Brain - Frontal Cortex" %in% x})
+
+diff_genes_ann_0.01[bool_contained,]
+
+```
+
+```{r}
+frontal_cortex = diff_genes_ann_0.01[bool_contained,]
+frontal_cortex = frontal_cortex[, 1:19]
+frontal_cortex_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
+frontal_cortex_graph = colMeans(frontal_cortex_mean)
+frontal_cortex_graph = data.frame (Expression_Level = frontal_cortex_graph, Week = c(4:9))
+
+
+
+frontal_cortex_plot = ggplot(frontal_cortex_graph, aes(x = Week, y= Expression_Level))  + geom_line(color = "#0000ff") + geom_point(color = "#0000ff") + labs(title = paste("Median expression level of all brain-related genes (GSE15744)"))  + theme_classic() 
+  
+```
+
+```{r}
+frontal_cortex_plot
+frontal_cortex_mean
+```
+
 
