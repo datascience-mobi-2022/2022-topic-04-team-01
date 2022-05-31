@@ -9,20 +9,33 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Load useful Libraries
+```{r}
+
+```
+
+
 ## Uses Annotated Dataset with only TRA Genes
 
-
+Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
 ```{r}
-#Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
-setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+#setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts") #Paul
 load("embryo_df_tra.RData")
 ```
 
 
-
+Overview over the dataset
 ```{r}
-#Overview over the dataset
 colnames(embryo_df_tra)
 dim(embryo_df_tra)
-
+head(embryo_df_tra)
+str(embryo_df_tra)
+filter(embryo_df_tra, tissues == "Liver")
 ```
+
+
+```{r}
+sum(apply(embryo_df_tra, 1, fun))
+```
+
