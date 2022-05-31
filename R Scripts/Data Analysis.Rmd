@@ -29,8 +29,9 @@ library(biomaRt)
 
 Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
 ```{r}
-setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+#setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
 #setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts") #Paul
+setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
 load("embryo_df_tra.RData")
 ```
 
@@ -56,6 +57,8 @@ str(embryo_df_tra)
 
 ## Changing the Tissues into a vector
 ```{r}
+library(tidyverse)
+
 #Make Tissue names more accessible
  a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
 
@@ -97,6 +100,8 @@ save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
 ## Limma Analysis for all different Combinations
 
 ```{r}
+library(limma)
+
 #Differential gene expression: Limma Analysis 2, between weeks
 
 limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
@@ -197,8 +202,8 @@ save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
 
 
 ```{r}
+all = c()
 bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Brain - Frontal Cortex" %in% x})
-
 diff_genes_ann_0.01[bool_contained,]
 
 ```
