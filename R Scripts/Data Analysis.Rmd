@@ -29,8 +29,9 @@ library(biomaRt)
 
 Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
 ```{r}
-setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+#setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
 #setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts") #Paul
+setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
 load("embryo_df_tra.RData")
 ```
 
@@ -56,6 +57,8 @@ str(embryo_df_tra)
 
 ## Changing the Tissues into a vector
 ```{r}
+library(tidyverse)
+
 #Make Tissue names more accessible
  a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
 
@@ -97,6 +100,8 @@ save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
 ## Limma Analysis for all different Combinations
 
 ```{r}
+library(limma)
+
 #Differential gene expression: Limma Analysis 2, between weeks
 
 limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
@@ -115,7 +120,7 @@ summary(results_all)
 
 ```
 
-
+### Do not use this block, only a single comparison for test purposes
 ```{r}
 # Ausgabe mit Gennamen für einen Vergleich
 
@@ -129,6 +134,7 @@ top.table[which(top.table$adj.P.Val < 0.01), ]
 
 
 ```{r}
+#Create list of all differentially expresssed genes
 diff_genes_list_0.01 = c()
 
 for (i in 1:15) {
@@ -142,8 +148,6 @@ for (i in 1:15) {
 
 ```
 
-
-
 ```{r}
 
 length(diff_genes_list_0.01) #4538
@@ -151,7 +155,6 @@ diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
 length(diff_genes_list_0.01) #1818
 
 ```
-
 
 ```{r}
 #List with 5%
@@ -171,16 +174,10 @@ diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 ```
 
 
-```{r}
-length(diff_genes_list_0.05)
-```
-
-
-
-
-#Final list of differentially expressed genes with an adjusted p-valuelower than 0.01:
+### Final list of differentially expressed genes with an adjusted p-valuelower than 0.01:
 
 ```{r}
+#Select differential genes from annotated dataframe
 diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
 save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
 ```
@@ -189,37 +186,290 @@ save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
 
 
 
-
-
-
-
-## Run graphs for brain genes
-
+## Test for single differential gene expression Graph: Frontal Cortex
 
 ```{r}
+#Select genes only of target tissue
 bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Brain - Frontal Cortex" %in% x})
-
 diff_genes_ann_0.01[bool_contained,]
 
 ```
 
 ```{r}
+#Graph of mean gene expression over time
 frontal_cortex = diff_genes_ann_0.01[bool_contained,]
 frontal_cortex = frontal_cortex[, 1:19]
 frontal_cortex_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
 frontal_cortex_graph = colMeans(frontal_cortex_mean)
 frontal_cortex_graph = data.frame (Expression_Level = frontal_cortex_graph, Week = c(4:9))
 
-
-
 frontal_cortex_plot = ggplot(frontal_cortex_graph, aes(x = Week, y= Expression_Level))  + geom_line(color = "#0000ff") + geom_point(color = "#0000ff") + labs(title = paste("Median expression level of all brain-related genes (GSE15744)"))  + theme_classic() 
   
 ```
-
 ```{r}
 frontal_cortex_plot
 frontal_cortex_mean
 ```
+
+### Clustering of one tissue 
+
+```{r}
+#New Dataset with median of gene expression
+data_temp = diff_genes_ann_0.01[bool_contained,]
+data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median), Week7 =  apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+row.names(data_abs) = data_temp$ensembl.transcript
+```
+
+```{r}
+# New dataset with difference in gene expression
+
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+row.names(data) = rownames(data_abs)
+```
+
+
+```{r}
+# K-Means für die Werte
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+
+# Daten Skalieren, Distance Matrix
+data = scale(data)
+dist_data = get_dist(data, method = "pearson")
+
+# Find optimal cluster number by silhouette value
+avg_sil = function(k) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k)})) +1
+
+#Plot with clustered genes
+
+km = kmeans(data, centers = n_cluster, nstart = 25)
+data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+plot_data = create_plot_data(data_plot_raw)
+
+
+
+ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) + geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", "Brain - Frontal Cortex", " genes", sep="")) + scale_color_npg() + theme_classic()
+
+
+```
+
+
+
+
+## Integrated function for 12 different plots
+
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra")
+
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {tissue %in% x})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data) = rownames(data_abs)
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", tissue, " genes", sep="")) +
+           scale_color_npg() + theme_classic() )
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+brain_table = grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]))
+```
+
+
+```{r}
+# Get a tissue count for our final gene list
+
+tissues = c("Adipose", "Artery", "Brain",  "Colon", "Esophagus", "Heart", "Kidney", "Liver", "Lung", "Muscle", "Skin", "Stomach", "Testis")
+count_data = data.frame(tissue = tissues, count = NA)
+for (tissue in tissues){
+  
+  count_data[count_data$tissue == tissue, "count"] = sum(bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))}))
+
+}
+count_data
+```
+
+
+
+## Ecactly the same with a cooler tissue selection
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+tissues = c("Adipose", "Artery", "Brain",  "Colon", "Esophagus", "Heart", "Kidney", "Liver", "Lung", "Muscle", "Skin", "Stomach", "Testis")
+
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data) = rownames(data_abs)
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", tissue, " genes", sep="")) +
+           scale_color_npg() + theme_classic() )
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+organs_table = grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Data cleaning
 ```{r}
