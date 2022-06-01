@@ -29,10 +29,11 @@ library(biomaRt)
 
 Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
 ```{r}
-#setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
 #setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts") #Paul
-setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
 load("embryo_df_tra.RData")
+load("diff_genes_ann_0.01.RData")
 ```
 
 
@@ -134,7 +135,7 @@ top.table[which(top.table$adj.P.Val < 0.01), ]
 
 
 ```{r}
-#Create list of all differentially expresssed genes
+#Create list of all differentially expressed genes
 diff_genes_list_0.01 = c()
 
 for (i in 1:15) {
@@ -472,32 +473,32 @@ organs_table = grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(
 
 
 ## Data cleaning
-```{r}
-glimpse(embryo_df_tra) #Chromosome.scaffold.name should be a factor data type
-summary(embryo_df_tra)
-
-embryo_df_tra <- embryo_df_tra %>%
-  mutate(Chromosome.scaffold.name.fct = as.factor(Chromosome.scaffold.name))
-summary(embryo_df_tra$Chromosome.scaffold.name.fct)
-
-
-#lv = levels(embryo_df_tra$Chromosome.scaffold.name.fct) # weirde Chromosomennamen
-#"CHR_HSCHR10_1_CTG2", "CHR_HSCHR11_1_CTG7", "CHR_HSCHR15_4_CTG8", "CHR_HSCHR22_1_CTG3", "CHR_HSCHR22_1_CTG7",  "CHR_HSCHR4_6_CTG12", "CHR_HSCHR7_2_CTG4_4", "CHR_HSCHR7_2_CTG6"
-#sum(lv== "CHR_HSCHR10_1_CTG2" | lv== "CHR_HSCHR11_1_CTG7"| lv== "CHR_HSCHR15_4_CTG8"| lv== "CHR_HSCHR22_1_CTG3"| lv== "CHR_HSCHR22_1_CTG7"| lv==  "CHR_HSCHR4_6_CTG12"| lv== "CHR_HSCHR7_2_CTG4_4"| lv==  "CHR_HSCHR7_2_CTG6") # 8
-
-embry_df_tra <- embryo_df_tra %>%
-  filter(Chromosome.scaffold.name.fct != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name.fct != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name.fct!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name.fct!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name.fct!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name.fct!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name.fct!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name.fct!=  "CHR_HSCHR7_2_CTG6" )
-embry_df_tra$Chromosome.scaffold.name.fct <- droplevels(embry_df_tra$Chromosome.scaffold.name.fct)
-embry_df_tra$Chromosome.scaffold.name.fct <- factor(embry_df_tra$Chromosome.scaffold.name.fct, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y", "empty"))
-embry_df_tra$Chromosome.scaffold.name.fct <- droplevels(embry_df_tra$Chromosome.scaffold.name.fct)
-
-summary(embry_df_tra$Chromosome.scaffold.name.fct)
-
-
-```
-Data cleaning tissue
 
 ```{r}
+#einige Spalten sind Dublikate
+glimpse(embryo_df_tissues) 
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom", "max.tissue")] #removed duplicates
+dim(embryo_df_tissues)
+
+
+#Chromosome Spalte aufhübschen und unnötiges löschen
+embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
+
+dim(embryo_test$Chromosome.scaffold.name)
+embryo_df_tissues <- embryo_df_tissues %>%
+  filter(Chromosome.scaffold.name != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name!=  "CHR_HSCHR7_2_CTG6" )
+embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
+
+# Nach NA values suchen
+sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+
+embryo_test$tissues <- sapply(embryo_test$tissues, as.factor)
+
+
+embryo_test %>%
+  filter(tissues == str_extract(tissues, "Brain"))
+
+
 embryo_test <- embryo_df_tra %>%
   mutate(tiss.fct = as.factor(max.tissue))
 
