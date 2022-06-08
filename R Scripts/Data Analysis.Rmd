@@ -1088,11 +1088,10 @@ for (tissue in tissues) {
     occurs = c(occurs, count)
     if(dim(tab_ful)[1] >= 20) {
       tab = data.frame(Function = tab_ful[1:20, 2], Rank = c(1:20))
-    }
+    } 
     else {
       tab = data.frame(Function = tab_ful[, 2], Rank = c(1:length(tab_ful[,2])))
     }
-    tab = data.frame(Function = tab_ful[, 2], Rank = c(1:length(tab_ful[,2])))
     assign(tissue, c(rep(0, dim(enr_GO_tissue)[2])))
     enr_GO_tissue = rbind(enr_GO_tissue, get(tissue))
     if(dim(tab_ful)[1] != 0) {
