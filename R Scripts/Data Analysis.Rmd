@@ -1071,6 +1071,10 @@ library(enrichplot)
 library(ggplot2)
 library(org.Hs.eg.db)
 
+setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+
 # List the tissues
 tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
