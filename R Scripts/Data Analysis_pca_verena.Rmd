@@ -521,6 +521,8 @@ summary(as.factor(diff_genes_ann_0.01$max.tissue)) # von jedem tissue existiert 
 
 
 ```
+
+
 ```{r}
 #pca ueber spalten (wochen)
 pca_wochen <- prcomp(diff_genes_ann_0.01[,1:18],center=TRUE, scale.=TRUE)
@@ -570,13 +572,16 @@ pairs.panels(pca_wochen$x,
 ```
 
 
+
 ```{r}
 #pca ueber zeilen (genes)
 pca_genes <- prcomp(
-  t(diff_genes_ann_0.01[,1:18]), # transpose our data frame to obtain PC scores for samples, not genes
-  scale. = TRUE # we want the data scaled to have unit variance for each gene
-)
+  t(diff_genes_ann_0.01[,1:18]), # transpose our data frame to obtain PC scores for genes, not weeks
+  scale. = TRUE # we want the data scaled to have unit variance
+  )
 summary(pca_genes)
+#pca_genes
+
 pca_genes_df <- data.frame(pca_genes$x[, 1:2])
 ```
 
@@ -601,6 +606,9 @@ pca_genes_plot <- ggplot(
 
 # Print out the plot here
 pca_genes_plot
+```
+```{r}
+ggbiplot(pca_genes, groups = diff_genes_ann_0.01$max.tissue)
 ```
 
 
