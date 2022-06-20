@@ -1224,5 +1224,62 @@ summary(as.factor(diff_genes_ann_0.01$max.tissue)) # von jedem tissue existiert 
 
 
 
+#Comparison between our dataset and dataset from Original paper
 
+Einlesen der Datein und Datacleaning
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(dplyr)
+paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls")
+for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
+  if(is.na(paper_df_diff$Probe_Set_ID[i])){
+    j=1
+    while (is.na(paper_df_diff$Probe_Set_ID[i-j])) {
+      j = j+1
+    }
+    paper_df_diff$Gene_Title[i-j] <- paste(paper_df_diff$Gene_Title[i-j], paper_df_diff$Gene_Title[i])
+  }
+}
+paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen mit restlichem String entfernt
+paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
+paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
+#Datacleaning complete
+glimpse(paper_df_diff)
+save(paper_df_diff, file="paper_df_diff.RData")
+```
+
+Annotierung des Datensatzes Paper
+```{r}
+setwd("C:/Users/david/Documents/Data Analysis Lokal/TRAdata")
+ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
+glimpse(ensembl)
+
+paper_df_ann <- left_join(paper_df_diff, ensembl, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+sum(is.na(paper_df_ann$Transcript.stable.ID)) # 1880 Transcripts verliere ich, da ich sie nicht annotiert bekomme
+#Kommentar: Es gibt mehrere Transript stable ID für die Probe_Set_ID der Transcripts aus dem Paper, daher entsteht ein großer Datensatz, der aber nicht einmal alle Transcripts des Papers erfasst. Daher eher ungeeignet -> Annotierung durch eigenen Datensatz
+
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
+
+paper_df_ann2 <- left_join(paper_df_ann, embryo_df_tissues)
+dim(paper_df_ann2)
+paper_df_ann3 <- left_join(paper_df_ann, embryo_df_tissues, by = c("Transcript.stable.ID" = "ensembl.transcript"))
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
+```
+
+
+
+Vergleich mit unseren Differenziell exprimierten Transcripts
+```{r}
+glimpse(diff_genes_ann_0.01)
+head(diff_genes_ann_0.01$ensembl.unigene)
+
+
+
+
+
+```
 
