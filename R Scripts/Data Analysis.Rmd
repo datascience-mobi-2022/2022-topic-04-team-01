@@ -1013,11 +1013,25 @@ library(clusterProfiler)
 library(enrichplot)
 library(ggplot2)
 library(org.Hs.eg.db)
+library(gt)
+library(gtExtras)
+library(ggsci)
 deGenes = unlist(diff_genes_ann_0.01$ensembl.entrez[!duplicated(diff_genes_ann_0.01$ensembl.entrez)])
 geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
 enr_GO_all = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
 enr_GO_all = as.data.frame(enr_GO_all)
 enr_GO_all
+enr_GO_print = enr_GO_all[,c(2:4,6)]
+enr_GO_print[,2] = sapply(enr_GO_print[,2], function(txt) {eval(parse(text = txt))*100})
+enr_GO_print[,3] = sapply(enr_GO_print[,3], function(txt) {eval(parse(text = txt))*100})
+colnames(enr_GO_print) = c("Description", "Ratio_Differential", "Ratio_All", "Adj.p.val")
+table_GO_all = gt(enr_GO_print)|>  tab_header(title= "Enriched gene clusters in GSE15744", subtitle = "Comparison of differentially expressed genes with all genes") |> fmt_markdown(columns = Description) |> gt_theme_538() |> gt_hulk_col_numeric(columns = Adj.p.val) |>  gt_plt_bar(column = Ratio_Differential) |> gt_plt_bar (column = Ratio_All)
+table_GO_all
+
+
+
+
+
 ```
 ## Test enrichment in a tissues DeGenes compared to all Degenes
 ```{r}
@@ -1112,6 +1126,45 @@ enr_GO_tissue = enr_GO_tissue[-1,-1]
 row.names(enr_GO_tissue) = tissues[occurs]
 enr_GO_tissue
 ```
+
+
+
+## Now to get good GSEA Plots analog to the Clustered per Tissue plots: 
+### 1. With 5 Most Important from Tissue TRAs vs. All TRAs (no differential expression!)
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+a= enr_GO_tissue$ID[1]
+a
+enr_GO_tissue
+require(DOSE)
+dotplot(enr_GO_tissue1, split = ".sign")
+upsetplot(enr_GO_tissue1)
+
+
+
+
+```
+
+```{r}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+gse()
+
+```
+
+
+
 
 
 
