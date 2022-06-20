@@ -569,6 +569,7 @@ pairs.panels(pca_wochen$x,
              gap=0,
              bg = c("red", "yellow", "blue"),
              pch=21)
+pca_genes
 ```
 
 
@@ -587,7 +588,7 @@ pca_genes_df <- data.frame(pca_genes$x[, 1:2])
 
 ```{r}
 #plotting pca_genes
-ggbiplot(pca_genes)
+ggbiplot(pca_genes, labels=colnames(diff_genes_ann_0.01)[1:18])
 ggbiplot(pca_genes, choices=c(2,3))
 ggbiplot(pca_genes, choices=c(3,4))
 
@@ -608,7 +609,10 @@ pca_genes_plot <- ggplot(
 pca_genes_plot
 ```
 ```{r}
-ggbiplot(pca_genes, groups = diff_genes_ann_0.01$max.tissue)
+pairs.panels(pca_genes$x,
+             gap=0,
+             bg = c("red", "yellow", "blue"),
+             pch=21)
 ```
 
 
