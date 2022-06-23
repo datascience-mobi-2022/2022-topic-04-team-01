@@ -572,6 +572,10 @@ pairs.panels(pca_wochen$x,
 ```
 
 
+```{r}
+diff_genes_ann_0.01[,1:18]
+t(diff_genes_ann_0.01[,1:18])
+```
 
 ```{r}
 #pca ueber zeilen (genes)
@@ -580,14 +584,14 @@ pca_genes <- prcomp(
   scale. = TRUE # we want the data scaled to have unit variance
   )
 summary(pca_genes)
-#pca_genes
+pca_genes
 
 pca_genes_df <- data.frame(pca_genes$x[, 1:2])
 ```
 
 ```{r}
 #plotting pca_genes
-ggbiplot(pca_genes)
+ggbiplot(pca_genes, labels=colnames(diff_genes_ann_0.01)[1:18])
 ggbiplot(pca_genes, choices=c(2,3))
 ggbiplot(pca_genes, choices=c(3,4))
 
@@ -607,8 +611,36 @@ pca_genes_plot <- ggplot(
 # Print out the plot here
 pca_genes_plot
 ```
+
+
 ```{r}
-ggbiplot(pca_genes, groups = diff_genes_ann_0.01$max.tissue)
+#varianz von pca erklärt
+pc_eigenvalues <- pca_genes$sdev^2
+
+pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)), 
+                         variance = pc_eigenvalues) %>% 
+  # add a new column with the percent variance
+  mutate(pct = variance/sum(variance)*100) %>% 
+  # add another column with the cumulative variance explained
+  mutate(pct_cum = cumsum(pct))
+
+
+pc_eigenvalues
+
+pc_eigenvalues %>% 
+  ggplot(aes(x = PC)) +
+  geom_col(aes(y = pct)) +
+  geom_line(aes(y = pct_cum, group = 1)) + 
+  geom_point(aes(y = pct_cum)) +
+  labs(x = "Principal component", y = "Fraction variance explained")
+```
+
+
+```{r}
+pairs.panels(pca_genes$x,
+             gap=0,
+             bg = c("red", "yellow", "blue"),
+             pch=21)
 ```
 
 

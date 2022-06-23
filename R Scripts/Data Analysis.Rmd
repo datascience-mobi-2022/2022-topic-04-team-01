@@ -74,6 +74,9 @@ embryo_df_tissues = a
 
 ```{r}
 save(embryo_df_tissues, file="embryo_df_tissues.RData")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
+embryo_df_tissues
 ```
 
 
@@ -1013,11 +1016,25 @@ library(clusterProfiler)
 library(enrichplot)
 library(ggplot2)
 library(org.Hs.eg.db)
+library(gt)
+library(gtExtras)
+library(ggsci)
 deGenes = unlist(diff_genes_ann_0.01$ensembl.entrez[!duplicated(diff_genes_ann_0.01$ensembl.entrez)])
 geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
 enr_GO_all = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
 enr_GO_all = as.data.frame(enr_GO_all)
 enr_GO_all
+enr_GO_print = enr_GO_all[,c(2:4,6)]
+enr_GO_print[,2] = sapply(enr_GO_print[,2], function(txt) {eval(parse(text = txt))*100})
+enr_GO_print[,3] = sapply(enr_GO_print[,3], function(txt) {eval(parse(text = txt))*100})
+colnames(enr_GO_print) = c("Description", "Ratio_Differential", "Ratio_All", "Adj.p.val")
+table_GO_all = gt(enr_GO_print)|>  tab_header(title= "Enriched gene clusters in GSE15744", subtitle = "Comparison of differentially expressed genes with all genes") |> fmt_markdown(columns = Description) |> gt_theme_538() |> gt_hulk_col_numeric(columns = Adj.p.val) |>  gt_plt_bar(column = Ratio_Differential) |> gt_plt_bar (column = Ratio_All)
+table_GO_all
+
+
+
+
+
 ```
 ## Test enrichment in a tissues DeGenes compared to all Degenes
 ```{r}
@@ -1115,6 +1132,45 @@ enr_GO_tissue
 
 
 
+## Now to get good GSEA Plots analog to the Clustered per Tissue plots: 
+### 1. With 5 Most Important from Tissue TRAs vs. All TRAs (no differential expression!)
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+a= enr_GO_tissue$ID[1]
+a
+enr_GO_tissue
+require(DOSE)
+dotplot(enr_GO_tissue1, split = ".sign")
+upsetplot(enr_GO_tissue1)
+
+
+
+
+```
+
+```{r}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+gse()
+
+```
+
+
+
+
+
+
 
 
 
@@ -1165,6 +1221,60 @@ diff_genes_ann_0.01 %>%
   filter(n>1) # Es sind keine Dublikate mehr vorhanden
 
 summary(as.factor(diff_genes_ann_0.01$max.tissue)) # von jedem tissue existiert noch min 1 differentiell exprimiertes Gen
+
+
+```
+
+
+
+#Comparison between our dataset and dataset from Original paper
+
+Einlesen der Datein und Datacleaning
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(dplyr)
+paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls")
+for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
+  if(is.na(paper_df_diff$Probe_Set_ID[i])){
+    j=1
+    while (is.na(paper_df_diff$Probe_Set_ID[i-j])) {
+      j = j+1
+    }
+    paper_df_diff$Gene_Title[i-j] <- paste(paper_df_diff$Gene_Title[i-j], paper_df_diff$Gene_Title[i])
+  }
+}
+paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen mit restlichem String entfernt
+paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
+paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
+#Datacleaning complete
+glimpse(paper_df_diff)
+save(paper_df_diff, file="paper_df_diff.RData")
+```
+
+Annotierung des Datensatzes Paper
+```{r}
+setwd("C:/Users/david/Documents/Data Analysis Lokal/TRAdata")
+ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))
+#ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
+glimpse(ensembl)
+
+paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+sum(!is.na(paper_df_ann$ensembl.transcript)) # 3203 Transcripts lassen sich annotieren
+paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
+save(paper_df_ann, file="paper_df_ann.RData")
+```
+
+
+Kurze Darstellung der Daten des Papers:
+```{r}
+
+```
+
+
+Vergleich mit unseren Differenziell exprimierten Transcripts
+```{r}
 
 
 ```
