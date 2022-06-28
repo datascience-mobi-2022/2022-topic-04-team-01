@@ -74,6 +74,9 @@ embryo_df_tissues = a
 
 ```{r}
 save(embryo_df_tissues, file="embryo_df_tissues.RData")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
+embryo_df_tissues
 ```
 
 
@@ -1302,32 +1305,29 @@ Annotierung des Datensatzes Paper
 ```{r}
 setwd("C:/Users/david/Documents/Data Analysis Lokal/TRAdata")
 ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))
-ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
+#ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
 glimpse(ensembl)
 
-paper_df_ann <- left_join(paper_df_diff, ensembl, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
-sum(is.na(paper_df_ann$Transcript.stable.ID)) # 1880 Transcripts verliere ich, da ich sie nicht annotiert bekomme
-#Kommentar: Es gibt mehrere Transript stable ID für die Probe_Set_ID der Transcripts aus dem Paper, daher entsteht ein großer Datensatz, der aber nicht einmal alle Transcripts des Papers erfasst. Daher eher ungeeignet -> Annotierung durch eigenen Datensatz
-
-setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
-load("embryo_df_tissues.RData")
-
-paper_df_ann2 <- left_join(paper_df_ann, embryo_df_tissues)
-dim(paper_df_ann2)
-paper_df_ann3 <- left_join(paper_df_ann, embryo_df_tissues, by = c("Transcript.stable.ID" = "ensembl.transcript"))
-ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
+paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+sum(!is.na(paper_df_ann$ensembl.transcript)) # 3203 Transcripts lassen sich annotieren
+paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
+save(paper_df_ann, file="paper_df_ann.RData")
 ```
 
+
+Kurze Darstellung der Daten des Papers:
+```{r}
+
+```
 
 
 Vergleich mit unseren Differenziell exprimierten Transcripts
 ```{r}
-glimpse(diff_genes_ann_0.01)
-head(diff_genes_ann_0.01$ensembl.unigene)
-
-
-
 
 
 ```
+
+
+
+
 

@@ -1,0 +1,343 @@
+---
+title: "Heatmap brain tissues"
+author: "Joshua Eigenmann"
+date: '2022-06-23'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load useful Libraries and datasets
+
+```{r}
+library(Rcpp)
+library(tidyverse)
+library(affy)
+library(vsn)
+library(AnnotationDbi)
+#library(hgu133plus2hsenstprobe)
+#library(hgu133plus2hsenstcdf) 
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(ggplot2)
+#library(biomaRt)
+install.packages("magrittr") # package installations are only needed the first time you use it
+install.packages("dplyr")    # alternative installation of the %>%
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+library(mgcv)
+install.packages("stringr")
+library(stringr)
+install.packages("factoextra")
+library("factoextra")
+install.packages("pheatmap")
+library(pheatmap)
+library(cluster)
+```
+
+
+```{r}
+#setwd("C:/Data_Analysis")#Joshua (Desktop)
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+
+setwd("/Users/joshuaeigenmann/Dokumente/Github Repo/2022-topic-04-team-01/R Scripts")
+
+load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/R Scripts/embryo_df_tissues.RData") #Joshua Mac
+
+#load("embryo_df_tra.RData") #Joshua Windows
+```
+
+Overview over the dataset
+
+```{r}
+colnames(embryo_df_tissues)
+dim(embryo_df_tissues)
+head(embryo_df_tissues)
+str(embryo_df_tissues)
+```
+
+```{r}
+data.liver = as.data.frame(embryo_df_tissues %>%
+                             filter(tissues == str_extract(tissues, "Liver")))
+data.liver = t(data.liver[1:18])
+dim(data.liver)
+data.kidney = as.data.frame(embryo_df_tissues %>%filter(tissues == str_extract(tissues, "Kidney - Cortex")))
+data.kidney =t(data.kidney[1:18])
+dim(data.kidney)
+correlation.matrix = cor(data.liver, data.kidney, method = "pearson")
+liver_kidney_cortex_heatmap <- pheatmap(correlation.matrix, main = "Correlations between liver and kidney - cortex")
+liver_kidney_cortex_heatmap
+pdf("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/R Scripts/Correlations between liver and kidney.pdf", height = 10, width = 10)
+```
+
+
+
+```{r}
+tissues
+
+# Brain - Amygdala
+data.brain_Amygdala = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Amygdala")))
+data.brain_Amygdala = t(data.brain_Amygdala[1:18])
+dim(data.brain_Amygdala)
+data.brain_Amygdala
+
+# Brain - Anterior cingulate cortex
+data.brain_ACCort = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Anterior cingulate cortex")))
+data.brain_ACCort = t(data.brain_ACCort[1:18])
+dim(data.brain_ACCort)
+data.brain_ACCort
+
+# Brain - Caudate
+data.brain_Caudate = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Caudate")))
+data.brain_Caudate = t(data.brain_Caudate[1:18])
+dim(data.brain_Caudate)
+data.brain_Caudate
+
+# Brain - Cerebellar Hemisphere
+data.brain_CerebH = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Cerebellar Hemisphere")))
+data.brain_CerebH = t(data.brain_CerebH[1:18])
+dim(data.brain_CerebH)
+data.brain_CerebH
+
+# Brain - Cerebellum
+data.brain_Cerebellum = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Cerebellum")))
+data.brain_Cerebellum = t(data.brain_Cerebellum[1:18])
+dim(data.brain_Cerebellum)
+data.brain_Cerebellum
+
+# Brain - Cortex
+data.brain_Cortex = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Cortex")))
+data.brain_Cortex = t(data.brain_Cortex[1:18])
+dim(data.brain_Cortex)
+data.brain_Cortex
+
+# Brain - Frontal Cortex
+data.brain_FCort = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Frontal Cortex")))
+data.brain_FCort = t(data.brain_FCort[1:18])
+dim(data.brain_FCort)
+data.brain_FCort
+
+# Brain - Hippocampus
+data.brain_Hipp = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Hippocampus")))
+data.brain_Hipp = t(data.brain_Hipp[1:18])
+dim(data.brain_Hipp)
+data.brain_Hipp
+
+# Brain - Hypothalamus
+data.brain_Hypo = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Hypothalamus")))
+data.brain_Hypo = t(data.brain_Hypo[1:18])
+dim(data.brain_Hypo)
+data.brain_Hypo
+
+# Brain - Nucleus accumbens
+data.brain_Nacc = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Nucleus accumbens")))
+data.brain_Nacc = t(data.brain_Nacc[1:18])
+dim(data.brain_Nacc)
+data.brain_Nacc
+
+# Brain - Putamen
+data.brain_Putamen = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Putamen")))
+data.brain_Putamen = t(data.brain_Putamen[1:18])
+dim(data.brain_Putamen)
+data.brain_Putamen
+
+# Brain - Spinal cord
+data.brain_Spicor = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Spinal cord")))
+data.brain_Spicor = t(data.brain_Spicor[1:18])
+dim(data.brain_Spicor)
+data.brain_Spicor
+
+# Brain - Substantia nigra
+data.brain_Subni = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, "Brain - Substantia nigra")))
+data.brain_Subni = t(data.brain_Subni[1:18])
+dim(data.brain_Subni)
+data.brain_Subni
+
+data <- data.frame(data.brain_Amygdala,data.brain_Caudate,data.brain_CerebH,data.brain_Cerebellum,data.brain_Cortex,data.brain_FCort,data.brain_Hipp,data.brain_Hypo,data.brain_Nacc,data.brain_Putamen,data.brain_Spicor,data.brain_Subni)
+data
+```
+
+```{r}
+correlation.matrix = cor(data.brain_Amygdala, data.brain_ACCort, method = "pearson")
+Amy_ACCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Anterior cingulate cortex")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Caudate, method = "pearson")
+Amy_Cau_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Caudate")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Cerebellum, method = "pearson")
+Amy_Cerebellum_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Cerebellum")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Cortex, method = "pearson")
+Amy_Cortex_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Cortex")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_FCort, method = "pearson")
+Amy_FCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Frontal Cortex")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Hipp, method = "pearson")
+Amy_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Hippocampus")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Hypo, method = "pearson")
+Amy_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Hypothalamus")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Nacc, method = "pearson")
+Amy_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Putamen, method = "pearson")
+Amy_Put_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Putamen")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Spicor, method = "pearson")
+Amy_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Spinal cord")
+correlation.matrix = cor(data.brain_Amygdala, data.brain_Subni, method = "pearson")
+Amy_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Amygdala and Substantia nigra")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Caudate, method = "pearson")
+ACCort_Caudate_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Caudate")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Cerebellum, method = "pearson")
+ACCort_Cerebellum_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Cerebellum")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Cortex, method = "pearson")
+ACCort_Cortex_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Cortex")
+correlation.matrix = cor(data.brain_ACCort, data.brain_FCort, method = "pearson")
+ACCort_FCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Frontal Cortex")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Hipp, method = "pearson")
+ACCort_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Hippocampus")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Hypo, method = "pearson")
+ACCort_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Hypothalamus")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Nacc, method = "pearson")
+ACCort_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Nucleus accumbens")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Putamen, method = "pearson")
+ACCort_Put_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Putamen")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Spicor, method = "pearson")
+ACCort_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Spinal cord")
+correlation.matrix = cor(data.brain_ACCort, data.brain_Subni, method = "pearson")
+ACCort_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Anterior cingulate cortex and Substantia nigra")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Cerebellum, method = "pearson")
+Caudate_Cerebellum_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Cerebellum")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Cortex, method = "pearson")
+Caudate_Cortex_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Cortex")
+correlation.matrix = cor(data.brain_Caudate, data.brain_FCort, method = "pearson")
+Caudate_FCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Frontal Cortex")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Hipp, method = "pearson")
+Caudate_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Hippocampus")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Hypo, method = "pearson")
+Caudate_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Hypothalamus")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Nacc, method = "pearson")
+Caudate_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Putamen, method = "pearson")
+Caudate_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Putamen")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Spicor, method = "pearson")
+Caudate_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Spinal cord")
+correlation.matrix = cor(data.brain_Caudate, data.brain_Subni, method = "pearson")
+Caudate_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Caudate and Substantia nigra")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Cortex, method = "pearson")
+Cerebellum_Cortex_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Cortex")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_FCort, method = "pearson")
+Cerebellum_FCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Frontal Cortex")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Hipp, method = "pearson")
+Cerebellum_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Hippocampus")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Hypo, method = "pearson")
+Cerebellum_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Hypothalamus")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Nacc, method = "pearson")
+Cerebellum_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Putamen, method = "pearson")
+Cerebellum_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Putamen")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Spicor, method = "pearson")
+Cerebellum_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Spinal cord")
+correlation.matrix = cor(data.brain_Cerebellum, data.brain_Subni, method = "pearson")
+Cerebellum_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cerebellum and Substantia nigra")
+correlation.matrix = cor(data.brain_Cortex, data.brain_FCort, method = "pearson")
+Cortex_FCort_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Frontal Cortex")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Hipp, method = "pearson")
+Cortex_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Hippocampus")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Hypo, method = "pearson")
+Cortex_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Hypothalamus")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Nacc, method = "pearson")
+Cortex_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Putamen, method = "pearson")
+Cortex_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Putamen")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Spicor, method = "pearson")
+Cortex_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Spinal cord")
+correlation.matrix = cor(data.brain_Cortex, data.brain_Subni, method = "pearson")
+Cortex_Subnic_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Cortex and Substantia nigra")
+correlation.matrix = cor(data.brain_FCort, data.brain_Hipp, method = "pearson")
+FCort_Hipp_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Hippocampus")
+correlation.matrix = cor(data.brain_FCort, data.brain_Hypo, method = "pearson")
+FCort_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Hypothalamus")
+correlation.matrix = cor(data.brain_FCort, data.brain_Nacc, method = "pearson")
+FCort_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Nucleus accumbens")
+correlation.matrix = cor(data.brain_FCort, data.brain_Putamen, method = "pearson")
+FCort_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Putamen")
+correlation.matrix = cor(data.brain_FCort, data.brain_Spicor, method = "pearson")
+FCort_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Spinal cord")
+correlation.matrix = cor(data.brain_FCort, data.brain_Subni, method = "pearson")
+FCort_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Frontal Cortex and Substantia nigra")
+correlation.matrix = cor(data.brain_Hipp, data.brain_Hypo, method = "pearson")
+Hipp_Hypo_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hippocampus and Hypothalamus")
+correlation.matrix = cor(data.brain_Hipp, data.brain_Nacc, method = "pearson")
+Hipp_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hippocampus and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Hipp, data.brain_Putamen, method = "pearson")
+Hipp_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hippocampus and Putamen")
+correlation.matrix = cor(data.brain_Hipp, data.brain_Spicor, method = "pearson")
+Hipp_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hippocampus and Spinal cord")
+correlation.matrix = cor(data.brain_Hipp, data.brain_Subni, method = "pearson")
+Hipp_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hippocampus and Substantia nigra")
+correlation.matrix = cor(data.brain_Hypo, data.brain_Nacc, method = "pearson")
+Hypo_Nacc_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hypothalamus and Nucleus accumbens")
+correlation.matrix = cor(data.brain_Hypo, data.brain_Putamen, method = "pearson")
+Hypo_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hypothalamus and Putamen")
+correlation.matrix = cor(data.brain_Hypo, data.brain_Spicor, method = "pearson")
+Hypo_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hypothalamus and Spinal cord")
+correlation.matrix = cor(data.brain_Hypo, data.brain_Subni, method = "pearson")
+Hypo_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Hypothalamus and Substantia nigra")
+correlation.matrix = cor(data.brain_Nacc, data.brain_Putamen, method = "pearson")
+Nacc_Putamen_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Nucleus accumbens and Putamen")
+correlation.matrix = cor(data.brain_Nacc, data.brain_Spicor, method = "pearson")
+Nacc_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Nucleus accumbens and Spinal cord")
+correlation.matrix = cor(data.brain_Nacc, data.brain_Subni, method = "pearson")
+Nacc_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Nucleus accumbens and Substantia nigra")
+correlation.matrix = cor(data.brain_Putamen, data.brain_Spicor, method = "pearson")
+Putamen_Spicor_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Putamen and Spinal cord")
+correlation.matrix = cor(data.brain_Putamen, data.brain_Subni, method = "pearson")
+Putamen_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Putamen and Substantia nigra")
+correlation.matrix = cor(data.brain_Spicor, data.brain_Subni, method = "pearson")
+Spicor_Subni_heatmap <- pheatmap(correlation.matrix, main = "Correlations between Spinal cord and Substantia nigra")
+```
+
+```{r}
+tissues
+for(i in tissues) {
+    for(j in tissues) {
+      data.brain1 = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, i)))
+      data.brain1 = t(data.brain1[1:18])
+      sum1 = sum(is.na(data.brain1)) 
+      
+      data.brain2 = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(tissues, j)))
+      data.brain2 = t(data.brain2[1:18])
+      sum2 = sum(is.na(data.brain2)) 
+      
+      if (sum1 < 1) {
+        if (sum2 < 1) {
+        correlation.matrix = cor(data.brain1, data.brain2, method = "pearson")
+        heatmap <- pheatmap(correlation.matrix, main = "Correlations")
+        print(heatmap)
+      } else {}
+      } 
+      else {}
+   }
+  }
+
+sum(is.na(data.brain_Amygdala))
+```
+
+
+
+
+
+

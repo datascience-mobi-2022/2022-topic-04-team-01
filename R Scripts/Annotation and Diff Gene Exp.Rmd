@@ -28,30 +28,16 @@ library(biomaRt)
 # Import Data 
 
 library(affy)
-setwd("C:/Data Analysis/Raw Data")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/GSE15744_RAW")
 gse.exp = ReadAffy()
-#gse.exp@cdfName <- "HGU133Plus2_Hs_ENST"
+gse.exp@cdfName <- "HGU133Plus2_Hs_ENST"
+exprs(gse.exp)
                    
 library(vsn)
 GSE15744.vsnrma <- vsnrma(gse.exp)
+gse.exp
+GSE15744.vsnrma
 save(GSE15744.vsnrma, file = "GSE15744.vsnrma.rda")
-
-```
-```{r}
-# Import Data 
-
-library(affy)
-setwd("C:/Data Analysis/Raw Data")
-gse.exp_a = ReadAffy()
-gse.exp_a@cdfName <- "HGU133Plus2_Hs_ENST"
-```
-
-
-
-
-```{r}
-head(exprs(vsnrma(gse.exp)))
-head(exprs(vsnrma(gse.exp_a)))
 
 ```
 
@@ -60,7 +46,7 @@ head(exprs(vsnrma(gse.exp_a)))
 
 #Load Normalized Data 
 
-setwd("C:/Data Analysis/R Scripts")
+#setwd("C:/Data Analysis/R Scripts")
 #load("GSE15744.vsnrma.rda")
 
 #Clean up the names
@@ -83,8 +69,8 @@ colnames(pData(GSE15744.vsnrma))
 temp_embryo_df = as.data.frame(exprs(GSE15744.vsnrma))
 colnames(temp_embryo_df) = rownames(pData(GSE15744.vsnrma))
 temp_embryo_df
-#embryo_df = temp_embryo_df[63:54675,]
-
+embryo_df = temp_embryo_df[63:95721,]
+embryo_df
 ```
 
 
@@ -100,18 +86,25 @@ ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # L
 TranscriptID_orig = rownames(embryo_df)
 ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
 
+
 embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
-
-
+embryo_df
+ensembl
 embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
+embryo_df_ann
 rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
 
-setwd("C:/Data Analysis")
-save(embryo_df_ann, file = "embryo_df_ann.RData")
+#setwd("C:/Data Analysis")
+#save(embryo_df_ann, file = "embryo_df_ann.RData")
 
 ```
 
 
+```{r}
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/Paul Exploratory + Stuff")
+load("embryo_df_ann.RData")
+embryo_df_ann
+```
 
 
 
@@ -143,26 +136,6 @@ ggplot(embryo_expr_genes_sd, aes(sd)) + geom_boxplot()
 
 
 
-Annotation:
-
-```{r}
-#Annotate the dataset
-setwd("C:/Data Analysis/TRAdata")
-ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # Load the ensembl annotation data
-
-TranscriptID_orig = rownames(embryo_df)
-ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
-
-embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
-
-
-embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
-rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
-
-setwd("C:/Data Analysis")
-save(embryo_df_ann, file = "embryo_df_ann.RData")
-
-```
 
 
 ```{r}
@@ -175,7 +148,7 @@ head(embryo_df_ann)
 ```{r}
 #Import the TRAs
 
-setwd("C:/Data Analysis/TRAdata")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/Paul Exploratory + Stuff")
 tra_gtex = as.data.frame(read.csv(file = 'tra.2017.human.gtex.5x.table.tsv', sep = "\t"))
 
 ```
