@@ -1138,18 +1138,66 @@ library(ggplot2)
 library(org.Hs.eg.db)
 library(ggsci)
 library(ggupset)
+
+load("embryo_df_tissues.RData")
+
+# List the tissues
+tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+tissue = "Skin"
+
+
 bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
 embryo_df_tissue = embryo_df_tissues[bool_contained,]
 deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
 geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
 enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
 enr_GO_tissue = as.data.frame(enr_GO_tissue1)
-a= enr_GO_tissue$ID[1]
-a
-enr_GO_tissue
-require(DOSE)
-dotplot(enr_GO_tissue1, split = ".sign")
-upsetplot(enr_GO_tissue1)
+enr_GO_tissue$geneID
+
+
+
+
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  data_raw = data.frame(Week4 = )
+  for (i in 1:8) {
+    xx = strsplit(enr_GO_tissue$geneID[i], "/")
+    bool_contained1 = sapply(diff_genes_ann_0.01$tissues, function(x) {x %in% xx})
+    data_temp = diff_genes_ann_0.01[bool_contained1,]
+     data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  }
+ 
+
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+
+
+
 
 
 
