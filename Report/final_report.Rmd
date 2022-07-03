@@ -26,7 +26,6 @@ opts_chunk$set(echo=FALSE,
 #opts_knit$set(root.dir  = "~/")
 ```
 
-
 ```{r}
 library(affy)
 library(vsn)
@@ -42,8 +41,8 @@ library(hexbin)
 library(biomaRt)
 library(kableExtra)
 library(Rfssa)
+library(ggbiplot)
 ```
-
 
 #Introduction
 
@@ -53,11 +52,9 @@ library(Rfssa)
 
 The programming language R version 4.2.0 and its IDE RStudio were used.
 
-
 ## Libraries and packages
 
 Following libraries were used:
-
 
 ```{r}
 all_libraries <- tibble::tribble(
@@ -86,12 +83,13 @@ We chose a Dataset with following criteria: Human embryonic data in the stages o
 Next, the data was downloaded to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). The data was the read in with the help of the library Affy and is connected to the correct Annotation by the brainarray package.
 
 ```{r}
-setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
+setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/rawdata")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
-setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/Report")
+setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/report")
 save(data.GSE15744, file="data.GSE15744.RData")
 ```
+
 To access the data remotely, it is downloaded from the github with the Library Rfssa.
 
 ```{r}
@@ -100,17 +98,13 @@ githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blo
 load_github_data(githubURL)
 ```
 
-
-
 ### normalising the data set
 
-We used the method vsn rma normalization according to Huber et al.
-This method is able to deal with variance and with randomness.
+We used the method vsn rma normalization according to Huber et al. This method is able to deal with variance and with randomness.
 
 ```{r}
 data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 ```
-
 
 ## Quality control
 
@@ -125,7 +119,7 @@ for (i in 1:18) {
 } # GSM394501 looks a bit brighter, GSM394527 looks very bright
 ```
 
-The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some  differences in overall brightness are visible but marginal. 
+The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
 
 ### meanSdPlot
 
@@ -173,7 +167,6 @@ plotAffyRNAdeg(rnadeg.raw, col=rainbow(18), transform = "shift.only")
 title(sub="Human embryo (GSE15744, Raw data)")
 ```
 
-
 ### Scatter plot
 
 ```{r}
@@ -197,11 +190,10 @@ for(i in 1:17){
 }
 ```
 
-
-
 ## Data cleaning
 
 Remove file-endings (.CEL) from sample names in Rownames and Columnames.
+
 ```{r}
 filenames <- rownames(pData(data.GSE15744))
 samples <- substr(filenames, 1,9)                                   # Only keeps 1st to 9th character in the string -> cuts .cel from name
@@ -216,7 +208,6 @@ colnames(exprs(data.GSE15744.vsnrma)) = new
 
 ```
 
-
 Convert to dataframe and cut of Affymetrix Control genes
 
 ```{r}
@@ -225,7 +216,6 @@ colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
 temp_embryo_df
 embryo_df = temp_embryo_df[63:95721,]
 ```
-
 
 ## Annotation
 
@@ -237,7 +227,7 @@ TranscriptID_orig = rownames(embryo_df)
 ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
 
 
-embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+embryo_df["Transcript.stable.ID"] = gsub("[//._].*$" ,"", rownames(embryo_df)) # Add column for mergign
 embryo_df
 ensembl
 embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
@@ -261,8 +251,60 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
 ```
 
-
 Datacleaning complete. Now on to some Exploritory stuff.
+
+## Principal component analysis
+
+Principal component analysis (PCA) was performed on a matrix containing all deferentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
+
+```{r}
+#pca on rows (genes)
+pca_genes <- prcomp(
+  t(diff_genes_ann_0.01[,1:18]), # transposed matrix
+  scale. = TRUE # data scaled to have unit variance
+  )
+
+#taking a first look
+summary(pca_genes)
+```
+
+To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
+
+```{r}
+#visualizing the variance of the PCAs
+pc_eigenvalues <- pca_genes$sdev^2
+
+pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)), 
+                         variance = pc_eigenvalues) %>% 
+  #column with percent variance
+  mutate(pct = variance/sum(variance)*100) %>% 
+  #column with cumulative variance explained
+  mutate(pct_cum = cumsum(pct))
+
+
+#actual plot
+pc_eigenvalues %>% 
+  ggplot(aes(x = PC)) +
+  geom_col(aes(y = pct)) +
+  geom_line(aes(y = pct_cum, group = 1)) + 
+  geom_point(aes(y = pct_cum)) +
+  labs(x = "Principal component", y = "Fraction variance explained")
+```
+
+This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. Seeing as the first three PCAs already explain over 80% of the data's variance, only those three were chosen to be used for further analysis and visualization.
+
+The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained py the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
+
+```{r}
+#PCA 1&2
+ggbiplot(pca_genes)
+
+#PCA 2&3
+ggbiplot(pca_genes, choices=c(2,3))
+
+#PCA 1&3
+ggbiplot(pca_genes, choices=c(1,3))
+```
 
 # Results
 
