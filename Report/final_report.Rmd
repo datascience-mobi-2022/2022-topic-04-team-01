@@ -5,6 +5,7 @@ date: '2022-07-03'
 bibliography: references.bib
 output: 
   html_document:
+    number_sections: TRUE
     toc: TRUE
     theme: united
 ---
@@ -39,6 +40,8 @@ library(limma)
 library(pheatmap)
 library(hexbin)
 library(biomaRt)
+library(kableExtra)
+library(Rfssa)
 ```
 
 
@@ -46,13 +49,219 @@ library(biomaRt)
 
 #Methods
 
+## Programming language
+
 The programming language R version 4.2.0 and its IDE RStudio were used.
+
+
+## Libraries and packages
+
 Following libraries were used:
 
-```{r}
 
+```{r}
+all_libraries <- tibble::tribble(
+  ~Library...package,                        ~Version,                              ~Description,
+              "affy",                              NA, "library used for unpacking the raw data",
+               "vsn",                              NA,   "library for the vsn rma normalization",
+     "AnnotationDbi",                              NA,                                        NA,
+         "tidyverse", "library used for Datacleaning",                       "Library / package",
+           "Version",                   "Description",                                    "affy"
+  )
+
+all_libraries %>%
+  kable(all_libraries, digits = 3, row.names = FALSE, align = "c", caption = "Table 1: summary of all libraries used") %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+
+```
+
+Some of them are from Bioconductor. This is a ...
+
+## Dataset
+
+We chose a Dataset with following criteria: Human embryonic data in the stages of organ development.
+
+### reading in the data set
+
+Next, the data was downloaded to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). The data was the read in with the help of the library Affy and is connected to the correct Annotation by the brainarray package.
+
+```{r}
+setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
+data.GSE15744 <- ReadAffy()
+data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/Report")
+save(data.GSE15744, file="data.GSE15744.RData")
+```
+To access the data remotely, it is downloaded from the github with the Library Rfssa.
+
+```{r}
+#make data accessible for everyone
+githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/data.GSE15744.RData"
+load_github_data(githubURL)
 ```
 
 
 
+### normalising the data set
 
+We used the method vsn rma normalization according to Huber et al.
+This method is able to deal with variance and with randomness.
+
+```{r}
+data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
+```
+
+
+## Quality control
+
+There are some tests to verify the data collected through the micro arrays. Also, quality control needs to check the normalization method.
+
+### Single chip control
+
+```{r, echo=TRUE}
+
+for (i in 1:18) {
+  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
+} # GSM394501 looks a bit brighter, GSM394527 looks very bright
+```
+
+The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some  differences in overall brightness are visible but marginal. 
+
+### meanSdPlot
+
+The normalization can be verified by plotting the Rank of the mean against the standard deviation. The purpose of the normalization is to set the variance and the mean on an arbitrary level to reduce statistical fluctiation and randomness. This achieves comparible result. As a consequence there should be no correlation between the mean and the standard deviation, indicated by the red line.
+
+```{r}
+meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
+```
+
+### Boxplot
+
+There boxplots show the mean and variance of all 18 chips and further verifies the normalization.
+
+```{r}
+## Before
+
+boxplot(data.GSE15744, col = rainbow(15),
+        cex.axis=0.5,
+        las=2,                                            
+        ylab="Relative expression",
+        main="Raw Gene expression in human embryo (GSE15744, raw data)")
+
+
+## After
+
+boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
+        cex.axis=0.5,
+        las=2,                                            
+        ylab="Relative expression",
+        main="Raw Gene expression in human embryo (GSE15744, normalized)")
+```
+
+### RNA Degradation Plot
+
+This Quality control confirm that the standard conditions of the chips are met and they are comparible in their results.
+
+```{r}
+rnadeg.raw <- AffyRNAdeg(data.GSE15744)
+
+plotAffyRNAdeg(rnadeg.raw, col=rainbow(18))
+title(sub="Human embryo (GSE15744, Raw data)")
+
+# Not scaled
+plotAffyRNAdeg(rnadeg.raw, col=rainbow(18), transform = "shift.only")
+title(sub="Human embryo (GSE15744, Raw data)")
+```
+
+
+### Scatter plot
+
+```{r}
+# Comparison of some Scatter plots
+for(i in 1:17){
+  plot(eset[,c(i,i+1)], pch=".", cex=2)
+  abline(0, 1, col="red")               # 45 degree dividing line
+  
+  title(main = paste("Scatterplot of probe", 
+                     substr(colnames(GSE15744.vsnrma)[i], 1, nchar(colnames(GSE15744.vsnrma)[i])), "and", 
+                     substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1])), 
+                     sep=" ", collapse = NULL))
+  
+  file.name <- paste("C:/Users/david/Documents/Data Analysis Lokal/Plots/Scatterplots/Scatterplot_GSE15744.pdf", 
+                     as.character(substr(colnames(GSE15744.vsnrma)[i], 1, nchar(colnames(GSE15744.vsnrma)[i]))), "_",
+                     as.character(substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1]))),
+                     ".pdf", sep="")
+  
+  dev.copy2pdf(file = file.name)
+  dev.off()
+}
+```
+
+
+
+## Data cleaning
+
+Remove file-endings (.CEL) from sample names in Rownames and Columnames.
+```{r}
+filenames <- rownames(pData(data.GSE15744))
+samples <- substr(filenames, 1,9)                                   # Only keeps 1st to 9th character in the string -> cuts .cel from name
+rownames(pData(data.GSE15744)) = samples
+rownames
+
+
+orig <- colnames(exprs(data.GSE15744))
+new <- substr(orig, 1, nchar(orig)-4)                               # Removes last 4 characters in the string
+colnames(exprs(data.GSE15744)) = new
+colnames(exprs(data.GSE15744.vsnrma)) = new
+
+```
+
+
+Convert to dataframe and cut of Affymetrix Control genes
+
+```{r}
+temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
+colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
+temp_embryo_df
+embryo_df = temp_embryo_df[63:95721,]
+```
+
+
+## Annotation
+
+```{r}
+setwd("C:/Data Analysis/TRAdata")
+ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # Load the ensembl annotation data
+
+TranscriptID_orig = rownames(embryo_df)
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
+
+
+embryo_df["Transcript.stable.ID"] = gsub("[\\._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+embryo_df
+ensembl
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
+embryo_df_ann
+rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
+```
+
+## Data Cleaning
+
+```{r}
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] #removed duplicates
+
+
+#Chromosome Spalte aufhübschen und unnötiges löschen
+embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
+embryo_df_tissues <- embryo_df_tissues %>%
+  filter(Chromosome.scaffold.name != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name!=  "CHR_HSCHR7_2_CTG6" )
+embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
+
+# Nach NA values suchen
+sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+```
+
+
+Datacleaning complete. Now on to some Exploritory stuff.
+
+# Results
