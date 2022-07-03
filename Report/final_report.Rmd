@@ -265,3 +265,70 @@ sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Va
 Datacleaning complete. Now on to some Exploritory stuff.
 
 # Results
+
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development
+
+The annotated dataset after limma analysis was filtered to determine which genes which genes are differentially expressed in a certain tissue the discovered genes were exermined with NCBI to determine their function. The interesting genes are categorized in three groups: 
+
+1.Genes Ion channels
+2.Genes for neuronal development
+3.Genes for cytokine
+
+### 1. Ion channels
+
+```{r}
+load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/Report/Plots/Geneexpression_ion_chanel.pdf")
+```
+Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a signifikant increase between week 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPases.  
+
+### 2.Genes for neuronal development and function
+
+```{r}
+load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/Report/Plots/Geneexpression_neuronal_genes.pdf")
+```
+
+The second groupe are genes with a specific function in the neuronal development and function. 
+
+#### 2.1 Genes for neuronal function
+
+Therefore we discovered that ENST00000276646 and ENST00000529690 show an signifikant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role in  which contibutes activity-dependent presynaptic assembly in neuronal development.
+
+#### 2.2 Genes for axon guidance
+
+Filtering mentioned four genes for axon guidance:
+
+ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a thight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between week 7 to 8 and is connected to Anterior cingulate cortex.
+
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which interacts in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density. ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and show also signifikant increase between week 7 to 8.
+
+In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein) interacts in axon guidance. The encoded preprotein is processed to neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated to Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
+
+#### 2.3 Genes for neuronal survival
+
+ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheles, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
+
+#### 2.4 Brain associated gene
+
+Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 may regulate cytoskeletal organization. A defekt septin function disturbs cytokinesis. ENST00000577440 is connected to Cerebellar Hemisphere and shows a signifikant increase between week 7 to 9.
+
+### 3.Genes for cytokine
+
+```{r}
+load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/Report/Plots/Geneexpression_cytokine_genes.pdf")
+```
+
+Cytokines are important signaling molecules. Especially chemokines are ment to take part in signaling process during neuronal development.
+
+*Paper nennen*
+
+#### 3.1 Interleukin related genes
+
+Two interleukin related genes were discovered. ENST00000555247 encodes for IL11RA (interleukin 11 receptor subunit alpha) which is a receptor for the cytokine, Interleukin 11.  The IL-11 receptor is a member of the hematopoietic cytokine receptor family. ENST00000555247 is connected to Spinal cord and shows a signifikant increase in expression during week 4 to 8.
+ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and forms a heterodimer with a 45 kDa transcription factor. This complex is necassary for T-cell expression of interleukin 2. ENST00000590261 is related to Substantia nigra and shows a decline over the weeks.
+
+#### 3.2 Chemokine related genes
+
+There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (C-X-C motif chemokine ligand 14). CXCL14 is structurally related to the CXC (Cys-X-Cys) subfamily of cytokines.which means two cysteines separated by a single amino acid. ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
+ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for C-C motif chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
+
+
