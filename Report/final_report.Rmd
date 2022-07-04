@@ -253,7 +253,28 @@ sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Va
 
 Datacleaning complete. Now on to some Exploritory stuff.
 
-## Principal component analysis
+# Results
+
+## Limma analysis and Volcano plot
+
+### 1. Limma analysis
+
+### 2. Volcano plot
+
+The gathered dataset from limma analysis of the differentially expression between week 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10(adjusted P-value) boundary was set at 2 which equals our targeted our targeted adjusted P-value of 0.01%. The logFC boundary was -1 and 1, which reflects a doubling in the expression. The genes were categorized in two groups:
+
+1. up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01%
+2. down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01%
+
+Gene which didn't belong in those groups were declared as not differentially expressed. The genes with an adjusted P-value smaller then 0.01% were further used.
+
+```{r}
+load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/Report/Plots/Volcano.pdf")
+```
+
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+
+### Principal component analysis
 
 Principal component analysis (PCA) was performed on a matrix containing all deferentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
 
@@ -306,7 +327,6 @@ ggbiplot(pca_genes, choices=c(2,3))
 ggbiplot(pca_genes, choices=c(1,3))
 ```
 
-# Results
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
@@ -372,5 +392,20 @@ ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and form
 
 There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (C-X-C motif chemokine ligand 14). CXCL14 is structurally related to the CXC (Cys-X-Cys) subfamily of cytokines.which means two cysteines separated by a single amino acid. ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
 ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for C-C motif chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
+
+## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+
+# Discussion
+
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+
+
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development
+
+
+## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+
+
+
 
 
