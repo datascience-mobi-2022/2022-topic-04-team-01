@@ -92,7 +92,7 @@ https://www.ncbi.nlm.nih.gov/gene/?term=ENST00000529690
 
 #### ENST00000577440 
 SEPTIN4 septin 4 [ Homo sapiens (human) ]
-his gene is a member of the septin family of nucleotide binding proteins, originally described in yeast as cell division cycle regulatory proteins. Septins are highly conserved in yeast, Drosophila, and mouse, and appear to regulate cytoskeletal organization. Disruption of septin function disturbs cytokinesis and results in large multinucleate or polyploid cells. This gene is highly expressed in brain and heart. Alternatively spliced transcript variants encoding different isoforms have been described for this gene. One of the isoforms (known as ARTS) is distinct; it is localized to the mitochondria, and has a role in apoptosis and cancer. [provided by RefSeq, Nov 2010]
+This gene is a member of the septin family of nucleotide binding proteins, originally described in yeast as cell division cycle regulatory proteins. Septins are highly conserved in yeast, Drosophila, and mouse, and appear to regulate cytoskeletal organization. Disruption of septin function disturbs cytokinesis and results in large multinucleate or polyploid cells. This gene is highly expressed in brain and heart. Alternatively spliced transcript variants encoding different isoforms have been described for this gene. One of the isoforms (known as ARTS) is distinct; it is localized to the mitochondria, and has a role in apoptosis and cancer. [provided by RefSeq, Nov 2010]
 
 ## Brain - Cerebellum
 
