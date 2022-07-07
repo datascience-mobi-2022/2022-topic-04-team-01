@@ -380,7 +380,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 ### 1. Ion channels
 
-```{r,echo=FALSE}
+```{r}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -414,7 +414,7 @@ Ion channels play an important role in the function of neurons. We discovered th
 
 ### 2. Genes for neuronal development and function
 
-```{r,echo=FALSE}
+```{r}
 # ENST00000602349
 data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
@@ -637,7 +637,7 @@ Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 
 
 ### 3.Genes for cytokine
 
-```{r setup, echo=FALSE}
+```{r}
 # ENST00000337225
 data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
@@ -724,7 +724,6 @@ par(new=TRUE)
 plot(data.ENST00000590261[,2],data.ENST00000590261[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "green", ylim = c(7.6,9.7))
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),
        col=c("red", "blue", "orange", "green"), lty=1, cex=0.8,title="Expressed genes")
-
 ```
 
 Cytokines are important signaling molecules. Especially chemokines are ment to take part in signaling process during neuronal development.
