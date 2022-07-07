@@ -1,16 +1,8 @@
-base
-methods
-datasets
-utils
-grDevices
-graphics
-stats
 knitr
 BiocGenerics
 Biobase
 affy
 vsn
-stats4
 S4Vectors
 IRanges
 AnnotationDbi
@@ -32,3 +24,6 @@ hexbin
 biomaRt
 kableExtra
 Rfssa
+plyr
+scales
+ggbiplot
