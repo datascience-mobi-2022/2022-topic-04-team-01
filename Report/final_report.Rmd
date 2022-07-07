@@ -270,7 +270,7 @@ The gathered dataset from limma analysis of the differentially expression betwee
 1. up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01
 2. down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01
 
-Gene which didn't belong in those groups were declared as not differentially expressed. The genes with an adjusted P-value smaller then 0.01 were further used.
+Gene which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
 
 ```{r}
 # Create a dataset for the volcano plot from the limma analysis
