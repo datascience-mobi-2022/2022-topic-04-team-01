@@ -273,7 +273,45 @@ The gathered dataset from limma analysis of the differentially expression betwee
 Gene which didn't belong in those groups were declared as not differentially expressed. The genes with an adjusted P-value smaller then 0.01 were further used.
 
 ```{r}
-load("/Users/joshuaeigenmann/Documents/GitHub/2022-topic-04-team-01/Report/Plots/Volcano.pdf")
+# Create a dataset for the volcano plot from the limma analysis
+# Ausgabe der Toptabel vom Vergleich Woche 4/9
+top.table = topTable(fit_all,5, n = Inf)
+head(top.table)
+
+# Create a function for volcano plot
+volcanizator <- function(data, logFC_thresh_upper, logFC_thresh_lower, max_pValue){
+  
+  # Point colours
+  mycolours <- c("blue", "red", "black")
+  names(mycolours) <- c("DOWN", "UP", "NO")
+  
+  # Add a column to the data frame to specify if they are UP- or DOWN- regulated (log2FoldChange respectively positive or negative)
+  data$diffexpressed <- "NO"
+  data$diffexpressed[data$logFC > logFC_thresh_upper & data$adj.P.Val < max_pValue] <- "UP"
+  data$diffexpressed[data$logFC < logFC_thresh_lower & data$adj.P.Val < max_pValue] <- "DOWN"
+  
+  # Create a new column with names of differential expressed genes
+  data$delabel <- NA
+  #data$delabel[data$diffexpressed != "NO"] <- data$HGNC.symbol[data$diffexpressed != "NO"]
+  
+  # Plot
+  ggplot(data, aes(x=logFC, y=-log10(adj.P.Val))) +
+    geom_point(aes(colour = diffexpressed), size=0.9) +
+    theme_minimal() +
+    geom_text_repel(aes(label = delabel)) + #, force = 5, point.padding	= unit(5, "cm")
+    geom_vline(xintercept=c(logFC_thresh_lower, logFC_thresh_upper), col="red") + # log2FoldChange thresholds
+    geom_hline(yintercept=-log10(max_pValue), col="red") + # p-value threshold
+    scale_colour_manual(values = mycolours) +
+    geom_text(aes(label = delabel)) +
+    labs(title = paste("Differential gene expression: week 4 to 9"),
+         subtitle = "GEO dataset: GSE15744",
+         caption = "p Value adjusted: Benjamini & Hochberg (1995)"
+         ) +
+    xlab("log2FC") +
+    ylab("-log10(adj.P.Val)")
+}
+volcano <- volcanizator(top.table, 1, -1, 0.01)
+volcano
 ```
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
@@ -342,7 +380,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 ### 1. Ion channels
 
-```{r}
+```{r,echo=FALSE}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -376,7 +414,7 @@ Ion channels play an important role in the function of neurons. We discovered th
 
 ### 2. Genes for neuronal development and function
 
-```{r}
+```{r,echo=FALSE}
 # ENST00000602349
 data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
@@ -599,7 +637,7 @@ Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 
 
 ### 3.Genes for cytokine
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE}
 # ENST00000337225
 data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
