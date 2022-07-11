@@ -222,19 +222,39 @@ embryo_df = temp_embryo_df[63:95721,]
 ## Annotation
 
 ```{r}
-setwd("C:/Data Analysis/TRAdata")
-ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))   # Load the ensembl annotation data
-
+library(RCurl)
+file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
+ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
 TranscriptID_orig = rownames(embryo_df)
 ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
 
 
 embryo_df["Transcript.stable.ID"] = gsub("[//._].*$" ,"", rownames(embryo_df)) # Add column for mergign
-embryo_df
-ensembl
-embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by theier Transcript ID
-embryo_df_ann
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by their Transcript ID
 rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
+colnames(embryo_df_ann) = c("Week4_1", "Week4_2", "Week4_3", "Week5_1", "Week5_2", "Week5_3", "Week6_1", "Week6_2", "Week6_3", "Week7_1", "Week7_2", "Week7_3", "Week8_1", "Week8_2", "Week8_3", "Week9_1", "Week9_2", "Week9_3", "Transcript.stable.ID", "Gene.stable.ID", "Chromosome.scaffold.name", "HGNC.symbol", "AFFY.HG.U133.Plus.2.probe")
+
+
+file_tra = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/tra.2017.human.gtex.5x.table.tsv")
+tra_gtex = as.data.frame(read.csv(text = file_tra, sep = "\t"))
+embryo_df_tra = embryo_df_ann[embryo_df_ann$Transcript.stable.ID %in% tra_gtex$ensembl.transcript ,]
+embryo_df_tra = embryo_df_tra %>%  dplyr::rename(ensembl.transcript = Transcript.stable.ID)
+embryo_df_tra =  left_join(embryo_df_tra, tra_gtex, by="ensembl.transcript") 
+
+
+#Make Tissue names more accessible by creating a vector for them
+a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+embryo_df_tissues = a
 ```
 
 ## Data Cleaning
@@ -260,6 +280,66 @@ Datacleaning complete. Now on to some Exploritory stuff.
 ## Limma analysis and Volcano plot
 
 ### 1. Limma analysis
+
+```{r}
+library(limma)
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+#summary(results_all)
+
+
+#Create list of all differentially expressed genes
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+length(diff_genes_list_0.01) #4522
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01) #1814
+
+#Select differential genes from annotated dataframe
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+
+```
+
+```{r}
+#List with 5%
+
+diff_genes_list_0.05 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.05 = c(diff_genes_list_0.05, rownames(top.table[which(top.table$adj.P.Val < 0.05), ]))
+}
+diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
+```
+
+
+
+
+
+
+
 
 
 
@@ -740,7 +820,59 @@ ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and form
 There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (C-X-C motif chemokine ligand 14). CXCL14 is structurally related to the CXC (Cys-X-Cys) subfamily of cytokines.which means two cysteines separated by a single amino acid. ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
 ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for C-C motif chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
 
-## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+## TRAs can infer a basic timeline of organ development
+
+### Differentially expressed transcripts can be linked to all analyzed tissues
+
+The TRA Data cover 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum was found with 46 stomach-linked transcripts, the maximum were 837 TRAs for the testes. 
+
+```{r, fig.width=8, fig.height=6}
+# Create a barplot for the TRA count of each tissue based on our dataset of differentially expressed genes
+
+all_tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex", "Colon - Sigmoid", "Colon - Transverse", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix",  "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid", "Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra",  "Nerve - Tibial")
+tissue_count = data.frame(tissue = all_tissues, count = sapply(all_tissues, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+tissue_count_barplot =  ggplot(tissue_count, aes(x = tissue, y = count, fill = tissue))  + geom_bar(stat = "identity") + labs(x = "Tissue", y = "Number of Transcripts")  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(fill = FALSE) 
+```
+
+```{r, fig.width=7, fig.height=7}
+library(ggplot2)
+library(treemapify)
+
+select_tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+
+
+count_data = data.frame(tissue = select_tissues, count = NA)
+for (tissue in select_tissues){
+  
+  count_data[count_data$tissue == tissue, "count"] = sum(bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))}))
+
+}
+cols = rainbow(33, s=.6, v=.9) #[sample(1:33,33)] #61
+count_data$color = cols
+count_data
+treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
+```
+
+
+```{r, fig.width=9, fig.height=6}
+library(grid)
+library(gridExtra)
+lay = rbind(c(1,1,2), c(1,1, NA))
+grid.arrange(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay, top = "Differentially expressed transcripts of TRAs by tissue")
+```
+
+
+
+
+This numbers are sufficient for further analysis of the gene expression within individual tissues. 
+
+
+
+
+
+
 
 # Discussion
 
