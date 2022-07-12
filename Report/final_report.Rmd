@@ -858,20 +858,26 @@ treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) +
 ```
 
 
-```{r, fig.width=9, fig.height=6}
+```{r, fig.width=9, fig.height=6, fig.subcap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
 library(grid)
 library(gridExtra)
+library(cowplot)
 lay = rbind(c(1,1,2), c(1,1, NA))
-grid.arrange(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay, top = "Differentially expressed transcripts of TRAs by tissue")
+plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
+plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.7), y = c(0.1,0.1)) 
+annotate_figure(plot_output, top = text_grob("Differentially expressed transcripts of TRAs by tissue", color = "black", face = "bold", size = 16))
 ```
+
+
 ```{r}
 # Mean number of tissues associated with each transcript
 mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
-This numbers are sufficient for further analysis of the gene expression within individual tissues. Nonetheless, it should be noted that there is significant overlap between the TRAs associated with different tissues, especially since each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by fig. ????. 
+This numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis.
+Nonetheless, it should be noted that there is significant overlap between the TRAs associated with different tissues, especially since each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by fig. ????. 
 
-```{r,fig.width=12, fig.height=8}
+```{r,fig.width=9, fig.height=7, fig.subcap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
 library(igraph)
 library(tidyverse)
 library(ggnet)
@@ -907,30 +913,12 @@ edge_weight_cleared
 graph2 = ggnet2(edge_weight_cleared[,1:2], label = TRUE, edge.size = edge_weight_cleared$weight)
 node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
 
-graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE)
+graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues")
 graph2
 ```
 
+#### Das würde ich in den Anhang packen. 
 ```{r, fig.width=14, fig.height=14}
-library(pheatmap)
-
-tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-weights = matrix(nrow =length(tissues), ncol = length(tissues))
-rownames(weights) = tissues
-colnames(weights) = tissues
-for (i in 1:33) {
-  for (j in 1:33) {
-    weights[i,j] = sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))
-  }
-} 
-weights2 = log2(weights)
-heatmap_links = pheatmap(weights2, display_numbers = TRUE, fontsize_number = 8, legend = TRUE)
-heatmap_links
-```
-
-
-```{r, fig.width=14, fig.height=14}
-# Jetzt mit prozentualem Anteil 
 library(pheatmap)
 
 tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
@@ -946,9 +934,14 @@ for (i in 1:33) {
   }
 } 
 
-heatmap_links = pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
-heatmap_links
+heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
 ```
+
+### The expression of all TRAs associated with a tissue cannot be used to infer organ development
+
+In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. ???A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. ???B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. ???C. 
+
+
 
 
 
