@@ -29,24 +29,31 @@ opts_chunk$set(echo=FALSE,
 ```{r}
 library(affy)
 library(AnnotationDbi)
-#library(hgu133plus2hsenstprobe)
-#library(hgu133plus2hsenstcdf) 
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
 library(Rcpp)
 library(tidyverse)
 library(vsn)
 library(limma)
 library(pheatmap)
 library(hexbin)
-#library(biomaRt)
+library(biomaRt)
 library(kableExtra)
 library(Rfssa)
 library(ggbiplot)
 library(magrittr) 
 library(dplyr)
 library(stringr)
+library(ggrepel)
 ```
 
 #Introduction
+
+Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of the first cysteins (C). In the alpha groupe (or CXC) are they separeted by a single aminoacid. In the beta groupe (or CC) are they next to each other. In the gamma groupe (or C) is only one cystein present. In the delta groupe (or CX3C) are they separeted by three aminoacid s. (Yusuf,2005). Chemokines induce cell migration by binding to their receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron 2008).
+
+*Quellen: https://link.springer.com/article/10.1007/s00429-005-0013-9; https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847 *
+
+
 
 #Methods
 
@@ -460,7 +467,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 ### 1. Ion channels
 
-```{r,fig.height=1.75,fig.width=3}
+```{r,fig.height=2.5,fig.width=2.5}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -488,13 +495,13 @@ data.ENST00000531293 =cbind(data.ENST00000531293,week)
 plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red")
 par(new=TRUE)
 legend(3.8, 9.25, legend=c("ENST00000531293"),
-       col=c("red"), lty=1, cex=0.8,title="Expressed genes")
+       col=c("red"), lty=1, cex=0.3,title="Expressed genes")
 ```
 Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a signifikant increase between week 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPases.  
 
 ### 2. Genes for neuronal development and function
 
-```{r}
+```{r,fig.height=3.2,fig.width=3.2}
 # ENST00000602349
 data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
@@ -684,7 +691,7 @@ plot(data.ENST00000439476[,2],data.ENST00000439476[,1],type = "b",lwd=1,pch=19, 
 par(new=TRUE)
 plot(data.ENST00000539563[,2],data.ENST00000539563[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "yellowgreen", ylim = c(6.3,8.4))
 legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690", "ENST00000356660", "ENST00000518312", "ENST00000521485", "ENST00000577440", "ENST00000439476", "ENST00000539563"),
-       col=c("red", "blue", "orange", "green","black", "pink", "purple", "salmon", "yellowgreen"), lty=1, cex=0.8,title="Expressed genes")
+       col=c("red", "blue", "orange", "green","black", "pink", "purple", "salmon", "yellowgreen"), lty=1, cex=0.3,title="Expressed genes")
 
 ```
 
@@ -717,7 +724,7 @@ Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 
 
 ### 3.Genes for cytokine
 
-```{r}
+```{r,fig.height=3.2,fig.width=3.2}
 # ENST00000337225
 data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
                              filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
@@ -803,12 +810,10 @@ plot(data.ENST00000555247[,2],data.ENST00000555247[,1],type = "b",lwd=1,pch=19, 
 par(new=TRUE)
 plot(data.ENST00000590261[,2],data.ENST00000590261[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "green", ylim = c(7.6,9.7))
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),
-       col=c("red", "blue", "orange", "green"), lty=1, cex=0.8,title="Expressed genes")
+       col=c("red", "blue", "orange", "green"), lty=1, cex=0.3,title="Expressed genes")
 ```
 
-Cytokines are important signaling molecules. Especially chemokines are ment to take part in signaling process during neuronal development.
-
-*Paper nennen*
+Cytokines are important signaling molecules. Especially chemokines are ment to take part in signaling process during neuronal development (Tiveron 2008).
 
 #### 3.1 Interleukin related genes
 
@@ -817,8 +822,8 @@ ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and form
 
 #### 3.2 Chemokine related genes
 
-There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (C-X-C motif chemokine ligand 14). CXCL14 is structurally related to the CXC (Cys-X-Cys) subfamily of cytokines.which means two cysteines separated by a single amino acid. ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
-ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for C-C motif chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
+There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
+ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
 
 ## TRAs can infer a basic timeline of organ development
 
