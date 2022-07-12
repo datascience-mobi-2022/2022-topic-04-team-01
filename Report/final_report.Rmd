@@ -49,6 +49,11 @@ library(ggrepel)
 
 #Introduction
 
+The brain shows a signifkant development during week 4 to 9, the neural tube closes, the Prosencephalon develops to the Diencephalon and Telencephalon.  
+Major parts of the brain are developed at week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
+
+*Quellen: https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress; https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf *
+
 Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of the first cysteins (C). In the alpha groupe (or CXC) are they separeted by a single aminoacid. In the beta groupe (or CC) are they next to each other. In the gamma groupe (or C) is only one cystein present. In the delta groupe (or CX3C) are they separeted by three aminoacid s. (Yusuf,2005). Chemokines induce cell migration by binding to their receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron 2008).
 
 *Quellen: https://link.springer.com/article/10.1007/s00429-005-0013-9; https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847 *
@@ -1088,6 +1093,7 @@ annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-rel
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
+First point to discuss is the signifikant increase 
 
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
 
