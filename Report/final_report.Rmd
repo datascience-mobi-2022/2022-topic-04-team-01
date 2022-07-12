@@ -830,6 +830,8 @@ ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and form
 There are many research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a signifikant increase in expression between week 4 to 6 and is related to Anterior cingulate cortex.
 ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
 
+
+
 ## TRAs can infer a basic timeline of organ development
 
 ### Differentially expressed transcripts can be linked to all analyzed tissues
@@ -992,7 +994,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Spleen" %in% 
 #Graph of mean gene expression over time
 spleen_genes = diff_genes_ann_0.01[bool_contained,]
 spleen_genes = spleen_genes[, 1:19]
-spleen_genes_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
+spleen_genes_mean = data.frame(week4=rowMeans(spleen_genes[,1:3]),week5=rowMeans(spleen_genes[,4:6]), week6=rowMeans(spleen_genes[,7:9]),week7=rowMeans(spleen_genes[,10:12]), week8=rowMeans(spleen_genes[,13:15]), week9=rowMeans(spleen_genes[,16:18]))
 spleen_genes_graph = apply(spleen_genes_mean, 2, median)
 spleen_genes_graph= data.frame (Expression = spleen_genes_graph, Week = c(4:9))
 
@@ -1070,7 +1072,7 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
    
 ```
 
-```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
+```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median expression for all spleen-associated TRAs is shown for each point in time. C. For k-means clustring, the silhouette score determined an optimum of two clusters. The median expression analog to B is plottet for each of these clusters. "}
 library(grid)
 library(gridExtra)
 library(cowplot)
@@ -1079,9 +1081,133 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size =
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
 ```
 
+For many tissues, as shown here exemplary with the spleen, the clustering showed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters. 
+
+
+### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. 
+
+For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation. 
+
+```{r}
+#Get the spleen dataset with the clusters
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen", toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data_abs) = data_temp$ensembl.transcript
+  row.names(data) = rownames(data_abs)
+  
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+
+  spleen_genes_clustered = data_plot_raw
+
+```
+
+```{r, fig.width= 5, fig.height= 3}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts")
+spleen_boxplot
+#boxplot(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)
+```
+
+```{r}
+get_gene_info = function(transcript_ids){
+  library(rentrez)
+  library(XML)
+  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
+  for(x in transcript_ids) {
+    table = rbind(table, get_single_transcript(x))
+  }
+  table
+}
+
+get_single_transcript = function(single_transcript) {
+   res = entrez_search(db = "gene", term = single_transcript)
+   if(!length(res$ids)==0) {
+     results = entrez_summary(db = "gene", id = res$ids)
+      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
+   }
+   else{
+        c(single_transcript, NA, NA, NA)
+   }
+}
+
+spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
+spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+```{r}
+#Table verschönern
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
+           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
+
+spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
+spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
 
 
 
+table_spleen1 = gt(spleen1_gene_description_spl)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+```
+
+
+```{r}
+# Jetzt noch für Spleen2
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+library(webshot)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+
+```
 
 
 
