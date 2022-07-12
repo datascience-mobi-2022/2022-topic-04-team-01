@@ -1219,7 +1219,18 @@ table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - 
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
-First point to discuss is the signifikant increase 
+First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLNsarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
+
+Another point is the strong correlation between the expression of SNAP91 genes and SYBU gene. Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
+
+*Quelle:https://onlinelibrary.wiley.com/doi/10.1111/jnc.15194*
+
+In addition we identified a signifikant increase in expression of NXPH1 this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11.
+
+We further identified that two transkripts associated to two different tissues show identical correlation, this can be caused by a false annotations. Nevertheless, they show a stong downregulation of BDNF. This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development.
+
+The neuronal cell migration is stongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a signifikant increase in CXCL14 between week 5 to 6 and a maintaining at a high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9. 
+
 
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
 
