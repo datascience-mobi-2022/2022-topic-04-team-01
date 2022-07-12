@@ -49,21 +49,30 @@ library(ggrepel)
 
 #Introduction
 
-Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of their first cysteins (C). In the alpha groupe (or CXC) they are separeted by a single aminoacid. In the beta groupe (or CC) they are next to each other. In the gamma groupe (or C) there is only one cystein present. In the delta groupe (or CX3C) they are separeted by three aminoacid s. (Yusuf,2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is the target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron 2008).
+<<<<<<< HEAD
+Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of their first cysteins (C). In the alpha groupe (or CXC) they are separeted by a single aminoacid. In the beta groupe (or CC) they are next to each other. In the gamma groupe (or C) there is only one cystein present. In the delta groupe (or CX3C) they are separeted by three aminoacids. (Yusuf,2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is the target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron 2008).
+=======
+The brain shows a significant development during weeks 4 to 9, the neural tube closes, the Prosencephalon develops to the Diencephalon and Telencephalon.  
+Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
+
+*Quellen: https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress; https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf *
+
+Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of their first cysteins (C). In the alpha groupe (or CXC) they are separeted by a single aminoacid. In the beta groupe (or CC) they are next to each other. In the gamma groupe (or C) there is only one cystein present. In the delta groupe (or CX3C) they are separeted by three aminoacids. (Yusuf,2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron 2008).
+
+*Quellen: https://link.springer.com/article/10.1007/s00429-005-0013-9; https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847 *
+
+>>>>>>> 941b2c6a4546521ae5448da877c05bb6bf9dd60c
 
 *Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
 
 #Methods
 
-## Programming language
+## Programming language and Libraries
 
-The programming language R version 4.2.0 and its IDE RStudio were used.
-
-## Libraries and packages
+The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays. Packages for annotation purposes of microarrays were provided by brainarray.
 
 Following libraries were used:
-
-```{r, eval = FALSE}
+```{r table-with-all-libraries, eval = FALSE}
 all_libraries <- tibble::tribble(
   ~Library...package,                        ~Version,                              ~Description,
               "affy",                              NA, "library used for unpacking the raw data",
@@ -79,17 +88,22 @@ all_libraries %>%
 
 ```
 
-Some of them are from Bioconductor. This is a ...
 
 ## Dataset
 
-We chose a Dataset with following criteria: Human embryonic data in the stages of organ development.
+We obtained the data set from Yi H *et al.* (2010). We chose this data set by the following criteria, it contains human embryonic data and it covers every week between the 4th and 9th week, which are interesting stages of embryogenesis and organ development. Three replica at each point in time were tested, hence data from 18 embryos were acquired.
+The timezone covers the Carnegie stages 10-23, finishing the process of embryogenesis and organogenesis. This peroid of embryogenesis is highly regulated with considerable differential gene expression.
+Overall, the data set suits the requirements for our purpose.
 
-### reading in the data set
+### Affymetrix U133 plus 2.0 human GeneChip array
 
-Next, the data was downloaded to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). The data was the read in with the help of the library Affy and is connected to the correct Annotation by the brainarray package.
+The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with matrices which screens for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices.
 
-```{r, eval = FALSE}
+### Importing the data set
+
+We downloaded the raw data to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). We imported it with the help of the library *affy* and is connected to the correct Annotation by the brainarray package. The *affy* package allows more manageable data analysis and manipulation of microarray intensity values.
+
+```{r importing-the-data-from-harddrive, eval = FALSE}
 setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/rawdata")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
@@ -97,15 +111,32 @@ setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/r
 save(data.GSE15744, file="data.GSE15744.RData")
 ```
 
-To access the data remotely, it is downloaded from the github with the Library Rfssa.
+To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the Library *Rfssa*.
 
-```{r}
+```{r loading-data-from-github, eval=FALSE}
 #make data accessible for everyone
 githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/data.GSE15744.RData"
 load_github_data(githubURL)
 ```
 
-### normalising the data set
+### Quality control of the suface images
+
+To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example 
+
+The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+```{r QC-surface-images}
+image.GSM394525 <- image(data.GSE15744[,16], col=rainbow(100, start = 0, end = 0.75)[100:1])
+image.GSM394527 <- image(data.GSE15744[,17], col=rainbow(100, start = 0, end = 0.75)[100:1])
+
+
+## To generate all images please use:
+#for (i in 1:18) {
+#  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
+#} # GSM394501 looks a bit brighter, GSM394527 looks very bright
+```
+
+## normalising the data set
+
 
 We used the method vsn rma normalization according to Huber et al. This method is able to deal with variance and with randomness.
 
@@ -119,18 +150,13 @@ There are some tests to verify the data collected through the micro arrays. Also
 
 ### Single chip control
 
-```{r, echo=TRUE}
 
-for (i in 1:18) {
-  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
-} # GSM394501 looks a bit brighter, GSM394527 looks very bright
-```
 
-The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+
 
 ### meanSdPlot
 
-The normalization can be verified by plotting the Rank of the mean against the standard deviation. The purpose of the normalization is to set the variance and the mean on an arbitrary level to reduce statistical fluctiation and randomness. This achieves comparible result. As a consequence there should be no correlation between the mean and the standard deviation, indicated by the red line.
+The normalization can be verified by plotting the rank of the mean against the standard deviation. The purpose of the normalization is to set the variance and the mean on an arbitrary level to reduce statistical fluctiation and randomness. This achieves comparible result. As a consequence there should be no correlation between the mean and the standard deviation, indicated by the red line.
 
 ```{r}
 meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
@@ -161,7 +187,7 @@ boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
 
 ### RNA Degradation Plot
 
-This Quality control confirm that the standard conditions of the chips are met and they are comparible in their results.
+This Quality control confirm that the standard conditions of the chips are met and they are comparable in their results.
 
 ```{r RNA Degradation Plot}
 rnadeg.raw <- AffyRNAdeg(data.GSE15744)
@@ -686,7 +712,7 @@ The second groupe are genes with a specific function in the neuronal development
 
 #### 2.1 Genes for neuronal function
 
-Therefore we discovered that ENST00000276646 and ENST00000529690 show an signifikant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
+Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
 
 #### 2.2 Genes for axon guidance
 
@@ -801,11 +827,13 @@ Cytokines are important signaling molecules. Especially chemokines are ment to t
 
 #### 3.1 Interleukin related genes
 
-Two interleukin related genes were discovered. ENST00000555247 encodes for IL11RA (interleukin 11 receptor subunit alpha) which is a receptor for the cytokine, Interleukin 11. The IL-11 receptor is a member of the hematopoietic cytokine receptor family. ENST00000555247 is connected to the spinal cord and shows a significant increase in expression during weeks 4 to 8. ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and forms a heterodimer with a 45 kDa transcription factor. This complex is necassary for T-cell expression of interleukin 2. ENST00000590261 is related to Substantia nigra and shows a decline over the weeks.
+Two interleukin related genes were discovered. ENST00000555247 encodes for IL11RA (interleukin 11 receptor subunit alpha) which is a receptor for the cytokine, Interleukin 11. The IL-11 receptor is a member of the hematopoietic cytokine receptor family. ENST00000555247 is connected to the spinal cord and shows a significant increase in expression during weeks 4 to 8. ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and forms a heterodimer with a 45 kDa transcription factor. This complex is necessary for T-cell expression of interleukin 2. ENST00000590261 is related to Substantia nigra and shows a decline over the weeks.
 
 #### 3.2 Chemokine related genes
 
-There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between week 5 to 9.
+There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
+
+
 
 ## TRAs can infer a basic timeline of organ development
 
@@ -964,7 +992,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Spleen" %in% 
 #Graph of mean gene expression over time
 spleen_genes = diff_genes_ann_0.01[bool_contained,]
 spleen_genes = spleen_genes[, 1:19]
-spleen_genes_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
+spleen_genes_mean = data.frame(week4=rowMeans(spleen_genes[,1:3]),week5=rowMeans(spleen_genes[,4:6]), week6=rowMeans(spleen_genes[,7:9]),week7=rowMeans(spleen_genes[,10:12]), week8=rowMeans(spleen_genes[,13:15]), week9=rowMeans(spleen_genes[,16:18]))
 spleen_genes_graph = apply(spleen_genes_mean, 2, median)
 spleen_genes_graph= data.frame (Expression = spleen_genes_graph, Week = c(4:9))
 
@@ -1041,7 +1069,7 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
    
 ```
 
-```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
+```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median expression for all spleen-associated TRAs is shown for each point in time. C. For k-means clustring, the silhouette score determined an optimum of two clusters. The median expression analog to B is plottet for each of these clusters. "}
 library(grid)
 library(gridExtra)
 library(cowplot)
@@ -1050,10 +1078,160 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size =
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
 ```
 
+<<<<<<< HEAD
+=======
+For many tissues, as shown here exemplary with the spleen, the clustering showed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters. 
+
+
+### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. 
+
+For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation. 
+
+```{r}
+#Get the spleen dataset with the clusters
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen", toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data_abs) = data_temp$ensembl.transcript
+  row.names(data) = rownames(data_abs)
+  
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+
+  spleen_genes_clustered = data_plot_raw
+
+```
+
+```{r, fig.width= 5, fig.height= 3}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts")
+spleen_boxplot
+#boxplot(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)
+```
+
+```{r}
+get_gene_info = function(transcript_ids){
+  library(rentrez)
+  library(XML)
+  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
+  for(x in transcript_ids) {
+    table = rbind(table, get_single_transcript(x))
+  }
+  table
+}
+
+get_single_transcript = function(single_transcript) {
+   res = entrez_search(db = "gene", term = single_transcript)
+   if(!length(res$ids)==0) {
+     results = entrez_summary(db = "gene", id = res$ids)
+      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
+   }
+   else{
+        c(single_transcript, NA, NA, NA)
+   }
+}
+
+spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
+spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+```{r}
+#Table verschönern
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
+           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
+
+spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
+spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
+
+
+
+table_spleen1 = gt(spleen1_gene_description_spl)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+```
+
+
+```{r}
+# Jetzt noch für Spleen2
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+library(webshot)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+
+```
+
+
+
+
+>>>>>>> 941b2c6a4546521ae5448da877c05bb6bf9dd60c
 # Discussion
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
+<<<<<<< HEAD
+=======
+First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLN sarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
+
+Another point is the strong correlation between the expression of SNAP91 genes and SYBU gene. Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
+
+*Quelle:https://onlinelibrary.wiley.com/doi/10.1111/jnc.15194*
+
+In addition we identified a signifikant increase in expression of NXPH1 this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11.
+
+We further identified that two transkripts associated to two different tissues show identical correlation, this can be caused by a false annotations. Nevertheless, they show a stong downregulation of BDNF. This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development.
+
+The neuronal cell migration is stongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a signifikant increase in CXCL14 between week 5 to 6 and a maintaining at a high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9. 
+
+
+>>>>>>> 941b2c6a4546521ae5448da877c05bb6bf9dd60c
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
