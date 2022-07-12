@@ -65,7 +65,7 @@ The programming language R version 4.2.0 and its IDE RStudio were used.
 
 Following libraries were used:
 
-```{r}
+```{r, eval = FALSE}
 all_libraries <- tibble::tribble(
   ~Library...package,                        ~Version,                              ~Description,
               "affy",                              NA, "library used for unpacking the raw data",
@@ -91,7 +91,7 @@ We chose a Dataset with following criteria: Human embryonic data in the stages o
 
 Next, the data was downloaded to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). The data was the read in with the help of the library Affy and is connected to the correct Annotation by the brainarray package.
 
-```{r}
+```{r, eval = FALSE}
 setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/rawdata")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
@@ -165,7 +165,7 @@ boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
 
 This Quality control confirm that the standard conditions of the chips are met and they are comparible in their results.
 
-```{r}
+```{r RNA Degradation Plot}
 rnadeg.raw <- AffyRNAdeg(data.GSE15744)
 
 plotAffyRNAdeg(rnadeg.raw, col=rainbow(18))
@@ -203,7 +203,7 @@ for(i in 1:17){
 
 Remove file-endings (.CEL) from sample names in Rownames and Columnames.
 
-```{r}
+```{r, eval = FALSE}
 filenames <- rownames(pData(data.GSE15744))
 samples <- substr(filenames, 1,9)                                   # Only keeps 1st to 9th character in the string -> cuts .cel from name
 rownames(pData(data.GSE15744)) = samples
@@ -219,7 +219,7 @@ colnames(exprs(data.GSE15744.vsnrma)) = new
 
 Convert to dataframe and cut of Affymetrix Control genes
 
-```{r}
+```{r, eval = FALSE}
 temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
 colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
 temp_embryo_df
@@ -228,7 +228,7 @@ embryo_df = temp_embryo_df[63:95721,]
 
 ## Annotation
 
-```{r}
+```{r Annotation, eval=}
 library(RCurl)
 file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
 ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
@@ -266,7 +266,7 @@ embryo_df_tissues = a
 
 ## Data Cleaning
 
-```{r}
+```{r, eval = FALSE}
 embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] #removed duplicates
 
 
@@ -288,7 +288,7 @@ Datacleaning complete. Now on to some Exploritory stuff.
 
 ### 1. Limma analysis
 
-```{r}
+```{r, eval = FALSE}
 library(limma)
 
 limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
@@ -325,7 +325,7 @@ diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in
 
 ```
 
-```{r}
+```{r, eval = FALSE}
 #List with 5%
 
 diff_genes_list_0.05 = c()
@@ -359,7 +359,7 @@ The gathered dataset from limma analysis of the differentially expression betwee
 
 Gene which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
 
-```{r}
+```{r Volcano Plot}
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
@@ -943,6 +943,137 @@ heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development
 
 In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. ???A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. ???B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. ???C. 
+
+
+
+```{r}
+# Create dataframe with median expression levels for each transcript and week (combining the replicates)
+embryo_df_tissues_median  = data.frame(Week4 = apply(embryo_df_tissues[1:3], 1, median), Week5 =  apply(embryo_df_tissues[4:6], 1, median), Week6 =  apply(embryo_df_tissues[7:9], 1, median), Week7=apply(embryo_df_tissues[10:12], 1, median), Week8 =  apply(embryo_df_tissues[13:15], 1, median), Week9 =  apply(embryo_df_tissues[16:18], 1, median))
+embryo_df_tissues_median = cbind(embryo_df_tissues_median, embryo_df_tissues[,c(19,29)])
+
+
+tissue = "Spleen"
+threshold = c(6.6,6.8, 7.0, 7.2, 7.4, 7.6, 8.0)
+
+# Select the data from a tissues
+bool_contained = sapply(embryo_df_tissues_median$tissues, function(x) {grepl(tissue, toString(x))})
+data_temp = embryo_df_tissues_median[bool_contained,]
+
+#Determine the percentage of expressed genes
+count = 0
+a = c()
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(threshold))})), Threshold = factor(c(rep(threshold, 6))), Percentage = NA)
+  for(s in 4:9) {
+    for(t in 1:length(threshold)) {
+      count = count +1
+      a  = c(a,(sum(data_temp[,str_glue("Week", s)] > threshold[t]))/(dim(data_temp)[1]))
+    }
+  }
+data_plot$Percentage= a
+
+  
+#Plot the data
+spleen_percentage_plot =  ggplot(data_plot, aes(x = Week, y= Percentage, group = Threshold))   + geom_line(aes(colour = Threshold)) + geom_point(aes(colour = Threshold, shape = Threshold)) + labs(title = "Share over threshold") + theme_classic() + ylim(0,1)
+
+```
+
+
+```{r}
+#Plot of median expression level of all spleen-related genes over time
+
+#Select genes only of target tissue
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Spleen" %in% x})
+
+#Graph of mean gene expression over time
+spleen_genes = diff_genes_ann_0.01[bool_contained,]
+spleen_genes = spleen_genes[, 1:19]
+spleen_genes_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
+spleen_genes_graph = apply(spleen_genes_mean, 2, median)
+spleen_genes_graph= data.frame (Expression = spleen_genes_graph, Week = c(4:9))
+
+spleen_genes_plot = ggplot(spleen_genes_graph, aes(x = Week, y= Expression))  + geom_line(color = "#0000ff") + geom_point(color = "#0000ff") + labs(title = paste("Median expression"))  + theme_classic() +  ylim(6.5,8.5)
+
+```
+
+
+```{r}
+#Clustered plot of expression levels over time for the spleen
+
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+tissue = "Spleen"
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+
+# Select an modify the data used for kmeans
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+data_temp = diff_genes_ann_0.01[bool_contained,]
+data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+row.names(data) = rownames(data_abs)
+  
+# Select optimum cluster number
+data = scale(data)
+dist_data = get_dist(data, method = "pearson")
+n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+# Create the data for our plot
+km = kmeans(data, centers = n_cluster, nstart = 25)
+data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+plot_data = create_plot_data(data_plot_raw)
+  
+# Create the Plot
+spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+          geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = "Clustered expression") +
+          scale_color_npg() + theme_classic()  + ylim(6.5,8.5)
+   
+```
+
+```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
+library(grid)
+library(gridExtra)
+library(cowplot)
+plot = arrangeGrob(grobs = list(spleen_percentage_plot, spleen_genes_plot, spleen_clustered_plot), nrow=1, widths = c(3.3,2.7, 4), heights = c(0.7))
+plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
+annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
+```
+
 
 
 
