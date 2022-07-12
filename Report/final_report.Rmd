@@ -29,19 +29,17 @@ opts_chunk$set(echo=FALSE,
 ```{r}
 library(affy)
 library(AnnotationDbi)
-library(hgu133plus2hsenstprobe)
-library(hgu133plus2hsenstcdf) 
+#library(hgu133plus2hsenstprobe)
+#library(hgu133plus2hsenstcdf) 
 library(Rcpp)
 library(tidyverse)
 library(vsn)
 library(limma)
 library(pheatmap)
 library(hexbin)
-library(biomaRt)
+#library(biomaRt)
 library(kableExtra)
 library(Rfssa)
-install.packages("remotes")
-remotes::install_github("vqv/ggbiplot")
 library(ggbiplot)
 library(magrittr) 
 library(dplyr)
@@ -462,7 +460,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 ### 1. Ion channels
 
-```{r}
+```{r,fig.height=1.75,fig.width=3}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
