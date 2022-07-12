@@ -1219,7 +1219,7 @@ table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - 
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
-First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLNsarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
+First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLN sarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
 
 Another point is the strong correlation between the expression of SNAP91 genes and SYBU gene. Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
 
