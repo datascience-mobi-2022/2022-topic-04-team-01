@@ -92,7 +92,7 @@ Overall, the data set suits the requirements for our purpose.
 
 ### Affymetrix U133 plus 2.0 human GeneChip array
 
-The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with matrices which screens for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices.
+The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with oligonucleotides as matrices which screen for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices.
 
 ### Importing the data set
 
@@ -102,6 +102,12 @@ We downloaded the raw data to a local harddrive from the Gene Expression Omnibus
 setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/rawdata")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
+
+# adjusting the microarray names by cutting the .cel
+rownames(pData(data.GSE15744)) <- substr(rownames(pData(data.GSE15744)), 1, nchar(rownames(pData(data.GSE15744)))-4)
+colnames(exprs(data.GSE15744)) <- substr(colnames(exprs(data.GSE15744)), 1, nchar(colnames(exprs(data.GSE15744)))-4)
+
+
 setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/report")
 save(data.GSE15744, file="data.GSE15744.RData")
 ```
@@ -118,123 +124,87 @@ load_github_data(githubURL)
 
 To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example 
 
-The surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
-```{r QC-surface-images}
-image.GSM394525 <- image(data.GSE15744[,16], col=rainbow(100, start = 0, end = 0.75)[100:1])
-image.GSM394527 <- image(data.GSE15744[,17], col=rainbow(100, start = 0, end = 0.75)[100:1])
-
-
+As shown in Figure \@ref(fig:QC-surface-images) as an example, the surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+```{r QC-surface-images, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: a selected surface image of the microarrays showing no damage or artefacts.** The microarray inspection shows no irregularities and every chip is accepted for further data analysis"}
+surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, end = 0.75)[100:1])
 ## To generate all images please use:
 #for (i in 1:18) {
 #  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
-#} # GSM394501 looks a bit brighter, GSM394527 looks very bright
+#} # GSM394501 looks a bit brighter, GSM394527 looks bright
 ```
 
-## normalising the data set
+### Quality control of RNA Degradation
 
+We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (**doi: 10.1093/bioinformatics/bts629**). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:RNA-Degradation-Plot)).
 
-We used the method vsn rma normalization according to Huber et al. This method is able to deal with variance and with randomness.
+```{r RNA-Degradation-Plot, fig.width= 8, fig.height= 8, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+data.rnadegradation <- AffyRNAdeg(data.GSE15744)
 
-```{r}
+plotAffyRNAdeg(data.rnadegradation, col=rainbow(18))
+title(sub="RNA Degradation of 18 microarrays, GSE15744")
+
+## Not scaled
+#plotAffyRNAdeg(data.rnadegradation, col=rainbow(18), transform = "shift.only")
+#title(sub="Human embryo (GSE15744, Raw data)")
+```
+
+## Normalising the data set
+
+Intensity values of different chips are affected by sample preparation and array manufacturing and processing resulting in statistical variance and random fluctuation. To access the biological relevant variation the raw data needs to be transformed by normalisation. We chose the vsn rma normalization with its library *vsn* according to Huber *et al.* (2002).
+
+```{r vsn-normalization}
 data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 ```
 
-## Quality control
-
-There are some tests to verify the data collected through the micro arrays. Also, quality control needs to check the normalization method.
-
-### Single chip control
+The library vsn is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
 
 
+### Quality control of the vsn normalization
+
+To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)).
+After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:)A).
+Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:)C). 
 
 
 
-### meanSdPlot
-
-The normalization can be verified by plotting the Rank of the mean against the standard deviation. The purpose of the normalization is to set the variance and the mean on an arbitrary level to reduce statistical fluctiation and randomness. This achieves comparible result. As a consequence there should be no correlation between the mean and the standard deviation, indicated by the red line.
-
-```{r}
-meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
+```{r mean-sd-plot}
+meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
+meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data GSE15744")
 ```
-
-### Boxplot
-
-There boxplots show the mean and variance of all 18 chips and further verifies the normalization.
-
-```{r}
-## Before
-
-boxplot(data.GSE15744, col = rainbow(15),
+```{r boxplot-vsn-normalization}
+boxplot.GSE15744.vsnrma <- boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
         cex.axis=0.5,
-        las=2,                                            
+        las=2,
         ylab="Relative expression",
-        main="Raw Gene expression in human embryo (GSE15744, raw data)")
-
-
-## After
-
-boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
-        cex.axis=0.5,
-        las=2,                                            
-        ylab="Relative expression",
-        main="Raw Gene expression in human embryo (GSE15744, normalized)")
+        main="Boxplots of microarrays with vsn normalized data")
+```
+```{r Scatter-plot}
+exprs.GSE15744.vsnrma <- as.data.frame(exprs(data.GSE15744.vsnrma))
+scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma,) +
+  theme_bw() +
+  geom_point(mapping = aes(exprs.GSE15744.vsnrma[,4], exprs.GSE15744.vsnrma[,5]), size = 0.5) +
+  geom_abline(intersept = 0, slope = 1, col = "red", aes(size=1)) +
+  labs(title = paste("Scatterplot of microarray", substr(colnames(data.GSE15744.vsnrma)[4], 1, nchar(colnames(data.GSE15744.vsnrma)[4])), "and", substr(colnames(data.GSE15744.vsnrma)[5], 1, nchar(colnames(data.GSE15744.vsnrma)[5])), "in week 5", sep=" ", collapse = NULL),
+       x = colnames(data.GSE15744.vsnrma)[4],
+       y = colnames(data.GSE15744.vsnrma)[5]) 
 ```
 
-### RNA Degradation Plot
+```{r QC-normalization-plots, fig.width=9, fig.height=6, fig.subcap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
 
-This Quality control confirm that the standard conditions of the chips are met and they are comparible in their results.
+OC_normalization_plot = arrangeGrob(grobs = list(meansd.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, exprs.GSE15744.vsnrma), nrow=1, widths = c(3, 3, 3), heights = c(3))
 
-```{r RNA Degradation Plot}
-rnadeg.raw <- AffyRNAdeg(data.GSE15744)
+OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
+  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
 
-plotAffyRNAdeg(rnadeg.raw, col=rainbow(18))
-title(sub="Human embryo (GSE15744, Raw data)")
-
-# Not scaled
-plotAffyRNAdeg(rnadeg.raw, col=rainbow(18), transform = "shift.only")
-title(sub="Human embryo (GSE15744, Raw data)")
+annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
-### Scatter plot
-
-```{r}
-# Comparison of some Scatter plots
-for(i in 1:17){
-  plot(eset[,c(i,i+1)], pch=".", cex=2)
-  abline(0, 1, col="red")               # 45 degree dividing line
-  
-  title(main = paste("Scatterplot of probe", 
-                     substr(colnames(GSE15744.vsnrma)[i], 1, nchar(colnames(GSE15744.vsnrma)[i])), "and", 
-                     substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1])), 
-                     sep=" ", collapse = NULL))
-  
-  file.name <- paste("C:/Users/david/Documents/Data Analysis Lokal/Plots/Scatterplots/Scatterplot_GSE15744.pdf", 
-                     as.character(substr(colnames(GSE15744.vsnrma)[i], 1, nchar(colnames(GSE15744.vsnrma)[i]))), "_",
-                     as.character(substr(colnames(GSE15744.vsnrma)[i+1], 1, nchar(colnames(GSE15744.vsnrma)[i+1]))),
-                     ".pdf", sep="")
-  
-  dev.copy2pdf(file = file.name)
-  dev.off()
-}
-```
 
 ## Data cleaning
 
-Remove file-endings (.CEL) from sample names in Rownames and Columnames.
-
-```{r, eval = FALSE}
-filenames <- rownames(pData(data.GSE15744))
-samples <- substr(filenames, 1,9)                                   # Only keeps 1st to 9th character in the string -> cuts .cel from name
-rownames(pData(data.GSE15744)) = samples
-rownames
 
 
-orig <- colnames(exprs(data.GSE15744))
-new <- substr(orig, 1, nchar(orig)-4)                               # Removes last 4 characters in the string
-colnames(exprs(data.GSE15744)) = new
-colnames(exprs(data.GSE15744.vsnrma)) = new
 
-```
 
 Convert to dataframe and cut of Affymetrix Control genes
 
