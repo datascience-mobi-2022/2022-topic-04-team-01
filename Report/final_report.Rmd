@@ -207,8 +207,6 @@ annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: 
 
 
 
-
-
 Convert to dataframe and cut of Affymetrix Control genes
 
 ```{r, eval = FALSE}
@@ -678,7 +676,7 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 The second groupe are genes with a specific function in the neuronal development and function.
 
-#### 2.1 Genes for neuronal function
+#### 2.1 Genes for neuronal function 
 
 Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
 
@@ -1188,7 +1186,8 @@ table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - 
 
 First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLN sarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
 
-Another point is the strong correlation between the expression of SNAP91 genes and SYBU gene. Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
+Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
+One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
 *Quelle:https://onlinelibrary.wiley.com/doi/10.1111/jnc.15194*
 
@@ -1206,14 +1205,87 @@ The neuronal cell migration is stongly dependent on chemoattractors like chemoki
 # Supplementary
 
 ```{r,fig.height=9,fig.width=12}
+
+# Distribution control for Cerebellar Hemisphere 
 Tissues = embryo_df_tissues$max.tissue
+
+#Boxplot for all replicates over all weeks
 Cerebellar_Hemisphere = as.data.frame(embryo_df_tissues %>%
                              filter(max.tissue == str_extract(Tissues, "Brain - Cerebellar Hemisphere")))
 Cerebellar_Hemisphere_names = Cerebellar_Hemisphere$HGNC.symbol
 Cerebellar_Hemisphere =Cerebellar_Hemisphere[,1:18]
 Cerebellar_Hemisphere = t(Cerebellar_Hemisphere)
 colnames(Cerebellar_Hemisphere) <- Cerebellar_Hemisphere_names
-boxplot(Cerebellar_Hemisphere, main="Expression of Brain - Cerebellar Hemisphere genes",col= rainbow(542),cex.axis=0.5)
+Cerebellar_Hemisphere = as.data.frame(Cerebellar_Hemisphere)
+Cerebellar_Hemisphere_sorted = Cerebellar_Hemisphere %>% select(sort(colnames(Cerebellar_Hemisphere)))
+Cerebellar_Hemisphere_sorted
+boxplot(Cerebellar_Hemisphere_sorted, main="Expression of Brain - Cerebellar Hemisphere genes",col= rainbow(542),cex.axis=0.5)
+
+# for week 4 only
+Cerebellar_Hemisphere_week4= Cerebellar_Hemisphere_sorted[1:3,]
+boxplot(Cerebellar_Hemisphere_week4, main="Expression of Brain - Cerebellar Hemisphere genes (week 4)",col= rainbow(542),cex.axis=0.5)
+
+# for week 5 only
+Cerebellar_Hemisphere_week5= Cerebellar_Hemisphere_sorted[4:6,]
+boxplot(Cerebellar_Hemisphere_week5, main="Expression of Brain - Cerebellar Hemisphere genes (week 5)",col= rainbow(542),cex.axis=0.5)
+
+# for week 6 only
+Cerebellar_Hemisphere_week6= Cerebellar_Hemisphere_sorted[7:9,]
+boxplot(Cerebellar_Hemisphere_week6, main="Expression of Brain - Cerebellar Hemisphere genes (week 6)",col= rainbow(542),cex.axis=0.5)
+
+# for week 7 only
+Cerebellar_Hemisphere_week7= Cerebellar_Hemisphere_sorted[10:12,]
+boxplot(Cerebellar_Hemisphere_week7, main="Expression of Brain - Cerebellar Hemisphere genes (week 7)",col= rainbow(542),cex.axis=0.5)
+
+# for week 8 only
+Cerebellar_Hemisphere_week8= Cerebellar_Hemisphere_sorted[13:15,]
+boxplot(Cerebellar_Hemisphere_week8, main="Expression of Brain - Cerebellar Hemisphere genes (week 8)",col= rainbow(542),cex.axis=0.5)
+
+# for week 9 only
+Cerebellar_Hemisphere_week9= Cerebellar_Hemisphere_sorted[16:18,]
+boxplot(Cerebellar_Hemisphere_week9, main="Expression of Brain - Cerebellar Hemisphere genes (week 9)",col= rainbow(542),cex.axis=0.5)
+
+# Distribution Kontrol for ENST00000276646, ENST00000518312 & ENST00000521485
+ENST = embryo_df_tissues$ensembl.transcript
+
+# ENST00000276646
+data.ENST00000276646 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000276646")))
+week_4 =t(data.ENST00000276646[1:3])
+week_5 =t(data.ENST00000276646[4:6])
+week_6 =t(data.ENST00000276646[7:9])
+week_7 =t(data.ENST00000276646[10:12])
+week_8 =t(data.ENST00000276646[13:15])
+week_9 =t(data.ENST00000276646[16:18])
+data.ENST00000276646 = cbind(week_4,week_5,week_6,week_7,week_8,week_9)
+colnames(data.ENST00000276646) <- c("week_4","week_5","week_6","week_7","week_8","week_9")
+boxplot(data.ENST00000276646, main="Expression of ENST00000276646",col= rainbow(6),cex.axis=0.5)
+
+# ENST00000518312
+data.ENST00000518312 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000518312")))
+week_4 =t(data.ENST00000518312[1:3])
+week_5 =t(data.ENST00000518312[4:6])
+week_6 =t(data.ENST00000518312[7:9])
+week_7 =t(data.ENST00000518312[10:12])
+week_8 =t(data.ENST00000518312[13:15])
+week_9 =t(data.ENST00000518312[16:18])
+data.ENST00000518312 = cbind(week_4,week_5,week_6,week_7,week_8,week_9)
+colnames(data.ENST00000518312) <- c("week_4","week_5","week_6","week_7","week_8","week_9")
+boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(6),cex.axis=0.5)
+
+# ENST00000521485
+data.ENST00000521485 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000521485")))
+week_4 =t(data.ENST00000521485[1:3])
+week_5 =t(data.ENST00000521485[4:6])
+week_6 =t(data.ENST00000521485[7:9])
+week_7 =t(data.ENST00000521485[10:12])
+week_8 =t(data.ENST00000521485[13:15])
+week_9 =t(data.ENST00000521485[16:18])
+data.ENST00000521485 = cbind(week_4,week_5,week_6,week_7,week_8,week_9)
+colnames(data.ENST00000521485) <- c("week_4","week_5","week_6","week_7","week_8","week_9")
+boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 
 ```
 
