@@ -1201,3 +1201,20 @@ The neuronal cell migration is stongly dependent on chemoattractors like chemoki
 
 
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+
+
+# Supplementary
+
+```{r,fig.height=9,fig.width=12}
+Tissues = embryo_df_tissues$max.tissue
+Cerebellar_Hemisphere = as.data.frame(embryo_df_tissues %>%
+                             filter(max.tissue == str_extract(Tissues, "Brain - Cerebellar Hemisphere")))
+Cerebellar_Hemisphere_names = Cerebellar_Hemisphere$HGNC.symbol
+Cerebellar_Hemisphere =Cerebellar_Hemisphere[,1:18]
+Cerebellar_Hemisphere = t(Cerebellar_Hemisphere)
+colnames(Cerebellar_Hemisphere) <- Cerebellar_Hemisphere_names
+boxplot(Cerebellar_Hemisphere, main="Expression of Brain - Cerebellar Hemisphere genes",col= rainbow(542),cex.axis=0.5)
+
+```
+
+
