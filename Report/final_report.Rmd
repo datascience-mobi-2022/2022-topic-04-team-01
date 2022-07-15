@@ -74,7 +74,9 @@ The shape of the heart resembels a tube at week 3. The different heart parts dev
 
 *Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
 
-The skeletal muscles start developing at week 5 ()
+The skeletal muscles start developing at week 5. Skeletal muscles evolve from the myogenic progenitor cells of the myotome and dermomyotome located in the somites. As part of skeletal myogenesis a complex molecular network of independant pathways is resbonsable for the development of myogenic progenitor cells into myofibers.
+
+*Quellen:Ito Y, Kayama T, Asahara H. A systems approach and skeletal myogenesis. Comp Funct Genomics. 2012;2012:759407. doi: 10.1155/2012/759407. Epub 2012 Sep 6. PMID: 22991503; PMCID: PMC3443578.*
 
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
 >>>>>>> 97cb6f6275acf16211dcb5c2fdf4190c065d1f2b
