@@ -1283,7 +1283,7 @@ Einlesen der Datein und Datacleaning
 library(readxl)
 library(tidyverse)
 library(dplyr)
-paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls")
+paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls") # 5385 Probe IDs
 for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
   if(is.na(paper_df_diff$Probe_Set_ID[i])){
     j=1
@@ -1297,34 +1297,207 @@ paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen
 paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
 paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
 #Datacleaning complete
-glimpse(paper_df_diff)
-save(paper_df_diff, file="paper_df_diff.RData")
+
 ```
 
 Annotierung des Datensatzes Paper
 ```{r}
-setwd("C:/Users/david/Documents/Data Analysis Lokal/TRAdata")
-ensembl = as.data.frame(read.csv(file="ensembl_103_human.txt", sep = ","))
-#ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE)
-glimpse(ensembl)
 
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
 paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
-sum(!is.na(paper_df_ann$ensembl.transcript)) # 3203 Transcripts lassen sich annotieren
+sum(!is.na(paper_df_ann$ensembl.transcript)) # we are able to compare 3203 Transcripts
 paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
 save(paper_df_ann, file="paper_df_ann.RData")
 ```
 
 
-Kurze Darstellung der Daten des Papers:
+Creating seperate datasets for up, down and arch:
 ```{r}
+paper_df_up <- filter(paper_df_ann, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_ann, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_ann, Expression_pattern == "ARCH") # 396
+```
+
+
+```{r}
+sum(is.na(embryo_df_tissues$AFFY.HG.U133.Plus.2.probe))
+embryo_df_tissues <- embryo_df_tissues %>% drop_na(AFFY.HG.U133.Plus.2.probe)
+```
+
+
+```{r}
+library(ggforce)
+library(VennDiagram)
+library(png)
+#colors <- c("#6b7fff", )
+venn.diagram(
+  x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe),
+  category.names = c("dataframe_paper", "dataframe_TRA"),
+  filename = "venn_diagramm_comparison_paper.png",
+  output = TRUE,
+  
+  imagetype = "png",
+  scaled = FALSE,
+  #height = 480,
+  #width = ,
+  resolution = 300,
+  compression = "lzw",
+  
+  lwd = 2,
+  lty = "blank",
+  margin = 0.15
+)
+
+#Display saved image
+options(repr.plot.height=12, repr.plot.width=12)
+pp <- readPNG("venn_diagramm_comparison_paper.png")
+plot.new()
+rasterImage(pp,0,0,1,1)
+```
+
+```{r}
+# Load the VennDiagram package
+library(VennDiagram)
+
+set.seed(12)
+set1 <- sample(1:10000, 2000)
+set2 <- sample(1:10000, 2000)
+set3 <- sample(1:10000, 2000)
+set4 <- sample(1:10000, 2000)
+set5 <- sample(1:10000, 2000)
+colors <- c("#ff4059", "#2cff21")
+
+# Make Venn diagram from list of groups
+display_venn(x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe) ,
+            category.names = c("dataframe_paper", "dataframe_TRA"),
+            filename = 'venn_diagramm_comparison_paper.png',
+            output=TRUE,
+            imagetype="png", 
+            #scaled = FALSE,
+            height = 1000 , 
+            width = 1000 ,
+            resolution = 300,
+            compression = "lzw",
+            col = "black",
+            fill = colors,
+            cat.col = colors,
+            cat.cex = 2,
+            margin = 0
+            
+)
+display_venn()
+
+
+# Display saved image
+#options(repr.plot.height=1000, repr.plot.width= 1000)
+library("png")
+pp <- readPNG("venn_diagramm_comparison_paper.png")
+plot.new() 
+rasterImage(pp,0,0,1,1)
 
 ```
 
 
+
+```{r}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+library(tm)
+library(proustr)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/14_SeveralIndepLists.csv", header=TRUE) 
+to_remove <- c("_|[0-9]|\\.|function|^id|script|var|div|null|typeof|opts|if|^r$|undefined|false|loaded|true|settimeout|eval|else|artist")
+data <- data %>% filter(!grepl(to_remove, word)) %>% filter(!word %in% stopwords('fr')) %>% filter(!word %in% proust_stopwords()$word)
+
+set1 <- data %>% filter(artist=="booba") %>% select(word) %>% unlist()
+set2 <- data %>% filter(artist=="nekfeu") %>% select(word) %>% unlist() 
+set3 <- data %>% filter(artist=="georges-brassens") %>% select(word) %>% unlist()
+
+# library
+library(VennDiagram)
+ 
+#Make the plot
+venn.diagram(
+  x = list(
+    set1, set2, set3
+    ),
+  category.names = c("Booba (1995)" , "Nekfeu (663)" , "Brassens (471)"),
+  filename = 'test_venn.png',
+  output = TRUE ,
+          imagetype="png" ,
+          height = 480 , 
+          width = 480 , 
+          resolution = 300,
+          compression = "lzw",
+          lwd = 1,
+          col=c("#440154ff", '#21908dff', '#fde725ff'),
+          fill = c(alpha("#440154ff",0.3), alpha('#21908dff',0.3), alpha('#fde725ff',0.3)),
+          cex = 0.5,
+          fontfamily = "sans",
+          cat.cex = 0.3,
+          cat.default.pos = "outer",
+          cat.pos = c(-27, 27, 135),
+          cat.dist = c(0.055, 0.055, 0.085),
+          cat.fontfamily = "sans",
+          cat.col = c("#440154ff", '#21908dff', '#fde725ff'),
+          rotation = 1
+        )
+library("png")
+pp <- readPNG("test_venn.png")
+plot.new() 
+rasterImage(pp,0,0,1,1)
+```
+
+
+
 Vergleich mit unseren Differenziell exprimierten Transcripts
+
+```{r}
+ggplot(paper_df_up, aes())
+```
+
+
 ```{r}
 
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
 
+
+for (tissue in tissues) {
+  data_raw = data.frame(Week4 = )
+  for (i in 1:8) {
+    xx = strsplit(enr_GO_tissue$geneID[i], "/")
+    bool_contained1 = sapply(diff_genes_ann_0.01$tissues, function(x) {x %in% xx})
+    data_temp = diff_genes_ann_0.01[bool_contained1,]
+     data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  }
+ 
+
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
 ```
 
 

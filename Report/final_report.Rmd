@@ -45,6 +45,16 @@ library(magrittr)
 library(dplyr)
 library(stringr)
 library(ggrepel)
+library(readxl)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(cowplot)
+library(RCurl)
+library(readxl)
+library(ggforce)
+library(VennDiagram)
+library(png)
 ```
 
 #Introduction
@@ -97,24 +107,16 @@ Overall, the data set suits the requirements for our purpose.
 
 ### Affymetrix U133 plus 2.0 human GeneChip array
 
-The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with oligonucleotides as matrices which screen for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices.
+The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with oligonucleotides as matrices which screen for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices. The Affymetrix chip include 62 control transcripts, whose intensities are imported together with the acquired data.
 
 ### Importing the data set
 
 We downloaded the raw data to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). We imported it with the help of the library *affy* and is connected to the correct Annotation by the brainarray package. The *affy* package allows more manageable data analysis and manipulation of microarray intensity values.
 
 ```{r importing-the-data-from-harddrive, eval = FALSE}
-setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/rawdata")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
-
-# adjusting the microarray names by cutting the .cel
-rownames(pData(data.GSE15744)) <- substr(rownames(pData(data.GSE15744)), 1, nchar(rownames(pData(data.GSE15744)))-4)
-colnames(exprs(data.GSE15744)) <- substr(colnames(exprs(data.GSE15744)), 1, nchar(colnames(exprs(data.GSE15744)))-4)
-
-
-setwd("C:/Users/merke/Documents/Vorlesungen Material/SS22/DataAnalysis/project/report")
-save(data.GSE15744, file="data.GSE15744.RData")
 ```
 
 To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the Library *Rfssa*.
@@ -164,6 +166,17 @@ data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 The library vsn is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
 
 
+```{r silent-Data-Cleaning, include=FALSE}
+#adjusting the microarray names by cutting the .cel
+rownames(pData(data.GSE15744.vsnrma)) <- substr(rownames(pData(data.GSE15744)), 1, nchar(rownames(pData(data.GSE15744)))-4)
+colnames(exprs(data.GSE15744.vsnrma)) <- substr(colnames(exprs(data.GSE15744)), 1, nchar(colnames(exprs(data.GSE15744)))-4)
+
+temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
+colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
+temp_embryo_df
+embryo_df = temp_embryo_df[63:95721,]
+```
+
 ### Quality control of the vsn normalization
 
 To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)).
@@ -173,7 +186,7 @@ Another way to control the normalization is to visualize the intensity values. H
 
 
 
-```{r mean-sd-plot}
+```{r mean-sd-plot, include=FALSE}
 meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
 meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data GSE15744")
 ```
@@ -184,7 +197,7 @@ boxplot.GSE15744.vsnrma <- boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15
         ylab="Relative expression",
         main="Boxplots of microarrays with vsn normalized data")
 ```
-```{r Scatter-plot}
+```{r Scatter-plot, include=FALSE}
 exprs.GSE15744.vsnrma <- as.data.frame(exprs(data.GSE15744.vsnrma))
 scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma,) +
   theme_bw() +
@@ -195,33 +208,39 @@ scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma,) +
        y = colnames(data.GSE15744.vsnrma)[5]) 
 ```
 
+```{r}
+par(mfrow = c(1,3))
+meansdplot.GSE15744.vsnrma
+boxplot.GSE15744.vsnrma
+scatterplot.GSE15744.vsnrma
+```
+
+
 ```{r QC-normalization-plots, fig.width=9, fig.height=6, fig.subcap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
 
-OC_normalization_plot = arrangeGrob(grobs = list(meansd.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, exprs.GSE15744.vsnrma), nrow=1, widths = c(3, 3, 3), heights = c(3))
+#meansd.GSE15744.vsnrma <- as.grob(meansd.GSE15744.vsnrma$gg)
+#boxplot.GSE15744.vsnrma <- as.grob(boxplot.GSE15744.vsnrma)
+
+#str(meansd.GSE15744.vsnrma)
+OC_normalization_plot = arrangeGrob(grobs = list(meansd.GSE15744.vsnrma$gg, #boxplot.GSE15744.vsnrma,
+                                                 scatterplot.GSE15744.vsnrma), nrow=1, widths = c(3, #3,
+                                                                                                  3), heights = c(3))
 
 OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
-  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
+  draw_plot_label(label = c("A",# "B", 
+                            "C"), size = 15, x = c(0.03,# 0.35, 
+                                                   0.63), y = c(0.13,# 0.13,
+                                                                0.13)) 
 
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
 
-## Data cleaning
-
-
-
-Convert to dataframe and cut of Affymetrix Control genes
-
-```{r, eval = FALSE}
-temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
-colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
-temp_embryo_df
-embryo_df = temp_embryo_df[63:95721,]
-```
-
 ## Annotation
 
-```{r Annotation, eval=}
+To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Mrs Dr Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Mrs Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
+
+```{r Annotation}
 library(RCurl)
 file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
 ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
@@ -257,11 +276,8 @@ a$tissues = tissues
 embryo_df_tissues = a
 ```
 
-## Data Cleaning
-
-```{r, eval = FALSE}
-embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] #removed duplicates
-
+```{r further-silent-Data-Cleaning, eval = FALSE}
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] 
 
 #Chromosome Spalte aufhübschen und unnötiges löschen
 embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
@@ -270,16 +286,19 @@ embryo_df_tissues <- embryo_df_tissues %>%
 embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
 
 # Nach NA values suchen
-sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+#sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
 ```
 
-Datacleaning complete. Now on to some Exploritory stuff.
+## Limma analysis
+
+## Over representation analysis
+
 
 # Results
 
 ## Limma analysis and Volcano plot
 
-### 1. Limma analysis
+### Limma analysis
 
 ```{r, eval = FALSE}
 library(limma)
@@ -334,7 +353,7 @@ for (i in 1:15) {
 diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 ```
 
-### 2. Volcano plot
+### Volcano plot
 
 The gathered dataset from limma analysis of the differentially expression between week 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10(adjusted P-value) boundary was set at 2 which equals our targeted our targeted adjusted P-value of 0.01. The logFC boundary was -1 and 1, which reflects a doubling in the expression. The genes were categorized in two groups:
 
@@ -383,6 +402,78 @@ volcanizator <- function(data, logFC_thresh_upper, logFC_thresh_lower, max_pValu
 }
 volcano <- volcanizator(top.table, 1, -1, 0.01)
 volcano
+```
+
+
+## Comparison of differential expressed genes between the original paper and our method
+
+
+We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our dataset to filter for TRAs.
+```{r}
+#importing the data from xls file
+library(readxl)
+library(tidyverse)
+library(dplyr)
+paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls") # 5385 Probe IDs
+for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
+  if(is.na(paper_df_diff$Probe_Set_ID[i])){
+    j=1
+    while (is.na(paper_df_diff$Probe_Set_ID[i-j])) {
+      j = j+1
+    }
+    paper_df_diff$Gene_Title[i-j] <- paste(paper_df_diff$Gene_Title[i-j], paper_df_diff$Gene_Title[i])
+  }
+}
+paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen mit restlichem String entfernt
+paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
+paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
+#Datacleaning complete
+
+#Annotation:
+paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+#sum(!is.na(paper_df_ann$ensembl.transcript)) # we are able to compare 3203 Transcripts
+#paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
+#save(paper_df_ann, file="paper_df_ann.RData")
+```
+
+
+```{r}
+# Make Venn diagram from list of groups
+colors <- c("#ff4059", "#2cff21")
+display_venn(x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe) ,
+            category.names = c("dataframe_paper", "dataframe_TRA"),
+            filename = 'venn_diagramm_comparison_paper.png',
+            output=TRUE,
+            imagetype="png", 
+            #scaled = FALSE,
+            height = 1000 , 
+            width = 1000 ,
+            resolution = 300,
+            compression = "lzw",
+            col = "black",
+            fill = colors,
+            cat.col = colors,
+            cat.cex = 2,
+            margin = 0
+            
+)
+display_venn()
+
+
+# Display saved image
+#options(repr.plot.height=1000, repr.plot.width= 1000)
+library("png")
+pp <- readPNG("venn_diagramm_comparison_paper.png")
+plot.new() 
+rasterImage(pp,0,0,1,1)
+
+```
+
+
+```{r}
+paper_df_up <- filter(paper_df_ann, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_ann, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_ann, Expression_pattern == "ARCH") # 396
 ```
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
@@ -446,7 +537,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes for cytokines
 
-### 1. Ion channels
+### Ion channels
 
 ```{r,fig.height=2.5,fig.width=2.5}
 # A vektor of ENST numbers and weeks was created
@@ -481,7 +572,7 @@ legend(3.8, 9.25, legend=c("ENST00000531293"),
 
 Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPases.
 
-### 2. Genes for neuronal development and function
+### Genes for neuronal development and function
 
 ```{r,fig.height=3.2,fig.width=3.2}
 # ENST00000602349
@@ -679,11 +770,11 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 The second groupe are genes with a specific function in the neuronal development and function.
 
-#### 2.1 Genes for neuronal function 
+#### Genes for neuronal function 
 
 Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
 
-#### 2.2 Genes for axon guidance
+#### Genes for axon guidance
 
 Filtering mentioned four genes for axon guidance:
 
@@ -693,7 +784,7 @@ ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated pr
 
 In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein) interacts in axon guidance. The encoded preprotein is processed to neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated to Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
 
-#### 2.3 Genes for neuronal survival
+#### Genes for neuronal survival
 
 ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheles, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
 
