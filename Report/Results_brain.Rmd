@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Diagramof brain related genes
 
 ### 1. Ion channels
+
 ```{r setup, include=FALSE}
 # ENST00000531293
 data.ENST00000531293 = as.data.frame(embryo_df_tissues %>%
@@ -50,8 +51,8 @@ legend(1, 8.5, legend=c("ENST00000531293"),
 
 [hier Texteinfügen]
 
-
 ### 2.Genes for neuronal development
+
 ```{r setup, include=FALSE}
 
 # ENST00000602349
@@ -274,8 +275,8 @@ legend(1, 8.25, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690"
 
 [hier Texteinfügen]
 
-
 ### 3.Genes for cytokine
+
 ```{r setup, include=FALSE}
 # ENST00000337225
 data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
