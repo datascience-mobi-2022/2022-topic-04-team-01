@@ -79,9 +79,15 @@ The shape of the heart resembels a tube at week 3. The different heart parts dev
 
 *Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
 
+<<<<<<< HEAD
+The skeletal muscles start developing at week 5. Skeletal muscles evolve from the myogenic progenitor cells of the myotome and dermomyotome located in the somites. As part of skeletal myogenesis a complex molecular network of independant pathways is resbonsable for the development of myogenic progenitor cells into myofibers.
+
+*Quellen:Ito Y, Kayama T, Asahara H. A systems approach and skeletal myogenesis. Comp Funct Genomics. 2012;2012:759407. doi: 10.1155/2012/759407. Epub 2012 Sep 6. PMID: 22991503; PMCID: PMC3443578.*
+=======
 The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle protein develop in the follwing weeks (Romero; 2013). 
 
 *Quellen:https://www.sciencedirect.com/science/article/abs/pii/B9780444595652000022?via%3Dihub*
+>>>>>>> 37d97ee77052ab8c07bfbdb5a6b3b4ac570d590c
 
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
 >>>>>>> 97cb6f6275acf16211dcb5c2fdf4190c065d1f2b
@@ -469,6 +475,49 @@ theme(aspect.ratio = 1)
 ggbiplot(pca_genes, choices=c(1,3)) +
 theme(aspect.ratio = 1)
 ```
+```{r}
+ loadings = pca_genes$rotation[,"PC1"]
+pca_df = data.frame(diff_genes_ann_0.01[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
+pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+```
+```{r}
+#PCA for Heart transripts
+#tissue = "Heart"
+#bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+test_genes = diff_genes_ann_0.01  #[bool_contained,]
+
+#pca on rows (genes)
+pca_genes <- prcomp(
+  t(test_genes[,1:18]), # transposed matrix
+  scale. = TRUE # data scaled to have unit variance
+  )
+
+#taking a first look
+summary(pca_genes)
+
+loadings = pca_genes$rotation[,"PC1"]
+pca_df = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
+pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+test_genes
+ranks_pca = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol")], PC1 = NA, PC2 = NA, PC3 = NA, PC4 = NA, PC5 = NA)
+PC_vector = c("PC1", "PC2", "PC3", "PC4", "PC5")
+for (i in PC_vector) {
+  loadings = pca_genes$rotation[,i]
+  pca_df = data.frame(test_genes$ensembl.transcript, Loadings = loadings, Order = c(1:length(test_genes$ensembl.transcript)))
+  pca_df = pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+  pca_df$rank = c(1:length(test_genes$ensembl.transcript))
+  pca_df = pca_df[order(pca_df$Order),]
+  ranks_pca[,i] =  pca_df$rank
+}
+
+ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 - ranks_pca$PC5
+ranks_pca[order(ranks_pca$sum),]
+
+```
+
+
+
+
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
@@ -842,6 +891,7 @@ treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) +
 library(grid)
 library(gridExtra)
 library(cowplot)
+library(ggpubr)
 lay = rbind(c(1,1,2), c(1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.7), y = c(0.1,0.1)) 
@@ -1050,8 +1100,11 @@ For many tissues, as shown here exemplary with the spleen, the clustering reveal
 
 ### The clusters of up- and downregulated transcripts can be linked to distinct gene functions.
 
+<<<<<<< Updated upstream
 For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
 
+=======
+>>>>>>> Stashed changes
 ```{r}
 #Get the spleen dataset with the clusters
 expression_difference = function(x,y) {
@@ -1086,7 +1139,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r, fig.width= 5, fig.height= 3}
+```{r, fig.width= 5, fig.height= 3, fig.cap = A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts.}
 library(ggplot2)
 #Compare the initial expression values of both clusters
 spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
@@ -1102,8 +1155,13 @@ for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$W
 spleen_boxplot_data = spleen_boxplot_data[-1,]
 spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts")
 spleen_boxplot
-#boxplot(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)
+
 ```
+
+As shown in Fig. ???, the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed  transcripts, we used the NCBI gene database to get a functional annotation. 
+Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in [Suppl.]. 
+
+
 
 ```{r}
 get_gene_info = function(transcript_ids){
@@ -1132,7 +1190,7 @@ spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
 ```
 
 ```{r}
-#Table verschönern
+# Create a useful table for all upregulated genes
 library(gt)
 library(gtExtras)
 library(ggplot2)
@@ -1146,13 +1204,22 @@ Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1]
 spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
 spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
 
+spleen1_gene_description_sum = spleen1_gene_description_spl[c(2,5,6,8,11,17,20,26,29, 33,37,38,41,42,49,71,96),]
+functions_1 = c("Member of the immunoglobulin superfamily", "Mediates polarization of T cells and neutrophils", "Secreted by cytptpxic lymphocytes", "Can upregulate blood pressure", "B lymphocyte chemoattractant", "IL-11 receptor", "", "Contains von Willebrand factor domains", "May function as a cytokine", "Plays a role in immune surveillance", "Regulating the complement cascade", "HLA class II", "Endocytosis of pathogen", "Receptors for interferons alpha and beta", "Fibroblast growth factor", "Regulating the complement cascade", "Protect the antibody from degradation")
+spleen1_gene_description_sum$Summary = functions_1
 
-
-table_spleen1 = gt(spleen1_gene_description_spl)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+table_spleen1
 ```
 
+<<<<<<< Updated upstream
 ```{r}
 # Jetzt noch für Spleen2
+=======
+
+```{r, fig.width=12}
+# Table for downregulated genes
+>>>>>>> Stashed changes
 library(gt)
 library(gtExtras)
 library(ggplot2)
@@ -1168,8 +1235,71 @@ spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
 spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
 
 
-table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+table_spleen2 = gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+table_spleen2
+```
 
+### Overrepresentation Analysis can create plots that signify organ development
+
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+library(tidyverse)
+library(gridExtra)
+library(grid)
+
+
+load("embryo_df_tissues.RData")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin", "Muscle - Skeletal", "Artery", "Heart")
+#tissues = "Muscle - Skeletal"
+
+
+for (tissue in tissues) {
+  bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+  embryo_df_tissue = embryo_df_tissues[bool_contained,]
+  deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+  geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+  enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+  enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+  if (dim(enr_GO_tissue)[1] <8) {npath = dim(enr_GO_tissue)[1]} else {npath = 8}
+  if(npath != 0) {
+    data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, npath)})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[1:npath], 6)), Expression=NA))
+    for (i in 1:npath) {
+      xx = strsplit(enr_GO_tissue$geneID[i], "/")
+      bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+      bool_contained1[is.na(bool_contained1)] = FALSE
+      data_temp = diff_genes_ann_0.01[bool_contained1,]
+      data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+      expr_path = colMeans(data_abs[1:6,])
+      data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+    }
+ 
+  data_plot
+  
+    # Create the Plot
+    assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic()   )  #ylim(6.5,8.5)
+  }
+  else {
+    assign(str_glue(tissue, "_plot"), NA)
+  }
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]))
 ```
 
 # Discussion
@@ -1178,7 +1308,329 @@ table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - 
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
+<<<<<<< Updated upstream
 First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale. A cause of this is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofactor for actin dependent cell migration.
+=======
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+library(tidyverse)
+library(gridExtra)
+library(grid)
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+
+
+# List the tissues
+#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+tissues = c("Adipose",  "Skin",  "Muscle - Skeletal", "Bladder",   "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas",  "Spleen", "Stomach", "Cervix", "Fallopian Tube", "Ovary", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Brain", "Nerve - Tibial")
+#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin", "Muscle - Skeletal", "Artery", "Heart")
+#tissue = "Muscle - Skeletal"
+
+
+for (tissue in tissues) {
+  bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+  embryo_df_tissue = embryo_df_tissues[bool_contained,]
+  deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+  geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+  enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+  enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+  if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+  if(npath != 0) {
+     tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+     colnames(tissue_table) = c("Function", "Adj_p_value")
+     assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+             fmt_scientific(columns = c(Adj_p_value), decimals = 0)) 
+    } 
+  else {
+    assign(str_glue(tissue, "_table"), NA)
+  }
+   
+}
+get("Brain_table") 
+ff = sapply(tissues, function(x){str_glue(x, "_table")})
+for (i in 1:25) {
+  get(ff[i])
+}
+
+```
+
+```{r, fig.height = 7, fig.width = 14}
+#Rearrange the selectet plots so that we can combine the table with a plot 
+
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+library(tidyverse)
+library(gridExtra)
+library(grid)
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(cowplot)
+
+
+# Spleen 
+tissue = "Spleen"
+selected = c(1,2,3,4,5)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |> fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+
+
+
+# Brain 
+tissue = "Brain"
+selected = c(1,5,7)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+
+# Liver 
+tissue = "Liver"
+selected = c(1,3,5,7,9)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+lay = rbind(c(1,1,2,2,2))
+grid.arrange(grobs = list(Liver_t,Liver_plot), layout_matrix = lay)
+
+
+# Heart 
+tissue = "Heart"
+selected = c(1,2,3,6,10)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+
+# Muscle - Skeletal
+tissue = "Muscle - Skeletal"
+selected = c(1,2,4,5,7)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+
+# Testis
+tissue = "Testis"
+selected = c(1,4,7)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+#Adipose
+tissue = "Adipose"
+selected = c(1:10)
+#Overrepresentation Analysis
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+#Create the table of most significant functions
+if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
+tissue_table = enr_GO_tissue[1:npath,c(2,6)]
+colnames(tissue_table) = c("Function", "Adj_p_value")
+assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
+fmt_scientific(columns = c(Adj_p_value), decimals = 0) |>  tab_style(style = list(cell_text(weight = "bold")), locations = cells_body(columns =Function, rows = selected)))
+gtsave(get(str_glue(tissue, "_table")),str_glue(tissue, "_table.png"))
+assign(str_glue(tissue, "_t"), (ggdraw() + draw_image(str_glue(tissue, "_table.png"))))
+#Plot the chosen functions
+data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(selected))})), Function =
+                             as.character(c(rep(enr_GO_tissue$Description[selected], 6)), Expression=NA))
+for (i in selected) {
+  xx = strsplit(enr_GO_tissue$geneID[i], "/")
+  bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
+  bool_contained1[is.na(bool_contained1)] = FALSE
+  data_temp = diff_genes_ann_0.01[bool_contained1,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
+                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
+                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  expr_path = colMeans(data_abs[1:6,])
+  data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
+}
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic() + scale_color_npg())  #ylim(6.5,8.5)
+
+```
+
+
+
+>>>>>>> Stashed changes
 
 Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
@@ -1199,6 +1651,7 @@ The neuronal cell migration is strongly dependent on chemoattractors like chemok
 # Distribution control for Cerebellar Hemisphere 
 Tissues = embryo_df_tissues$max.tissue
 
+<<<<<<< Updated upstream
 #Boxplot for all replicates over all weeks
 Cerebellar_Hemisphere = as.data.frame(embryo_df_tissues %>%
                              filter(max.tissue == str_extract(Tissues, "Brain - Cerebellar Hemisphere")))
@@ -1210,6 +1663,9 @@ Cerebellar_Hemisphere = as.data.frame(Cerebellar_Hemisphere)
 Cerebellar_Hemisphere_sorted = Cerebellar_Hemisphere %>% select(sort(colnames(Cerebellar_Hemisphere)))
 Cerebellar_Hemisphere_sorted
 boxplot(Cerebellar_Hemisphere_sorted, main="Expression of Brain - Cerebellar Hemisphere genes",col= rainbow(542),cex.axis=0.5)
+=======
+In addition we identified a significant increase in expression of NXPH1 this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11.
+>>>>>>> Stashed changes
 
 # for week 4 only
 Cerebellar_Hemisphere_week4= Cerebellar_Hemisphere_sorted[1:3,]
