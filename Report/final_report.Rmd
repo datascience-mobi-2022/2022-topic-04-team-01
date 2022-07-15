@@ -47,14 +47,13 @@ library(stringr)
 library(ggrepel)
 ```
 
-<<<<<<< HEAD
-#Introduction Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs, the heart, the lungs, the liver and the brain.
+
 =======
 <<<<<<< HEAD
 #Introduction
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
 =======
-#Introduction Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs, the heart, the lungs, the liver and the brain.
+
 >>>>>>> d49f96b9f309622def21954751c23ac29b582d68
 >>>>>>> 97cb6f6275acf16211dcb5c2fdf4190c065d1f2b
 
