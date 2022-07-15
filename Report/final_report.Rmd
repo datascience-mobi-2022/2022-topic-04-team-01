@@ -48,9 +48,12 @@ library(ggrepel)
 ```
 
 #Introduction
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs, the heart, the lungs, the liver and the brain.
 
+Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways a network of venes develop. Between week 5 to 9 the production of gallic acid starts. Furthermore glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between week 8 and 9 the expression of cytochrome-P450-enzyme start (Deutsch, 2013).
 
-The brain shows a significant development during weeks 4 to 9, the neural tube closes, the Prosencephalon develops to the Diencephalon and Telencephalon.  
+*Quellen: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/ *
+
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
 
 *Quellen: https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress; https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf *
