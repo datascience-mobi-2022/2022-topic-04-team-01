@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.12)  15 JUL 2022 21:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  15 JUL 2022 22:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Test2.tex
 (./Test2.tex
 LaTeX2e <2022-06-01> patch level 5
-L3 programming layer <2022-07-04> (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
+L3 programming layer <2022-07-14> (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
 (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
@@ -473,12 +473,12 @@ Package pdftex.def Info: Test2_files/figure-latex/unnamed-chunk-10-1.pdf  used o
 l.124 ... circle {      fill: none;      stroke: #
                                                   000000;      stroke-lineca... 
 Here is how much of TeX's memory you used:
- 11934 strings out of 479984
- 193714 string characters out of 5885934
- 479703 words of memory out of 5000000
- 29967 multiletter control sequences out of 15000+600000
+ 11932 strings out of 479983
+ 193579 string characters out of 5886474
+ 479734 words of memory out of 5000000
+ 29968 multiletter control sequences out of 15000+600000
  509311 words of font info for 52 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,9n,77p,2175b,506s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,9n,77p,1856b,506s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 !  ==> Fatal error occurred, no output PDF file produced!

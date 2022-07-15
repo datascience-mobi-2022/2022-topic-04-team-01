@@ -1100,11 +1100,9 @@ For many tissues, as shown here exemplary with the spleen, the clustering reveal
 
 ### The clusters of up- and downregulated transcripts can be linked to distinct gene functions.
 
-<<<<<<< Updated upstream
 For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
 
-=======
->>>>>>> Stashed changes
+
 ```{r}
 #Get the spleen dataset with the clusters
 expression_difference = function(x,y) {
@@ -1212,14 +1210,11 @@ table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - 
 table_spleen1
 ```
 
-<<<<<<< Updated upstream
-```{r}
-# Jetzt noch für Spleen2
-=======
 
 ```{r, fig.width=12}
+
 # Table for downregulated genes
->>>>>>> Stashed changes
+
 library(gt)
 library(gtExtras)
 library(ggplot2)
@@ -1308,9 +1303,8 @@ ff = sapply(tissues, function(x){str_glue(x, "_plot")})
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
-<<<<<<< Updated upstream
 First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale. A cause of this is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofactor for actin dependent cell migration.
-=======
+
 ```{r}
 library(clusterProfiler)
 library(enrichplot)
@@ -1630,7 +1624,6 @@ assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression,
 
 
 
->>>>>>> Stashed changes
 
 Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
@@ -1651,7 +1644,6 @@ The neuronal cell migration is strongly dependent on chemoattractors like chemok
 # Distribution control for Cerebellar Hemisphere 
 Tissues = embryo_df_tissues$max.tissue
 
-<<<<<<< Updated upstream
 #Boxplot for all replicates over all weeks
 Cerebellar_Hemisphere = as.data.frame(embryo_df_tissues %>%
                              filter(max.tissue == str_extract(Tissues, "Brain - Cerebellar Hemisphere")))
