@@ -47,12 +47,16 @@ library(stringr)
 library(ggrepel)
 ```
 
+<<<<<<< HEAD
 #Introduction
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
+=======
+#Introduction Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs, the heart, the lungs, the liver and the brain.
+>>>>>>> d49f96b9f309622def21954751c23ac29b582d68
 
 Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways a network of venes develop. Between week 5 to 9 the production of gallic acid starts. Furthermore glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between week 8 and 9 the expression of cytochrome-P450-enzyme start (Deutsch, 2013).
 
-*Quellen: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/ *
+*Quellen: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/>*
 
 The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff; 1993). 
 
@@ -68,12 +72,11 @@ The skeletal muscles start developing at week 5 ()
 
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
 
-*Quellen: https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress; https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf *
+*Quellen: <https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress>; <https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf>*
 
 Chemokines are a groupe of small proteins, interacting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta) depending on the position of their first cysteins (C). In the alpha groupe (or CXC) they are separeted by a single aminoacid. In the beta groupe (or CC) they are next to each other. In the gamma groupe (or C) there is only one cystein present. In the delta groupe (or CX3C) they are separeted by three aminoacids. (Yusuf,2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortend with an R. E.g. CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonal development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron 2008).
 
-*Quellen: https://link.springer.com/article/10.1007/s00429-005-0013-9; https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847 *
-
+*Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
 
 *Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
 
@@ -84,6 +87,7 @@ Chemokines are a groupe of small proteins, interacting as chemoattractors on eff
 The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays. Packages for annotation purposes of microarrays were provided by brainarray.
 
 Following libraries were used:
+
 ```{r table-with-all-libraries, eval = FALSE}
 all_libraries <- tibble::tribble(
   ~Library...package,                        ~Version,                              ~Description,
@@ -100,12 +104,9 @@ all_libraries %>%
 
 ```
 
-
 ## Dataset
 
-We obtained the data set from Yi H *et al.* (2010). We chose this data set by the following criteria, it contains human embryonic data and it covers every week between the 4th and 9th week, which are interesting stages of embryogenesis and organ development. Three replica at each point in time were tested, hence data from 18 embryos were acquired.
-The timezone covers the Carnegie stages 10-23, finishing the process of embryogenesis and organogenesis. This peroid of embryogenesis is highly regulated with considerable differential gene expression.
-Overall, the data set suits the requirements for our purpose.
+We obtained the data set from Yi H *et al.* (2010). We chose this data set by the following criteria, it contains human embryonic data and it covers every week between the 4th and 9th week, which are interesting stages of embryogenesis and organ development. Three replica at each point in time were tested, hence data from 18 embryos were acquired. The timezone covers the Carnegie stages 10-23, finishing the process of embryogenesis and organogenesis. This peroid of embryogenesis is highly regulated with considerable differential gene expression. Overall, the data set suits the requirements for our purpose.
 
 ### Affymetrix U133 plus 2.0 human GeneChip array
 
@@ -139,9 +140,10 @@ load_github_data(githubURL)
 
 ### Quality control of the suface images
 
-To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example 
+To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example
 
 As shown in Figure \@ref(fig:QC-surface-images) as an example, the surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+
 ```{r QC-surface-images, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: a selected surface image of the microarrays showing no damage or artefacts.** The microarray inspection shows no irregularities and every chip is accepted for further data analysis"}
 surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, end = 0.75)[100:1])
 ## To generate all images please use:
@@ -175,20 +177,15 @@ data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 
 The library vsn is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
 
-
 ### Quality control of the vsn normalization
 
-To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)).
-After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:)A).
-Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:)C). 
-
-
-
+To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:)A). Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:)C).
 
 ```{r mean-sd-plot}
 meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
 meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data GSE15744")
 ```
+
 ```{r boxplot-vsn-normalization}
 boxplot.GSE15744.vsnrma <- boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
         cex.axis=0.5,
@@ -196,6 +193,7 @@ boxplot.GSE15744.vsnrma <- boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15
         ylab="Relative expression",
         main="Boxplots of microarrays with vsn normalized data")
 ```
+
 ```{r Scatter-plot}
 exprs.GSE15744.vsnrma <- as.data.frame(exprs(data.GSE15744.vsnrma))
 scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma,) +
@@ -217,10 +215,7 @@ OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
-
 ## Data cleaning
-
-
 
 Convert to dataframe and cut of Affymetrix Control genes
 
@@ -416,7 +411,7 @@ summary(pca_genes)
 
 To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
-```{r}
+```{r pca-variance}
 #visualizing the variance of the PCAs
 pc_eigenvalues <- pca_genes$sdev^2
 
@@ -434,22 +429,26 @@ pc_eigenvalues %>%
   geom_col(aes(y = pct)) +
   geom_line(aes(y = pct_cum, group = 1)) + 
   geom_point(aes(y = pct_cum)) +
-  labs(x = "Principal component", y = "Fraction variance explained")
+  labs(x = "Principal component", y = "Fraction variance explained") +
+  theme(aspect.ratio = 1)
 ```
 
-This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. Seeing as the first three PCAs already explain over 80% of the data's variance, only those three were chosen to be used for further analysis and visualization.
+This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. Seeing as the first three PCAs already explain over 80% of the data's variance (Figure \@ref(fig:pca-variance)), only those three were chosen to be used for further analysis and visualization.
 
 The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
 
-```{r}
+```{r pca-plots}
 #PCA 1&2
-ggbiplot(pca_genes)
+ggbiplot(pca_genes) +
+theme(aspect.ratio = 1)
 
 #PCA 2&3
-ggbiplot(pca_genes, choices=c(2,3))
+ggbiplot(pca_genes, choices=c(2,3)) +
+theme(aspect.ratio = 1)
 
 #PCA 1&3
-ggbiplot(pca_genes, choices=c(1,3))
+ggbiplot(pca_genes, choices=c(1,3)) +
+theme(aspect.ratio = 1)
 ```
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
@@ -691,7 +690,11 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 The second groupe are genes with a specific function in the neuronal development and function.
 
+<<<<<<< HEAD
 #### Genes for neuronal function 
+=======
+#### 2.1 Genes for neuronal function
+>>>>>>> d49f96b9f309622def21954751c23ac29b582d68
 
 Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
 
@@ -812,8 +815,6 @@ Two interleukin related genes were discovered. ENST00000555247 encodes for IL11R
 #### Chemokine related genes
 
 There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225 which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85) a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promote chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
-
-
 
 ## TRAs can infer a basic timeline of organ development
 
@@ -1058,13 +1059,11 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size =
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
 ```
 
+For many tissues, as shown here exemplary with the spleen, the clustering showed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
 
-For many tissues, as shown here exemplary with the spleen, the clustering showed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters. 
+### The clusters of up- and downregulated transcripts can be linked to distinct gene functions.
 
-
-### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. 
-
-For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation. 
+For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
 
 ```{r}
 #Get the spleen dataset with the clusters
@@ -1165,7 +1164,6 @@ spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
 table_spleen1 = gt(spleen1_gene_description_spl)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
 ```
 
-
 ```{r}
 # Jetzt noch für Spleen2
 library(gt)
@@ -1187,34 +1185,25 @@ table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - 
 
 ```
 
-
-
-
-
 # Discussion
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
-
 First point to discuss is the signifikant increase in the gene expression of Ca(2+)ATPases (SLN sarcolipin) by factor 2 in logarithmic scale. A reason therefor is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofaktor for actin dependent cell migration.
 
-Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020).
-One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
+Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
-*Quelle:https://onlinelibrary.wiley.com/doi/10.1111/jnc.15194*
+*Quelle:<https://onlinelibrary.wiley.com/doi/10.1111/jnc.15194>*
 
 In addition we identified a signifikant increase in expression of NXPH1 this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11.
 
 We further identified that two transkripts associated to two different tissues show identical correlation, this can be caused by a false annotations. Nevertheless, they show a stong downregulation of BDNF. This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development.
 
-The neuronal cell migration is stongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a signifikant increase in CXCL14 between week 5 to 6 and a maintaining at a high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9. 
-
-
+The neuronal cell migration is stongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a signifikant increase in CXCL14 between week 5 to 6 and a maintaining at a high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9.
 
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
-
 
 # Supplementary
 
@@ -1302,5 +1291,3 @@ colnames(data.ENST00000521485) <- c("week_4","week_5","week_6","week_7","week_8"
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 
 ```
-
-
