@@ -47,13 +47,38 @@ library(stringr)
 library(ggrepel)
 ```
 
+<<<<<<< HEAD
 #Introduction Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs, the heart, the lungs, the liver and the brain.
+=======
+<<<<<<< HEAD
+#Introduction
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
+=======
+#Introduction Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs, the heart, the lungs, the liver and the brain.
+>>>>>>> d49f96b9f309622def21954751c23ac29b582d68
+>>>>>>> 97cb6f6275acf16211dcb5c2fdf4190c065d1f2b
 
 Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch, 2013).
 
 *Quellen: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/>*
 
+<<<<<<< HEAD
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation (O'Connell, 2009;Müller, 2018). There are many signals that influence the development of the brain e.g. chemokines.
+=======
+The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff; 1993). 
+
+*Quellen:Benninghoff 1993 BENNINGHOFF, A.:Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München; Wien; Baltimore : Urban und Schwarzenberg, 1993*
+
+The spleen
+
+The shape of the heart resembels a tube at week 3. The different heart parts develope at week 4 due to curvation and growth and the ventricels are created. the fundamental layout of the heart is already present at week 4 to 5. Further remodelling takes place till week 7 ( Ulfig; 2009; Hikspoors; 2022)
+
+*Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
+
+The skeletal muscles start developing at week 5 ()
+
+Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
+>>>>>>> 97cb6f6275acf16211dcb5c2fdf4190c065d1f2b
 
 *Quellen: <https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress>; <https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf>*
 
@@ -440,7 +465,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
 
-### 1. Ion channels
+### Ion channels
 
 ```{r,fig.height=2.5,fig.width=2.5}
 # A vektor of ENST numbers and weeks was created
@@ -475,7 +500,7 @@ legend(3.8, 9.25, legend=c("ENST00000531293"),
 
 Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
 
-### 2. Genes for neuronal development and function
+### Genes for neuronal development and function
 
 ```{r,fig.height=3.2,fig.width=3.2}
 # ENST00000602349
@@ -673,11 +698,15 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 The second group are genes with a specific function in the neuronal development and function.
 
+<<<<<<< HEAD
+#### Genes for neuronal function 
+=======
 #### 2.1 Genes for neuronal function
+>>>>>>> d49f96b9f309622def21954751c23ac29b582d68
 
 Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
 
-#### 2.2 Genes for axon guidance
+#### Genes for axon guidance
 
 Filtering mentioned four genes for axon guidance:
 
@@ -687,15 +716,15 @@ ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated pr
 
 In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
 
-#### 2.3 Genes for neuronal survival
+#### Genes for neuronal survival
 
 ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheless, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
 
-#### 2.4 Brain associated gene
+#### Brain associated gene
 
 Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 may regulate cytoskeletal organization. A defect in septin function disturbs cytokinesis. ENST00000577440 is connected to Cerebellar Hemisphere and shows a significant increase between weeks 7 to 9.
 
-### 3.Genes for cytokine
+### Genes for cytokine
 
 ```{r,fig.height=3.2,fig.width=3.2}
 # ENST00000337225
@@ -782,17 +811,16 @@ par(new=TRUE)
 plot(data.ENST00000555247[,2],data.ENST00000555247[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "orange",ylim = c(7.6,9.7))
 par(new=TRUE)
 plot(data.ENST00000590261[,2],data.ENST00000590261[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "green", ylim = c(7.6,9.7))
-legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),
-       col=c("red", "blue", "orange", "green"), lty=1, cex=0.3,title="Expressed genes")
+legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),col=c("red", "blue", "orange", "green"), lty=1, cex=0.3,title="Expressed genes")
 ```
 
 Cytokines are important signaling molecules. They take up an important part in the signaling process during neuronal development (Tiveron 2008).
 
-#### 3.1 Interleukin related genes
+#### Interleukin related genes
 
 Two interleukin related genes were discovered. ENST00000555247 encodes for IL11RA (interleukin 11 receptor subunit alpha), which is a receptor for the cytokine Interleukin 11. The IL-11 receptor is a member of the hematopoietic cytokine receptor family. ENST00000555247 is connected to the spinal cord and shows a significant increase in expression during weeks 4 to 8. ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and forms a heterodimer with a 45 kDa transcription factor. This complex is necessary for T-cell expression of interleukin 2. ENST00000590261 is related to Substantia nigra and shows a decline over the weeks.
 
-#### 3.2 Chemokine related genes
+#### Chemokine related genes
 
 There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
 
