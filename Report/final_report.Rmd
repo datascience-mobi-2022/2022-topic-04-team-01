@@ -205,10 +205,16 @@ library(ggplotify)
 
 
 #Introduction
+<<<<<<< Updated upstream
 HEAD
 Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
 
 =======
+=======
+
+##Something subtitle tissues {#intro-tissues}
+
+>>>>>>> Stashed changes
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 >>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
 
@@ -1210,9 +1216,9 @@ There is a lot of research targeting the role of chemokines during neuronal deve
 
 
 
-## TRAs can infer a basic timeline of organ development
+## TRAs can infer a basic timeline of organ development {#organ}
 
-### Differentially expressed transcripts can be linked to all analyzed tissues
+### Differentially expressed transcripts can be linked to all analyzed tissues {#organ-overview}
 
 The TRA Data covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum was found with 46 stomach-linked transcripts, the maximum were 837 TRAs for the testes.
 
@@ -1261,9 +1267,9 @@ annotate_figure(plot_output, top = text_grob("Differentially expressed transcrip
 mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
-These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by fig. ????.
+These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by Fig. \@ref(fig:tissue-links).
 
-```{r,fig.width=9, fig.height=7, fig.subcap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
+```{r tissue-links,fig.width=9, fig.height=7, fig.subcap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
 library(igraph)
 library(tidyverse)
 library(ggnet)
@@ -1324,7 +1330,7 @@ for (i in 1:33) {
 heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
 ```
 
-### The expression of all TRAs associated with a tissue cannot be used to infer organ development
+### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
 In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. ???A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. ???B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. ???C.
 
@@ -1456,7 +1462,7 @@ annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-rel
 
 For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
 
-### The clusters of up- and downregulated transcripts can be linked to distinct gene functions.
+### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. {#organ-tables}
 
 
 For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
@@ -1597,7 +1603,7 @@ table_spleen2
 ```
 
 
-### Overrepresentation Analysis can create plots that signify organ development
+### Overrepresentation Analysis can create plots that signify organ development {#organ-ora}
 
 For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig: ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
 
@@ -1940,6 +1946,13 @@ We further identified that two transcripts associated to two different tissues s
 The neuronal cell migration is strongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9.
 
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+
+In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
+
+This approach was used in section \@ref(organ-ora) for eight different tissues. 
+For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
+The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
+
 
 # Supplementary
 
