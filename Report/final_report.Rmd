@@ -4,7 +4,7 @@ author: "Gruppe 4"
 date: '2022-07-03'
 bibliography: references.bib
 output: 
-  html_document:
+  bookdown::html_document2:
     number_sections: TRUE
     toc: TRUE
     theme: united
@@ -55,6 +55,11 @@ library(readxl)
 library(ggforce)
 library(VennDiagram)
 library(png)
+library(factoextra)
+library(cluster)
+library(ggplot2)
+library(ggsci)
+library(ggplotify)
 ```
 
 ```{r}
@@ -272,13 +277,13 @@ Following libraries were used:
 
 ```{r table-with-all-libraries, eval = FALSE}
 all_libraries <- tibble::tribble(
-  ~Library...package,                        ~Version,                              ~Description,
-              "affy",                              NA, "library used for unpacking the raw data",
-               "vsn",                              NA,   "library for the vsn rma normalization",
-     "AnnotationDbi",                              NA,                                        NA,
-         "tidyverse", "library used for Datacleaning",                       "Library / package",
-           "Version",                   "Description",                                    "affy"
-  )
+  ~Library...package,                        ~Version, 
+              "affy",                              NA, 
+               "vsn",                              NA, 
+     "AnnotationDbi",                              NA, 
+         "tidyverse", "library used for Datacleaning", 
+           "Version",                   "Description"
+  
 
 all_libraries %>%
   kable(all_libraries, digits = 3, row.names = FALSE, align = "c", caption = "Table 1: summary of all libraries used") %>%
@@ -370,51 +375,46 @@ To verify the transformed data intensity values, some test can be performed (Fig
 
 ```{r mean-sd-plot, include=FALSE}
 meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
-meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data GSE15744")
+meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data\nGSE15744") + theme(aspect.ratio = 1)
 ```
 
-```{r boxplot-vsn-normalization}
-boxplot.GSE15744.vsnrma <- boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
+```{r boxplot-vsn-normalization include=FALSE}
+weeks <- c("Week 4.1", "Week 4.2", "Week 4.3", "Week 5.1", "Week 5.2", "Week 5.3", "Week 6.1", "Week 6.2", "Week 6.3", "Week 7.1", "Week 7.2", "Week 7.3", "Week 8.1", "Week 8.2", "Week 8.3", "Week 9.1", "Week 9.2", "Week 9.3")
+png(filename = "boxplot_GSE15744_vsnrma.png", res = 115)
+boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
         cex.axis=0.5,
         las=2,
+        names=weeks,
         ylab="Relative expression",
-        main="Boxplots of microarrays with vsn normalized data")
+        main="Boxplots of microarrays with\nvsn normalized intensities")
+
+dev.off()
+
+library(magick)
+boxplot.GSE15744.vsnrma = ggdraw() + draw_image("boxplot_GSE15744_vsnrma.png") 
+
+
 ```
 
 ```{r Scatter-plot, include=FALSE}
 exprs.GSE15744.vsnrma <- as.data.frame(exprs(data.GSE15744.vsnrma))
-scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma,) +
+scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma) +
   theme_bw() +
   geom_point(mapping = aes(exprs.GSE15744.vsnrma[,4], exprs.GSE15744.vsnrma[,5]), size = 0.5) +
   geom_abline(intersept = 0, slope = 1, col = "red", aes(size=1)) +
-  labs(title = paste("Scatterplot of microarray", substr(colnames(data.GSE15744.vsnrma)[4], 1, nchar(colnames(data.GSE15744.vsnrma)[4])), "and", substr(colnames(data.GSE15744.vsnrma)[5], 1, nchar(colnames(data.GSE15744.vsnrma)[5])), "in week 5", sep=" ", collapse = NULL),
+  labs(title = paste(" Scatterplot of microarray\n", substr(colnames(data.GSE15744.vsnrma)[4], 1, nchar(colnames(data.GSE15744.vsnrma)[4])), "and", substr(colnames(data.GSE15744.vsnrma)[5], 1, nchar(colnames(data.GSE15744.vsnrma)[5])), "in week 5", sep=" ", collapse = NULL),
        x = colnames(data.GSE15744.vsnrma)[4],
-       y = colnames(data.GSE15744.vsnrma)[5]) 
+       y = colnames(data.GSE15744.vsnrma)[5])+ theme(aspect.ratio = 1) 
 ```
 
-```{r}
-par(mfrow = c(1,3))
-meansdplot.GSE15744.vsnrma
-boxplot.GSE15744.vsnrma
-scatterplot.GSE15744.vsnrma
-```
+```{r QC-normalization-plots, fig.width=12, fig.height=3.5, fig.cap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
 
 
-```{r QC-normalization-plots, fig.width=9, fig.height=6, fig.subcap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
-
-#meansd.GSE15744.vsnrma <- as.grob(meansd.GSE15744.vsnrma$gg)
-#boxplot.GSE15744.vsnrma <- as.grob(boxplot.GSE15744.vsnrma)
-
-#str(meansd.GSE15744.vsnrma)
-OC_normalization_plot = arrangeGrob(grobs = list(meansd.GSE15744.vsnrma$gg, #boxplot.GSE15744.vsnrma,
-                                                 scatterplot.GSE15744.vsnrma), nrow=1, widths = c(3, #3,
-                                                                                                  3), heights = c(3))
+OC_normalization_plot = arrangeGrob(grobs = list(meansdplot.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, scatterplot.GSE15744.vsnrma),
+                                    nrow=1, widths = c(3,3,3), heights = c(3.5))
 
 OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
-  draw_plot_label(label = c("A",# "B", 
-                            "C"), size = 15, x = c(0.03,# 0.35, 
-                                                   0.63), y = c(0.13,# 0.13,
-                                                                0.13)) 
+  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.36, 0.71), y = c(0.13, 0.13, 0.13)) 
 
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
@@ -422,7 +422,7 @@ annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: 
 
 ## Annotation
 
-To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Mrs Dr Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Mrs Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
+To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
 
 ```{r Annotation}
 library(RCurl)
@@ -460,7 +460,7 @@ a$tissues = tissues
 embryo_df_tissues = a
 ```
 
-```{r further-silent-Data-Cleaning, eval = FALSE}
+```{r further-silent-Data-Cleaning}
 embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] 
 
 #Chromosome Spalte aufhübschen und unnötiges löschen
@@ -484,7 +484,7 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 
 ### Limma analysis
 
-```{r, eval = FALSE}
+```{r, include = FALSE}
 library(limma)
 
 limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
@@ -592,12 +592,10 @@ volcano
 ## Comparison of differential expressed genes between the original paper and our method
 
 
-We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our dataset to filter for TRAs.
-```{r}
+
+We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our data set because the both have the same probe set IDs from the same microarray.
+```{r importing-data-paper}
 #importing the data from xls file
-library(readxl)
-library(tidyverse)
-library(dplyr)
 paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls") # 5385 Probe IDs
 for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
   if(is.na(paper_df_diff$Probe_Set_ID[i])){
@@ -615,20 +613,25 @@ paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
 
 #Annotation:
 paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+paper_df_intersec <- paper_df_ann %>% drop_na(ensembl.transcript)
+number_vec = sapply(c(1:sum(is.na(paper_df_ann$ensembl.transcript))), function(x){str_glue("no_value", x)} )
+paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- number_vec
 #sum(!is.na(paper_df_ann$ensembl.transcript)) # we are able to compare 3203 Transcripts
 #paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
-#save(paper_df_ann, file="paper_df_ann.RData")
 ```
 
+### Venn diagramm
 
-```{r}
+To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagramm)).
+```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)}
 # Make Venn diagram from list of groups
-colors <- c("#ff4059", "#2cff21")
-display_venn(x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe) ,
-            category.names = c("dataframe_paper", "dataframe_TRA"),
+colors <- c("#ff4059", "#2cff21", "yellow")
+venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
+            category.names = c("data from paper", "our TRA data", "our diff. data"),
             filename = 'venn_diagramm_comparison_paper.png',
             output=TRUE,
-            imagetype="png", 
+            imagetype="png",
+            #na = "none",
             #scaled = FALSE,
             height = 1000 , 
             width = 1000 ,
@@ -637,27 +640,88 @@ display_venn(x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133
             col = "black",
             fill = colors,
             cat.col = colors,
-            cat.cex = 2,
-            margin = 0
+            cat.cex = 1.4,
+            cat.pos = c(350,10,0),
+            #margin = 0
+            main = "Venn diagramm of differentially expressed genes\nfrom our TRA data and data of the original paper"
             
 )
-display_venn()
-
-
-# Display saved image
-#options(repr.plot.height=1000, repr.plot.width= 1000)
-library("png")
-pp <- readPNG("venn_diagramm_comparison_paper.png")
-plot.new() 
-rasterImage(pp,0,0,1,1)
-
+ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
+The intersection showed a number of transcripts worth for further analysis.
 
-```{r}
-paper_df_up <- filter(paper_df_ann, Expression_pattern == "UP") # 759
-paper_df_down <- filter(paper_df_ann, Expression_pattern == "DOWN") # 1096
-paper_df_arch <- filter(paper_df_ann, Expression_pattern == "ARCH") # 396
+### Verifing the trends postulated in the paper with our data
+
+In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
+
+
+```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined.}
+#Clustered plot of expression levels over time for the spleen
+paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_intersec, Expression_pattern == "ARCH") # 396
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], "]")
+   }
+  }
+  return(data_plot)
+}
+
+paper_df_diff_list = list(as.data.frame(paper_df_up),as.data.frame(paper_df_down),as.data.frame(paper_df_arch))
+# Select an modify the data used for kmeans
+i = 0
+names <- c("Up-regulated", "Down-regulated","Arch-regulated")
+for (data_temp in paper_df_diff_list){
+  i= i+1
+data_abs = data.frame(Week4 = apply(data_temp[8:10], 1, median), Week5 =  apply(data_temp[11:13], 1, median), Week6 =  apply(data_temp[14:16], 1, median),
+                        Week7=apply(data_temp[17:19], 1, median), Week8 =  apply(data_temp[20:22], 1, median), Week9 =  apply(data_temp[23:25], 1, median))
+data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+row.names(data) = rownames(data_abs)
+  
+# Select optimum cluster number
+data = scale(data)
+dist_data = get_dist(data, method = "pearson")
+n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+# Create the data for our plot
+km = kmeans(data, centers = n_cluster, nstart = 25)
+data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+plot_data = create_plot_data(data_plot_raw)
+
+assign(str_glue( "plot_", i), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = names[i]) + scale_color_npg() + theme_classic()  + ylim(6.5,8.5) + theme(aspect.ratio = 1))
+}
+
+Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3),
+                                    nrow=1, widths = c(5,5,5), heights = c(3.5))
+
+Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
+  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.37, 0.68), y = c(0.13, 0.13, 0.13)) 
+
+annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be\ndifferentially expressed by the paper", color = "black", face = "bold", size = 16))
 ```
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
@@ -762,7 +826,7 @@ ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 
 ranks_pca[order(ranks_pca$sum),]
 
 ```
-For further analyzation, each transcript was awarded a rank depending on how much it contributes to the specific PCA. We took a closer look at the first five transcripts of PCA1, as this PCA alone already explains over 60% of the variety of our data. These five transcripts with the highest contribution encode for: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+For further analyzation, each transcript was awarded a rank depending on how much it contributes to the specific PCA. We took a closer look at the five first-ranking transcripts of PCA1, as this PCA alone already explains over 60% of the variety of our data. These five transcripts with the highest contribution encode for: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
 ```{r}
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -775,25 +839,25 @@ rep3 <- data.frame(t(PCA1_first_five[,c(3,6,9,12,15,18)]))
 par(mfrow = c(1, 3))
 
 #rep1 first 5 transcripts expression over weeks
-matplot(rep1, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '1 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep1, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 1' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 
 #rep2 first 5 transcripts expression over weeks
-matplot(rep2, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '2 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep2, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 2' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 
 #rep3 first 5 transcripts expression over weeks
-matplot(rep3, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '3 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep3, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 3' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 ```
-The transcripts ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting for that, both transcripts consistently display the same expression levels over all weeks for all three different replicas. The same applies to the transcripts ENST00000241274 and ENST00000475390 as they also encode for the same protein (SLITRK3). 
-The transcripts for LDLRAD4 shown the highest overall expression levels. Their expression levels also don't show many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels for all three replicas over all weeks. Especially replica three shows a near identical expression patterns of KCNMB2 and SLITRK3 between weeks 5 to 8.
+The transcripts ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression levels over all weeks for all three different replicas. The same applies to the transcripts ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3). 
+The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels for all three replicas over all weeks. Especially replica three shows near identical expression patterns of KCNMB2 and SLITRK3 between weeks 5 to 8.
 
 
 
