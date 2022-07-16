@@ -61,9 +61,11 @@ library(png)
 
 #Introduction
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
+Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
 
 
 Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch, 2013).
+Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch, 2013).
 
 *Quellen: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/>*
 
@@ -74,6 +76,7 @@ The next organ are the gonades their progenitors develop next to the progenitor 
 *Quellen:Benninghoff 1993 BENNINGHOFF, A.:Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München; Wien; Baltimore : Urban und Schwarzenberg, 1993*
 
 The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in week 8 to 9 (James; 1983). The spleen plays an important role in immunesystem. As an example, b-lymphocytes are present in the spleen at week 12 (Hayward; 1983).
+The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in weeks 8 to 9 (James; 1983). The spleen plays an important role in the immunesystem. For example, b-lymphocytes are present in the spleen by week 12 (Hayward; 1983).
 
 *Quellen: https://journals.uair.arizona.edu/index.php/lymph/article/view/20479/20088; https://pubmed.ncbi.nlm.nih.gov/6606446/*
 
@@ -82,11 +85,11 @@ The shape of the heart resembels a tube at week 3. The different heart parts dev
 *Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
 
 
-The skeletal muscles start developing at week 5. Skeletal muscles evolve from the myogenic progenitor cells of the myotome and dermomyotome located in the somites. As part of skeletal myogenesis a complex molecular network of independant pathways is resbonsable for the development of myogenic progenitor cells into myofibers.
 
 *Quellen:Ito Y, Kayama T, Asahara H. A systems approach and skeletal myogenesis. Comp Funct Genomics. 2012;2012:759407. doi: 10.1155/2012/759407. Epub 2012 Sep 6. PMID: 22991503; PMCID: PMC3443578.*
 
 The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle protein develop in the follwing weeks (Romero; 2013). 
+The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the follwing weeks (Romero; 2013). 
 
 *Quellen:https://www.sciencedirect.com/science/article/abs/pii/B9780444595652000022?via%3Dihub*
 
@@ -103,6 +106,7 @@ Chemokines are a group of small proteins, acting as chemoattractors on effector 
 *Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
 
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in cluster and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker, 2019; Janeway Immunologie).We use the definition thate TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs has is target in this report.
+Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker, 2019; Janeway Immunologie).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 *Quellen: Dinkelackers Doktorarbeit, Janeway Immuno*
 
@@ -551,6 +555,9 @@ This visualization helps to determine how many PCAs are needed to explain a sign
 The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
 
 ```{r pca-plots}
+
+par(mfrow = c(1, 3))
+
 #PCA 1&2
 ggbiplot(pca_genes) +
 theme(aspect.ratio = 1)
@@ -563,11 +570,13 @@ theme(aspect.ratio = 1)
 ggbiplot(pca_genes, choices=c(1,3)) +
 theme(aspect.ratio = 1)
 ```
+
 ```{r}
  loadings = pca_genes$rotation[,"PC1"]
 pca_df = data.frame(diff_genes_ann_0.01[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
 pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
 ```
+
 ```{r}
 #PCA for Heart transripts
 #tissue = "Heart"
@@ -607,10 +616,13 @@ Each transcript was awarded a rank depending on how much it contributes to the s
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 PCA1_first_five
 
+rep1 <- data.frame(t(PCA1_first_five[,c(1,4,7,10,13,16)]))
+rep2 <- data.frame(t(PCA1_first_five[,c(2,5,8,11,14,17)]))
+rep3 <- data.frame(t(PCA1_first_five[,c(3,6,9,12,15,18)]))
 
-chip1 <- PCA1_first_five[,c(1,4,7,10,13,16)]
-chip2 <- PCA1_first_five[,c(2,5,8,11,14,17)]
-chip3 <- PCA1_first_five[,c(3,6,9,12,15,18)]
+
+#plotting the expression of the five most contributing transcripts for each chip
+par(mfrow = c(1, 3))
 
 plot(chip1)
 
@@ -620,9 +632,14 @@ PCA1_first_five %>%
   labs(x = "Weeks", y = "Expression") +
   theme(aspect.ratio = 1)
 
-plot(chip1, xlab = "weeks",ylab = "Expressionlevel")
+#rep3 first 5 transcripts expression over weeks
+matplot(rep3, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '3 transcripts with highest contribution to PCA1' , xaxt='n')
+axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+theme(aspect.ratio = 1)
 ```
-
+The transcripts ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting for that, both transcripts consistently display the same expression levels over all weeks for all three different replicas. The same applies to the transcripts ENST00000241274 and ENST00000475390 as they also encode for the same protein (SLITRK3). 
+The transcripts for LDLRAD4 shown the highest overall expression levels. Their expression levels also don't show many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels for all three replicas over all weeks. Especially replica three shows a near identical expression patterns of KCNMB2 and SLITRK3 between weeks 5 to 8.
 
 
 
