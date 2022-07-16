@@ -152,19 +152,8 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
    
 ```
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-```{r, fig.width= 10, fig.height= 3, fig.cap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-Fig. \@ref(Organ-dev1) bla bla
 
 ```{r test, fig.width= 10, fig.height= 3, fig.cap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
->>>>>>> Stashed changes
 
 library(ggplot2)
 library(grid)
@@ -175,7 +164,6 @@ plot = arrangeGrob(grobs = list(spleen_percentage_plot, spleen_genes_plot, splee
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
 ```
-
 
 
 
@@ -232,19 +220,8 @@ grid.arrange(p_1,p_2,p_3,p_4,p_6,p_7,p_8,p_9,p_10,p_11,p_12,p_13,p_14,p_15,p_16,
 ```
 
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-```{r, include = FALSE}
-#Rearrange the selectet plots so that we can combine the table with a plot 
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 ```{r ORA-code, include = FALSE, eval = FALSE}
 #Rearrange the selected plots so that we can combine the table with a plot 
->>>>>>> Stashed changes
 
 library(clusterProfiler)
 library(enrichplot)
@@ -541,21 +518,8 @@ for (i in selected) {
 assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 ```
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
-
-```{r, fig.width = 12, fig.height=16, fig.cap = ""}
-=======
 ```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs.", eval = FALSE}
->>>>>>> Stashed changes
-=======
-```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs.", eval = FALSE}
->>>>>>> Stashed changes
-=======
-```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs.", eval = FALSE}
->>>>>>> Stashed changes
 #Arrange the plots for all eight tissues
 library(grid)
 library(gridExtra)
@@ -566,6 +530,84 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E
 annotate_figure(plot_output, top = text_grob("Main functions from overrepresentation analysis plotted by tissue", color = "black", face = "bold", size = 16))
 ```
 
+```{r spleen-boxplot, fig.width= 5, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts")
+spleen_boxplot
+
+```
+
+```{r}
+get_gene_info = function(transcript_ids){
+  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
+  for(x in transcript_ids) {
+    table = rbind(table, get_single_transcript(x))
+  }
+  table
+}
+
+get_single_transcript = function(single_transcript) {
+   res = entrez_search(db = "gene", term = single_transcript)
+   if(!length(res$ids)==0) {
+     results = entrez_summary(db = "gene", id = res$ids)
+      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
+   }
+   else{
+        c(single_transcript, NA, NA, NA)
+   }
+}
+
+spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
+spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+```{r}
+# Create a useful table for all upregulated genes
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
+           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
+
+spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
+spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
+
+spleen1_gene_description_sum = spleen1_gene_description_spl[c(2,5,6,8,11,17,20,26,29, 33,37,38,41,42,49,71,96),]
+functions_1 = c("Member of the immunoglobulin superfamily", "Mediates polarization of T cells and neutrophils", "Secreted by cytptpxic lymphocytes", "Can upregulate blood pressure", "B lymphocyte chemoattractant", "IL-11 receptor", "", "Contains von Willebrand factor domains", "May function as a cytokine", "Plays a role in immune surveillance", "Regulating the complement cascade", "HLA class II", "Endocytosis of pathogen", "Receptors for interferons alpha and beta", "Fibroblast growth factor", "Regulating the complement cascade", "Protect the antibody from degradation")
+spleen1_gene_description_sum$Summary = functions_1
+
+table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+table_spleen1
+```
+
+```{r, fig.width=12}
+# Table for downregulated genes # Jetzt noch für Spleen2
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+table_spleen2 = gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+table_spleen2
+```
 
 
 

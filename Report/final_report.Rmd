@@ -60,6 +60,21 @@ library(cluster)
 library(ggplot2)
 library(ggsci)
 library(ggplotify)
+library(clusterProfiler)
+library(enrichplot)
+library(org.Hs.eg.db)
+library(ggupset)
+library(gt)
+library(gtExtras)
+library(svglite)
+library(webshot)
+library(rentrez)
+library(XML)
+library(igraph)
+library(ggnet)
+library(viridis)
+library(treemapify)
+library(magick)
 ```
 
 # Abstract
@@ -210,7 +225,6 @@ boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
 
 dev.off()
 
-library(magick)
 boxplot.GSE15744.vsnrma = ggdraw() + draw_image("boxplot_GSE15744_vsnrma.png") 
 
 
@@ -245,7 +259,6 @@ annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: 
 To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr. Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
 
 ```{r Annotation}
-library(RCurl)
 file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
 ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
 TranscriptID_orig = rownames(embryo_df)
@@ -309,7 +322,6 @@ To filter our data for biological interesting data, we performed *limma* analysi
 
 
 ```{r, include = FALSE}
-library(limma)
 
 limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
 
@@ -535,8 +547,6 @@ tissue_count_barplot =  ggplot(tissue_count, aes(x = tissue, y = count, fill = t
 ```
 
 ```{r, fig.width=7, fig.height=7}
-library(ggplot2)
-library(treemapify)
 
 select_tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
@@ -555,10 +565,6 @@ treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) +
 ```
 
 ```{r, fig.width=9, fig.height=6, fig.subcap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
-library(grid)
-library(gridExtra)
-library(cowplot)
-library(ggpubr)
 lay = rbind(c(1,1,2), c(1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.7), y = c(0.1,0.1)) 
@@ -573,10 +579,6 @@ mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by Fig. \@ref(fig:tissue-links).
 
 ```{r tissue-links,fig.width=9, fig.height=7, fig.subcap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
-library(igraph)
-library(tidyverse)
-library(ggnet)
-library(viridis)
 
 nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
@@ -610,27 +612,6 @@ node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
 
 graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues")
 graph2
-```
-
-#### Das würde ich in den Anhang packen.
-
-```{r, fig.width=14, fig.height=14}
-library(pheatmap)
-
-tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-
-node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
-
-weights = matrix(nrow =length(tissues), ncol = length(tissues))
-rownames(weights) = tissues
-colnames(weights) = tissues
-for (i in 1:33) {
-  for (j in 1:33) {
-    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
-  }
-} 
-
-heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
 ```
 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
@@ -687,14 +668,6 @@ spleen_genes_plot = ggplot(spleen_genes_graph, aes(x = Week, y= Expression))  + 
 
 ```{r}
 #Clustered plot of expression levels over time for the spleen
-
-library(factoextra)
-library(cluster)
-library(stringr)
-library(ggplot2)
-library(ggsci)
-library(grid)
-library(gridExtra)
 
 tissue = "Spleen"
 
@@ -755,9 +728,7 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
 ```
 
 ```{r, fig.width= 10, fig.height= 3, fig.subcap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median expression for all spleen-associated TRAs is shown for each point in time. C. For k-means clustring, the silhouette score determined an optimum of two clusters. The median expression analog to B is plottet for each of these clusters. "}
-library(grid)
-library(gridExtra)
-library(cowplot)
+
 plot = arrangeGrob(grobs = list(spleen_percentage_plot, spleen_genes_plot, spleen_clustered_plot), nrow=1, widths = c(3.3,2.7, 4), heights = c(0.7))
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
@@ -766,7 +737,6 @@ annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-rel
 For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
 
 ### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. {#organ-tables}
-
 
 For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
 
@@ -804,7 +774,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r spleen-boxplot, fig.width= 5, fig.height= 3, fig.cap = A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts.}
+```{r spleen-boxplot, fig.width= 5, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
 library(ggplot2)
 #Compare the initial expression values of both clusters
 spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
@@ -827,101 +797,12 @@ As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two
 Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in [Suppl.]. 
 
 
-
-```{r}
-get_gene_info = function(transcript_ids){
-  library(rentrez)
-  library(XML)
-  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
-  for(x in transcript_ids) {
-    table = rbind(table, get_single_transcript(x))
-  }
-  table
-}
-
-get_single_transcript = function(single_transcript) {
-   res = entrez_search(db = "gene", term = single_transcript)
-   if(!length(res$ids)==0) {
-     results = entrez_summary(db = "gene", id = res$ids)
-      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
-   }
-   else{
-        c(single_transcript, NA, NA, NA)
-   }
-}
-
-spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
-spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
-```
-
-```{r}
-# Create a useful table for all upregulated genes
-library(gt)
-library(gtExtras)
-library(ggplot2)
-library(tidyverse)
-library(svglite)
-
-Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
-Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
-           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
-
-spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
-spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
-
-spleen1_gene_description_sum = spleen1_gene_description_spl[c(2,5,6,8,11,17,20,26,29, 33,37,38,41,42,49,71,96),]
-functions_1 = c("Member of the immunoglobulin superfamily", "Mediates polarization of T cells and neutrophils", "Secreted by cytptpxic lymphocytes", "Can upregulate blood pressure", "B lymphocyte chemoattractant", "IL-11 receptor", "", "Contains von Willebrand factor domains", "May function as a cytokine", "Plays a role in immune surveillance", "Regulating the complement cascade", "HLA class II", "Endocytosis of pathogen", "Receptors for interferons alpha and beta", "Fibroblast growth factor", "Regulating the complement cascade", "Protect the antibody from degradation")
-spleen1_gene_description_sum$Summary = functions_1
-
-table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
-table_spleen1
-```
-
-```{r, fig.width=12}
-# Table for downregulated genes # Jetzt noch für Spleen2
-library(gt)
-library(gtExtras)
-library(ggplot2)
-library(tidyverse)
-library(svglite)
-library(webshot)
-
-Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
-Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
-           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
-
-spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
-spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
-
-
-spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
-functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
-spleen2_gene_description_sum$Summary = functions_2
-table_spleen2 = gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
-table_spleen2
-```
-
-
 ### Overrepresentation Analysis can create plots that signify organ development {#organ-ora}
 
 For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig: ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
 
 ```{r ORA-code, include = FALSE}
 #Rearrange the selected plots so that we can combine the table with a plot 
-
-library(clusterProfiler)
-library(enrichplot)
-library(ggplot2)
-library(org.Hs.eg.db)
-library(ggsci)
-library(ggupset)
-library(tidyverse)
-library(gridExtra)
-library(grid)
-library(gt)
-library(gtExtras)
-library(ggplot2)
-library(cowplot)
 
 
 # Spleen 
@@ -1207,10 +1088,6 @@ assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression,
 
 ```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
-library(grid)
-library(gridExtra)
-library(cowplot)
-library(ggpubr)
 plot = arrangeGrob(grobs = list(Spleen_t,Spleen_plot, Brain_t, Brain_plot, Heart_t, Heart_plot, Liver_t, Liver_plot,get("Muscle - Skeletal_t"), get("Muscle - Skeletal_plot"), Testis_t, Testis_plot, Stomach_t, Stomach_plot, Skin_t, Skin_plot), nrow = 4)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E", "F", "G", "H"), size = 15, x = c(0.01, 0.51,0.01, 0.51,0.01, 0.51,0.01, 0.51), y = c(0.79,0.79,0.52,0.52,0.28,0.28,0.02,0.02)) 
 annotate_figure(plot_output, top = text_grob("Main functions from overrepresentation analysis plotted by tissue", color = "black", face = "bold", size = 16))
@@ -1782,7 +1659,99 @@ Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine r
 
 ## Organ development
 
-##
+```{r, fig.width=14, fig.height=14, include = FALSE}
+library(pheatmap)
+
+tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+weights = matrix(nrow =length(tissues), ncol = length(tissues))
+rownames(weights) = tissues
+colnames(weights) = tissues
+for (i in 1:33) {
+  for (j in 1:33) {
+    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
+  }
+} 
+
+heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
+```
+
+```{r, fig.width=14, fig.height=14}
+
+file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
+download.file(file_heatmap, "/TRA_overlap_edited.png", mode = "wb")
+heatmap = readPNG("/TRA_overlap_edited.png")
+ggdraw() + draw_image(heatmap)
+```
+
+
+
+```{r}
+get_gene_info = function(transcript_ids){
+  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
+  for(x in transcript_ids) {
+    table = rbind(table, get_single_transcript(x))
+  }
+  table
+}
+
+get_single_transcript = function(single_transcript) {
+   res = entrez_search(db = "gene", term = single_transcript)
+   if(!length(res$ids)==0) {
+     results = entrez_summary(db = "gene", id = res$ids)
+      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
+   }
+   else{
+        c(single_transcript, NA, NA, NA)
+   }
+}
+
+spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
+spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+```{r}
+# Create a useful table for all upregulated genes
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
+           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
+
+spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
+spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
+
+spleen1_gene_description_sum = spleen1_gene_description_spl[c(2,5,6,8,11,17,20,26,29, 33,37,38,41,42,49,71,96),]
+functions_1 = c("Member of the immunoglobulin superfamily", "Mediates polarization of T cells and neutrophils", "Secreted by cytptpxic lymphocytes", "Can upregulate blood pressure", "B lymphocyte chemoattractant", "IL-11 receptor", "", "Contains von Willebrand factor domains", "May function as a cytokine", "Plays a role in immune surveillance", "Regulating the complement cascade", "HLA class II", "Endocytosis of pathogen", "Receptors for interferons alpha and beta", "Fibroblast growth factor", "Regulating the complement cascade", "Protect the antibody from degradation")
+spleen1_gene_description_sum$Summary = functions_1
+
+table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+table_spleen1
+```
+
+```{r, fig.width=12}
+# Table for downregulated genes # Jetzt noch für Spleen2
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+table_spleen2 = gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+table_spleen2
+```
+
+
+
+
+## Brain development
 
 ```{r Volcano-Plot, fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
 # Create a dataset for the volcano plot from the limma analysis
@@ -1914,6 +1883,8 @@ boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(
 
 ```
 
+
+## PCA
 
 The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
 
