@@ -448,6 +448,9 @@ number_vec = sapply(c(1:sum(is.na(paper_df_ann$ensembl.transcript))), function(x
 paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- number_vec
 #sum(!is.na(paper_df_ann$ensembl.transcript)) 
 #paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
+
+
+
 ```
 
 ### Venn diagramm
@@ -1317,7 +1320,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r, fig.width= 5, fig.height= 3, fig.cap = A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts.}
+```{r spleen-boxplot, fig.width= 5, fig.height= 3, fig.cap = A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts.}
 library(ggplot2)
 #Compare the initial expression values of both clusters
 spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
@@ -1336,7 +1339,7 @@ spleen_boxplot
 
 ```
 
-As shown in Fig. ???, the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed  transcripts, we used the NCBI gene database to get a functional annotation. 
+As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed  transcripts, we used the NCBI gene database to get a functional annotation. 
 Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in [Suppl.]. 
 
 
