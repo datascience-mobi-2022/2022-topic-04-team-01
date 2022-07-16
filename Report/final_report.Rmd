@@ -65,14 +65,22 @@ library(ggplotify)
 # Abstract
 
 #Introduction
-<<<<<<< HEAD
-Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 
-Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch 2013).
+
+Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
+=======
+>>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
+
+## TRAs as a tool to gain insight into embryonic development {#intro-tra}
+
 
 The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades between weeks 5 to 6. They develop into ovaries and testes at week 7 (Benninghoff 1993). 
+=======
+Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
+>>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
 
-The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in weeks 8 to 9 (James & Jones 1983). The spleen plays an important role in the immunesystem. For example, b-lymphocytes are present in the spleen by week 12 (Hayward 1983).
+## Embryonic development during the observed timeframe {#intro-tissues}
+
 
 The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth, also the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place until week 7 ( Ulfig 2009; Hikspoors et al. 2022)
 
@@ -84,15 +92,28 @@ The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First 
 
 Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this period, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
 
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
+First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).
+The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993). 
+The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen’s role in the human  immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).
+At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors et al. 2022).
+The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth et al. 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward. 
+## https://cms.galenos.com.tr/Uploads/Article_20241/BAS-5-175-En.pdf
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during  weeks 4 to 8 (Hu et al. 2018).
+The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero et al. 2013). 
+While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
+
+## Chemokines and brain development {#intro-brain}
+>>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
+
 Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
 
-Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 #Methods
 
 ## Programming language and Libraries
 
-The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays. Packages for annotation purposes of microarrays were provided by brainarray.
+The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays and statistical genomics. Packages for annotation purposes of microarrays were provided by brainarray.
 
 Following libraries were used:
 
@@ -130,7 +151,7 @@ data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
 ```
 
-To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the Library *Rfssa*.
+To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the library *Rfssa*.
 
 ```{r loading-data-from-github, eval=FALSE}
 #make data accessible for everyone
@@ -294,16 +315,22 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 #sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
 ```
 
-## Limma analysis
+## Limma package
+
+The *limma* package is installed and imported using bioconductor. Among many other things, it determines changes of gene expression over time in intensity values of microarrays, so called differential expressed genes. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It does this by utilizing information borrowing, quantitative weighting, variance modelling and data preprocessing, but importantly, it does not subset the data. doi: 10.1093/nar/gkv007. Because the same linear model was performed on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values, while reducing the variance of residuals. 
 
 ## Over representation analysis
 
+The statistical method over-representation analysis
 
 # Results
 
-## Limma analysis and Volcano plot
 
-### Limma analysis
+
+## Limma analysis
+
+To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcrips 
+
 
 ```{r, include = FALSE}
 library(limma)
@@ -444,7 +471,7 @@ paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- numbe
 ### Venn diagramm
 
 To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagramm)).
-```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)}
+```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
@@ -477,7 +504,7 @@ The intersection showed a number of transcripts worth for further analysis.
 In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
 
-```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined.}
+```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = "Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined."}
 #Clustered plot of expression levels over time for the spleen
 paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
 paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
@@ -544,6 +571,7 @@ Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
 
 annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be\ndifferentially expressed by the paper", color = "black", face = "bold", size = 16))
 ```
+
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
@@ -1016,6 +1044,8 @@ Two interleukin related genes were discovered. ENST00000555247 encodes for IL11R
 #### Chemokine related genes
 
 There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
+=======
+>>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
 
 
 
@@ -1377,10 +1407,6 @@ table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - 
 table_spleen1
 ```
 
-
-
-
-
 ```{r, fig.width=12}
 # Table for downregulated genes # Jetzt noch für Spleen2
 library(gt)
@@ -1729,12 +1755,502 @@ For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expressio
 Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. 
 
 
-# Discussion
-
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
+The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
+
+1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
+
+
+### Ion channel
+
+```{r gene-expression-brain,fig.height=5,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and cytokine (right) was plotted for week 4 to 9"}
+# A vektor of ENST numbers and weeks was created
+ENST = embryo_df_tissues$ensembl.transcript
+week = c(4,5,6,7,8,9)
+
+# Data for Ion channel geneexpression was generated
+# ENST00000531293
+data.ENST00000531293 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000531293")))
+data.ENST00000531293 = data.ENST00000531293[,1:18]
+week_4 =data.ENST00000531293[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000531293[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000531293[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000531293[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000531293[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000531293[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000531293 = c(week_4,week_5,week_6,week_7,week_8,week_9)
+data.ENST00000531293 =cbind(data.ENST00000531293,week)
+
+# Data for neuronal development and function geneexpression was generated
+# ENST00000602349
+data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
+data.ENST00000602349 = data.ENST00000602349[,1:18]
+week_4 =data.ENST00000602349[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000602349[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000602349[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000602349[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000602349[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000602349[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000602349 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000602349 =cbind(data.ENST00000602349,week)
+
+# ENST00000276646 & ENST00000529690
+data.ENST00000276646 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000276646")))
+data.ENST00000276646 = data.ENST00000276646[,1:18]
+week_4 =data.ENST00000276646[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000276646[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000276646[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000276646[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000276646[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000276646[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000276646 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000276646 =cbind(data.ENST00000276646,week)
+
+data.ENST00000529690 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000529690")))
+data.ENST00000529690 = data.ENST00000529690[,1:18]
+week_4 =data.ENST00000529690[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000529690[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000529690[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000529690[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000529690[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000529690[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000529690 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000529690 =cbind(data.ENST00000529690,week)
+
+# ENST00000356660
+data.ENST00000356660 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000356660")))
+data.ENST00000356660 = data.ENST00000356660[,1:18]
+week_4 =data.ENST00000356660[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000356660[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000356660[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000356660[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000356660[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000356660[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000356660 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000356660 =cbind(data.ENST00000356660,week)
+
+# ENST00000518312 & ENST00000521485
+data.ENST00000518312 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000518312")))
+data.ENST00000518312 = data.ENST00000518312[,1:18]
+week_4 =data.ENST00000518312[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000518312[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000518312[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000518312[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000518312[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000518312[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000518312 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000518312 =cbind(data.ENST00000518312,week)
+
+data.ENST00000521485 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000521485")))
+data.ENST00000521485 = data.ENST00000521485[,1:18]
+week_4 =data.ENST00000521485[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000521485[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000521485[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000521485[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000521485[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000521485[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000521485 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000521485 =cbind(data.ENST00000521485,week)
+
+# ENST00000577440
+data.ENST00000577440 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000577440")))
+data.ENST00000577440 = data.ENST00000577440[,1:18]
+week_4 =data.ENST00000577440[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000577440[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000577440[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000577440[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000577440[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000577440[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000577440 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000577440 =cbind(data.ENST00000577440,week)
+
+# ENST00000439476
+data.ENST00000439476 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000439476")))
+data.ENST00000439476 = data.ENST00000439476[,1:18]
+week_4 =data.ENST00000439476[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000439476[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000439476[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000439476[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000439476[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000439476[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000439476 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000439476 =cbind(data.ENST00000439476,week)
+
+
+# ENST00000539563
+data.ENST00000539563 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000539563")))
+data.ENST00000539563 = data.ENST00000539563[,1:18]
+week_4 =data.ENST00000539563[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000539563[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000539563[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000539563[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000539563[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000539563[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000539563 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000539563 =cbind(data.ENST00000539563,week)
+
+# Data for cytokine geneexpression was generated 
+# ENST00000337225
+data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
+data.ENST00000337225 = data.ENST00000337225[,1:18]
+week_4 =data.ENST00000337225[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000337225[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000337225[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000337225[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000337225[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000337225[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000337225 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000337225 =cbind(data.ENST00000337225,week)
+
+# ENST00000579298
+data.ENST00000579298 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000579298")))
+data.ENST00000579298 = data.ENST00000579298[,1:18]
+week_4 =data.ENST00000579298[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000579298[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000579298[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000579298[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000579298[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000579298[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000579298 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000579298 =cbind(data.ENST00000579298,week)
+
+# ENST00000555247
+data.ENST00000555247 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000555247")))
+data.ENST00000555247 = data.ENST00000555247[,1:18]
+week_4 =data.ENST00000555247[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000555247[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000555247[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000555247[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000555247[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000555247[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000555247 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000555247 =cbind(data.ENST00000555247,week)
+
+# ENST00000590261
+data.ENST00000590261 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000590261")))
+data.ENST00000590261 = data.ENST00000590261[,1:18]
+week_4 =data.ENST00000590261[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000590261[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000590261[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000590261[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000590261[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000590261[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000590261 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000590261 =cbind(data.ENST00000590261,week)
+
+
+# Plotting of the gained geneexpression data
+par(mfrow = c(1, 3))
+
+#Plot for ion channel gene
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red")
+legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.3,title="Expressed genes")
+
+
+#Plot for neuronal development and function genes 
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))+lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue") +lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")+lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")+lines(data.ENST00000518312[,2],data.ENST00000518312[,1],type = "b",lwd=1,pch=19,col = "black")+lines(data.ENST00000521485[,2],data.ENST00000521485[,1],type = "b",lwd=1,pch=19,col = "pink") +lines(data.ENST00000577440[,2],data.ENST00000577440[,1],type = "b",lwd=1,pch=19,col = "purple")+lines(data.ENST00000439476[,2],data.ENST00000439476[,1],type = "b",lwd=1,pch=19,col = "salmon")+lines(data.ENST00000539563[,2],data.ENST00000539563[,1],type = "b",lwd=1,pch=19,col = "yellowgreen")
+legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690", "ENST00000356660", "ENST00000518312", "ENST00000521485", "ENST00000577440", "ENST00000439476", "ENST00000539563"),col=c("red", "blue", "orange", "green","black", "pink", "purple", "salmon", "yellowgreen"), lty=1, cex=0.3,title="Expressed genes")
+
+
+# Plot for cytokine genes
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7)) +lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")+lines(data.ENST00000555247[,2],data.ENST00000555247[,1],type = "b",lwd=1,pch=19,col = "orange")+lines(data.ENST00000590261[,2],data.ENST00000590261[,1],type = "b",lwd=1,pch=19,col = "green")
+legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),col=c("red", "blue", "orange", "green"), lty=1, cex=0.3,title="Expressed genes")
+
+```
+
+
+### Ion channel
+
+Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
+
+### Genes for neuronal development and function
+
+The second group are genes with a specific function in the neuronal development and function.
+
+#### Genes for neuronal function 
+
+Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
+
+#### Genes for axon guidance
+
+Filtering mentioned four genes for axon guidance:
+
+ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.
+
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density. ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.
+
+In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
+
+#### Genes for neuronal survival
+
+ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheless, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
+
+#### Brain associated gene
+
+Finally ENST00000577440 encoding for SEPTIN4 (septin 4) was identified. SEPTIN4 may regulate cytoskeletal organization. A defect in septin function disturbs cytokinesis. ENST00000577440 is connected to Cerebellar Hemisphere and shows a significant increase between weeks 7 to 9.
+
+### Genes for cytokine
+
+Cytokines are important signaling molecules. They take up an important part in the signaling process during neuronal development (Tiveron 2008).
+
+#### Interleukin related genes
+
+Two interleukin related genes were discovered. ENST00000555247 encodes for IL11RA (interleukin 11 receptor subunit alpha), which is a receptor for the cytokine Interleukin 11. The IL-11 receptor is a member of the hematopoietic cytokine receptor family. ENST00000555247 is connected to the spinal cord and shows a significant increase in expression during weeks 4 to 8. ENST00000590261 encodes for LF3 (interleukin enhancer binding factor 3) and forms a heterodimer with a 45 kDa transcription factor. This complex is necessary for T-cell expression of interleukin 2. ENST00000590261 is related to Substantia nigra and shows a decline over the weeks.
+
+#### Chemokine related genes
+
+There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
+
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+
+### Principal component analysis
+
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
+
+```{r}
+#pca on rows (genes)
+pca_genes <- prcomp(
+  t(diff_genes_ann_0.01[,1:18]), # transposed matrix
+  scale. = TRUE # data scaled to have unit variance
+  )
+
+#taking a first look
+summary(pca_genes)
+```
+
+To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
+
+```{r pca-variance}
+#visualizing the variance of the PCAs
+pc_eigenvalues <- pca_genes$sdev^2
+
+pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)), 
+                         variance = pc_eigenvalues) %>% 
+  #column with percent variance
+  mutate(pct = variance/sum(variance)*100) %>% 
+  #column with cumulative variance explained
+  mutate(pct_cum = cumsum(pct))
+
+
+#actual plot
+pc_eigenvalues %>% 
+  ggplot(aes(x = PC)) +
+  geom_col(aes(y = pct)) +
+  geom_line(aes(y = pct_cum, group = 1)) + 
+  geom_point(aes(y = pct_cum)) +
+  labs(x = "Principal component", y = "Fraction variance explained") +
+  theme(aspect.ratio = 1)
+```
+
+This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. The first three PCAs already explain over 80% of the data's variance. Notably, the first PCA alone already explains over 60% of the data's variance and all following PCAs explain significantly less variance(Figure \@ref(fig:pca-variance)).
+
+
+
+
+```{r}
+ loadings = pca_genes$rotation[,"PC1"]
+pca_df = data.frame(diff_genes_ann_0.01[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
+pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+```
+
+```{r}
+#PCA for Heart transripts
+#tissue = "Heart"
+#bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+test_genes = diff_genes_ann_0.01  #[bool_contained,]
+
+#pca on rows (genes)
+pca_genes <- prcomp(
+  t(test_genes[,1:18]), # transposed matrix
+  scale. = TRUE # data scaled to have unit variance
+  )
+
+#taking a first look
+summary(pca_genes)
+
+loadings = pca_genes$rotation[,"PC1"]
+pca_df = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
+pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+test_genes
+ranks_pca = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol")], PC1 = NA, PC2 = NA, PC3 = NA, PC4 = NA, PC5 = NA)
+PC_vector = c("PC1", "PC2", "PC3", "PC4", "PC5")
+for (i in PC_vector) {
+  loadings = pca_genes$rotation[,i]
+  pca_df = data.frame(test_genes$ensembl.transcript, Loadings = loadings, Order = c(1:length(test_genes$ensembl.transcript)))
+  pca_df = pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
+  pca_df$rank = c(1:length(test_genes$ensembl.transcript))
+  pca_df = pca_df[order(pca_df$Order),]
+  ranks_pca[,i] =  pca_df$rank
+}
+
+ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 - ranks_pca$PC5
+ranks_pca[order(ranks_pca$sum),]
+
+```
+For further analyzation, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+```{r, fig.width=3,fig.height=3}
+
+PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
+
+
+#median of the transcripts for each week
+PCA1_4 <- PCA1_first_five[,c(1,2,3)]
+week4 <- t(data.frame(apply(PCA1_4,1,median)))
+
+PCA1_5 <- PCA1_first_five[,c(4,5,6)]
+week5 <- t(data.frame(apply(PCA1_5,1,median)))
+
+PCA1_6 <- PCA1_first_five[,c(7,8,9)]
+week6 <- t(data.frame(apply(PCA1_6,1,median)))
+
+PCA1_7 <- PCA1_first_five[,c(10,11,12)]
+week7 <- t(data.frame(apply(PCA1_7,1,median)))
+
+PCA1_8 <- PCA1_first_five[,c(13,14,15)]
+week8 <- t(data.frame(apply(PCA1_8,1,median)))
+
+PCA1_9 <- PCA1_first_five[,c(16,17,18)]
+week9 <- t(data.frame(apply(PCA1_9,1,median)))
+
+
+#combining in a dataframe
+first_five <- rbind(week4,week5,week6,week7,week8,week9)
+
+#plotting the expression over weeks
+matplot(first_five, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression Level', main = 'Five transcripts with most contribution to PCA1' , xaxt='n')
+axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=1,title="Expressed genes")
+
+```
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. 
+The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show near identical expression patterns.
+
+
+
+
+
+
+
+# Discussion
+
+## Comparison with original paper
+
+## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+
+In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
+
+This approach was used in section \@ref(organ-ora) for eight different tissues. 
+For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
+The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
+<<<<<<< HEAD
+At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes. 
+The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development. 
+The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from  week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development. 
+The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:ORA-plot)E). This is in contrast to the embryonic development, where the gonads start to form at around the same time (section \@ref(intro-tissues)). 
+For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes. 
+Finally, the skin shows an increased expression of related genes sets from week 5 through 9 (Fig. \@ref(fig:ORA-plot)H). This broadly reflects the embryonic development, with the epidermis starting to form in week 4 (section \@ref(intro-tissues)). We also found this expression pattern in the keratinization gene set that is suggested by literature as a good indicator for skin formation.  
+
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
 First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale. A cause of this is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofactor for actin dependent cell migration.
 
@@ -1748,13 +2264,10 @@ We further identified that two transcripts associated to two different tissues s
 
 The neuronal cell migration is strongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks. This could be an accumulation for neuronal migration, starting at week 9.
 
-## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
-In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
 
-This approach was used in section \@ref(organ-ora) for eight different tissues. 
-For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
-The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
+
 
 # References
 Benninghoff, A.  (1993), Makroskopische Anatomie, Embryologie und Histologie des Menschen, 15. Auflage, München, Wien, Baltimore, Urban und Schwarzenberg.
@@ -1786,6 +2299,7 @@ Tiveron M.C. & Cremer H., (2008), CXCL12/CXCR4 signalling in neuronal cell migra
 Ulfig N.,  (2009),  Kurzlehrbuch Embryologie, Georg Thieme Verlag Stuttgart,New York.
 
 Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine receptor CXCR4 during chick embryo development, Anatomy and Embryology 210, 35-41.
+
 
 # Supplementary
 
