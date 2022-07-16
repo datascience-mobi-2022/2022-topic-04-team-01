@@ -2271,6 +2271,8 @@ Hikspoors J.P.J.M., Kruepunga N., Mommen G.M.C. et al., (2022), A pictorial acco
 
 Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP. & Longaker MT., (2018) Embryonic skin development and repair, Organogenesis  14, 46-63.
 
+Huber W., von Heydebreck A., Sültmann H., Poustka A., Vingron M., (2002), Variance stabilization applied to microarray data calibration and to the quantification of differential expression, Bioinformatics. 18 ,Suppl 1, 96-104.
+
 James F. & Jones M.D., (1983), Development of the Spleen, Lymphology 16, 83-89, Georg Thieme Verlag Stuttgart, New York.
 
 Kluth D., Jaeschke-Melli S. & Fiegel H., (2003),The embryology of gut rotation, Semin. Pediatr. Surg. 12, 275-279.
