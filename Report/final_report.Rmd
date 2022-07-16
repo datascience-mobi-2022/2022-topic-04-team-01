@@ -60,16 +60,24 @@ library(png)
 
 
 #Introduction
+HEAD
 Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
 
+=======
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
+>>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
 
 Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch, 2013).
 
 *Quellen: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/>*
 
+HEAD
 
 
 The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cell forms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonads in weeks 5 to 6. They develop into ovaries and testes in week7 (Benninghoff; 1993). 
+=======
+The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff; 1993). 
+>>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
 
 *Quellen:Benninghoff 1993 BENNINGHOFF, A.:Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München; Wien; Baltimore : Urban und Schwarzenberg, 1993*
 
@@ -81,10 +89,18 @@ The shape of the heart resembles a tube at week 3. The different heart parts dev
 
 *Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
 
+The stomach develops from the midgut. The primitive gut devides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth; 2013).
 
+HEAD
 The skeletal muscles start developing at week 5. Skeletal muscles evolve from the myogenic progenitor cells of the myotome and dermomyotome located in the somites. As part of skeletal myogenesis a complex molecular network of independant pathways is reasonable for the development of myogenic progenitor cells into myofibers.
+=======
+*Quellen: https://www.sciencedirect.com/science/article/pii/S1055858603000581?casa_token=hE7Ts9rUPgcAAAAA:pOCIFzjRX__R65pzP_Qb7IgF4loGtl50FE1LtK-W_xBimLfwkRsZShuUhN2H4XnhlJK4Ds-A*
+>>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
 
-*Quellen:Ito Y, Kayama T, Asahara H. A systems approach and skeletal myogenesis. Comp Funct Genomics. 2012;2012:759407. doi: 10.1155/2012/759407. Epub 2012 Sep 6. PMID: 22991503; PMCID: PMC3443578.*
+
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. the epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) creattes a protective layer for the ectoderm at weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are noteable at week 6 (Hu; 2018).
+
+*Quellen:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6150059/pdf/kogg-14-01-1421882.pdf*
 
 The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the follwing weeks (Romero; 2013). 
 
@@ -384,14 +400,14 @@ diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 
 ### Volcano plot
 
-The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10 (adjusted P-value) boundary was set at 2 which equals our targeted adjusted P-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression. The genes were categorized in two groups:
+The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10 (adjusted P-value) boundary was set at 2 which equals our targeted adjusted P-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression (Figure \@ref(fig:Volcano-Plot)). The genes were categorized in two groups:
 
 1.  up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01
 2.  down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01
 
 Genes which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
 
-```{r Volcano Plot}
+```{r Volcano-Plot}
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
@@ -932,13 +948,16 @@ par(mfrow = c(1, 3))
 plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red")
 legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.3,title="Expressed genes")
 
+
 #Plot for neuronal development and function genes 
 plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))+lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue") +lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")+lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")+lines(data.ENST00000518312[,2],data.ENST00000518312[,1],type = "b",lwd=1,pch=19,col = "black")+lines(data.ENST00000521485[,2],data.ENST00000521485[,1],type = "b",lwd=1,pch=19,col = "pink") +lines(data.ENST00000577440[,2],data.ENST00000577440[,1],type = "b",lwd=1,pch=19,col = "purple")+lines(data.ENST00000439476[,2],data.ENST00000439476[,1],type = "b",lwd=1,pch=19,col = "salmon")+lines(data.ENST00000539563[,2],data.ENST00000539563[,1],type = "b",lwd=1,pch=19,col = "yellowgreen")
 legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690", "ENST00000356660", "ENST00000518312", "ENST00000521485", "ENST00000577440", "ENST00000439476", "ENST00000539563"),col=c("red", "blue", "orange", "green","black", "pink", "purple", "salmon", "yellowgreen"), lty=1, cex=0.3,title="Expressed genes")
 
+
 # Plot for cytokine genes
 plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level during week 4 to 9", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7)) +lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")+lines(data.ENST00000555247[,2],data.ENST00000555247[,1],type = "b",lwd=1,pch=19,col = "orange")+lines(data.ENST00000590261[,2],data.ENST00000590261[,1],type = "b",lwd=1,pch=19,col = "green")
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247", "ENST00000590261"),col=c("red", "blue", "orange", "green"), lty=1, cex=0.3,title="Expressed genes")
+
 ```
 
 <<<<<<< Updated upstream
@@ -1374,127 +1393,13 @@ table_spleen2 = gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - 
 table_spleen2
 ```
 
+
 ### Overrepresentation Analysis can create plots that signify organ development
 
-```{r}
-library(clusterProfiler)
-library(enrichplot)
-library(ggplot2)
-library(org.Hs.eg.db)
-library(ggsci)
-library(ggupset)
-library(tidyverse)
-library(gridExtra)
-library(grid)
+For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig: ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
 
-
-load("embryo_df_tissues.RData")
-load("diff_genes_ann_0.01.RData")
-
-# List the tissues
-#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin", "Muscle - Skeletal", "Artery", "Heart")
-#tissues = "Muscle - Skeletal"
-
-
-for (tissue in tissues) {
-  bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
-  embryo_df_tissue = embryo_df_tissues[bool_contained,]
-  deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
-  geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
-  enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
-  enr_GO_tissue = as.data.frame(enr_GO_tissue1)
-  if (dim(enr_GO_tissue)[1] <8) {npath = dim(enr_GO_tissue)[1]} else {npath = 8}
-  if(npath != 0) {
-    data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, npath)})), Function =
-                             as.character(c(rep(enr_GO_tissue$Description[1:npath], 6)), Expression=NA))
-    for (i in 1:npath) {
-      xx = strsplit(enr_GO_tissue$geneID[i], "/")
-      bool_contained1 = sapply(diff_genes_ann_0.01$HGNC.symbol, function(x) {grepl(x, toString(xx))})
-      bool_contained1[is.na(bool_contained1)] = FALSE
-      data_temp = diff_genes_ann_0.01[bool_contained1,]
-      data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  
-                              apply(data_temp[7:9], 1, median), Week7=apply(data_temp[10:12], 1, median), Week8 = 
-                              apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
-      expr_path = colMeans(data_abs[1:6,])
-      data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
-    }
- 
-  data_plot
-  
-    # Create the Plot
-    assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0.4)) + geom_point(aes(colour = Function), position = position_dodge(0.4)) + labs(title = tissue) +  theme_classic()   )  #ylim(6.5,8.5)
-  }
-  else {
-    assign(str_glue(tissue, "_plot"), NA)
-  }
-   
-}
-ff = sapply(tissues, function(x){str_glue(x, "_plot")})
-#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]))
-```
-
-# Discussion
-
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
-
-## Hypothesis: Neural TRA expression patterns reflect morphological brain development
-
-
-First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale. A cause of this is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofactor for actin dependent cell migration.
-
-```{r}
-library(clusterProfiler)
-library(enrichplot)
-library(ggplot2)
-library(org.Hs.eg.db)
-library(ggsci)
-library(ggupset)
-library(tidyverse)
-library(gridExtra)
-library(grid)
-library(gt)
-library(gtExtras)
-library(ggplot2)
-library(tidyverse)
-
-
-# List the tissues
-#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-tissues = c("Adipose",  "Skin",  "Muscle - Skeletal", "Bladder",   "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas",  "Spleen", "Stomach", "Cervix", "Fallopian Tube", "Ovary", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Brain", "Nerve - Tibial")
-#tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin", "Muscle - Skeletal", "Artery", "Heart")
-#tissue = "Muscle - Skeletal"
-
-
-for (tissue in tissues) {
-  bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
-  embryo_df_tissue = embryo_df_tissues[bool_contained,]
-  deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
-  geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
-  enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
-  enr_GO_tissue = as.data.frame(enr_GO_tissue1)
-  if (dim(enr_GO_tissue)[1] <10) {npath = dim(enr_GO_tissue)[1]} else {npath = 10}
-  if(npath != 0) {
-     tissue_table = enr_GO_tissue[1:npath,c(2,6)]
-     colnames(tissue_table) = c("Function", "Adj_p_value")
-     assign(str_glue(tissue,"_table"), gt(tissue_table)|>  tab_header(title= tissue) |> fmt_markdown(columns = c(Function)) |> gt_theme_538() |>
-             fmt_scientific(columns = c(Adj_p_value), decimals = 0)) 
-    } 
-  else {
-    assign(str_glue(tissue, "_table"), NA)
-  }
-   
-}
-get("Brain_table") 
-ff = sapply(tissues, function(x){str_glue(x, "_table")})
-for (i in 1:25) {
-  get(ff[i])
-}
-
-```
-
-```{r, include = FALSE}
-#Rearrange the selectet plots so that we can combine the table with a plot 
+```{r ORA-code, include = FALSE}
+#Rearrange the selected plots so that we can combine the table with a plot 
 
 library(clusterProfiler)
 library(enrichplot)
@@ -1542,7 +1447,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 
@@ -1579,7 +1484,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 # Liver 
@@ -1614,7 +1519,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 # Heart 
@@ -1649,7 +1554,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 # Muscle - Skeletal
@@ -1684,7 +1589,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 # Testis
@@ -1719,7 +1624,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 #Stomach
 tissue = "Stomach"
@@ -1753,7 +1658,7 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 
 #Skin
@@ -1788,25 +1693,38 @@ for (i in selected) {
   expr_path = colMeans(data_abs[1:6,])
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
-assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.2,0.5,0.3,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
+assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 ```
-
-
-```{r, fig.width = 12, fig.height=16, fig.cap = ""}
+```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
 library(grid)
 library(gridExtra)
 library(cowplot)
 library(ggpubr)
 plot = arrangeGrob(grobs = list(Spleen_t,Spleen_plot, Brain_t, Brain_plot, Heart_t, Heart_plot, Liver_t, Liver_plot,get("Muscle - Skeletal_t"), get("Muscle - Skeletal_plot"), Testis_t, Testis_plot, Stomach_t, Stomach_plot, Skin_t, Skin_plot), nrow = 4)
-plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E", "F", "G", "H"), size = 15, x = c(0.01, 0.51,0.01, 0.51,0.01, 0.51,0.01, 0.51), y = c(0.76,0.76,0.55,0.55,0.3,0.3,0.03,0.03)) 
+plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E", "F", "G", "H"), size = 15, x = c(0.01, 0.51,0.01, 0.51,0.01, 0.51,0.01, 0.51), y = c(0.79,0.79,0.52,0.52,0.28,0.28,0.02,0.02)) 
 annotate_figure(plot_output, top = text_grob("Main functions from overrepresentation analysis plotted by tissue", color = "black", face = "bold", size = 16))
 ```
 
+For the spleen (Fig. \@ref(fig:ORA-plot)A), we determined a largely constant expression of immune-related genes throughout the time frame, with a slight increase in some functions from week 7-9. 
+The brain (Fig. \@ref(fig:ORA-plot)B) showed an increase in neuron projection morphogenesis from a previously inactive state (expression < 6.8) in week 4 to a significant expression (>7.5) by week 8. Synaptic signaling stayed at relatively constant expression levels. 
+Heart-associated functions (Fig. \@ref(fig:ORA-plot)C) can be grouped into two categories. Cardiac functions (cardiac muscle tissue development, heart contraction) are highly expressed in week 4 and fall continously until week 8. In contrast, general muscle gene sets are rising from originally lower expression levels during the observed time. 
+The liver (Fig. \@ref(fig:ORA-plot)D) shows no clear expression patterns, with some metabolic functions increasing through time (organic hydroxy compound metabolic process) while others stay mostly constant (cellular amino acid metabolic process) or fall (organic acid catabolic process). 
+In contrast, skeletal muscle gene sets (Fig. \@ref(fig:ORA-plot)E) show a very clear trend. After a mostly slight increase between week 4 and 8, a sharp rise in expression levels is visible from week 8 to 9. 
+The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in expression from week 5 onward. 
+For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. 
+Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. 
 
 
+# Discussion
 
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development
+
+
+First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale. A cause of this is the process of neuronal migration which starts at week 9. Ca(2+) is an important cofactor for actin dependent cell migration.
 
 Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff, 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
