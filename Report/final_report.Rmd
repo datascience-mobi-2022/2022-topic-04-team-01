@@ -57,6 +57,146 @@ library(VennDiagram)
 library(png)
 ```
 
+```{r}
+#Quellen Liver
+@Book{Liver,
+  title = {Pädiatrische Gastroenterologie, Hepatologie und Ernährung. Embryologie und Physiologie der Leber.},
+  author = {{Deutsch,J.}},
+  address = {Berlin, Deutschland},
+  year = {2013},
+  url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/},
+}
+#Deutsch J.  2013. Embryologie und Physiologie der Leber. Pädiatrische Gastroenterologie, Hepatologie und Ernährung. 375–87. German.
+
+# Quellen Gonades
+@Book{Gonades,
+  title = {Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage.},
+  author = {{BENNINGHOFF A.}},
+  address = {München, Deutschland},
+  year = {1933},
+}
+#BENNINGHOFF, A. , 1993. Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München, Wien, Baltimore. Urban und Schwarzenberg
+
+#Quellen Spleen
+@article{Spleen1,
+  title = {Development of the Spleen},
+  author = {{James F., Jones M.D.}},
+  address = {©Georg Thieme Verlag Stuttgart, New York},
+  year = {1933},
+  url = {Lyrnphology 16 (1983) 83-89},
+}
+#James F. Jones, M.D. 1983. Development of the Spleen. Lyrnphology 16 83-89.Georg Thieme Verlag Stuttgart, New York
+@article{Spleen2,
+  title = {The human fetus and newborn: development of the immune response.},
+  author = {{Hayward AR.}},
+  year = {1983},
+}
+#Hayward AR. 1983. The human fetus and newborn: development of the immune response. Birth Defects Orig. Artic. Ser. 19(3):289-94. PMID: 6606446.
+
+#Quellen Herz
+@Book{Heart1,
+  title = {Kurzlehrbuch Embryologie, 2. Auflage},
+  author = {{Ulfig N.}},
+  address = {©Georg Thieme Verlag Stuttgart · New York},
+  year = {20009},
+  url = {},
+}
+#Ulfig N.  2009.  Kurzlehrbuch Embryologie. Georg Thieme Verlag Stuttgart,New York.
+@Article{Heart2,
+  title = {A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development.},
+  author = {{Hikspoors, J.P.J.M., Kruepunga, N., Mommen, G.M.C. et al.}},
+  address = {Commun Biol 5, 226},
+  year = {20022},
+  url = {https://doi.org/10.1038/s42003-022-03153-x},
+}
+#Hikspoors, J.P.J.M., Kruepunga, N., Mommen, G.M.C. et al. 2022. A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development. Commun Biol 5, 226. https://doi.org/10.1038/s42003-022-03153-x
+
+#Quellen Stomach
+@Article{Stomach,
+  title = {A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development.},
+  author = {{Kluth D., Jaeschke-Melli S., Fiegel H.}},
+  address = {Seminars in Pediatric Surgery},
+  year = {20003},
+  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
+}
+#Kluth D., Jaeschke-Melli S., Fiegel H. 2003.The embryology of gut rotation. Seminars in Pediatric Surgery. 12(4) (275-279).
+
+#Quellen Skin
+@Article{Skin,
+  title = {Embryonic skin development and repair.},
+  author = {{Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP., Longaker MT.}},
+  address = {Organogenesis},
+  year = {2018 Jan 2;14(1) (46-63)},
+  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
+}
+#Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP., Longaker MT. 2018. Embryonic skin development and repair. Organogenesis.  14(1) (46-63).
+
+
+#Quellen Skeletal Muscles
+@Book{Skeletal_Muscles,
+  title = {Pediatric Neurology Part III.Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle},
+  author = {{Romero N. B., Mezmezian M., Fidziańska A.}},
+  address = {Elsevier. Handbook of Clinical Neurology 113 (1299-1310)},
+  year = {2013)},
+  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
+}
+#Romero N. B., Mezmezian M., Fidziańska A. 2013. Pediatric Neurology Part III. Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle. Handbook of Clinical Neurology 113 (1299-1310). Elsevier.
+
+#Quellen Brain
+@Article{Brain,
+  title = {Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities},
+  author = {{National Research Council and Institute of Medicine}},
+  address = {Washington, DC},
+  year = {2009)},
+  url = {https://doi.org/10.17226/12480},
+}
+#National Research Council and Institute of Medicine. 2009. Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities. Washington, DC: The National Academies Press.
+@Book{Brain2,
+  title = {Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen. 6. Auflage.},
+  author = {{Müller W. A., Hassel M.}},
+  address = {Berlin, Deutschland},
+  year = {2018)},
+  url = {https://doi.org/10.1007/978-3-662-55534-7},
+}
+#Müller W. A., Hassel M. 2018. Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen. 6. Auflage. Springer-Verlag GmbH Deutschland. Berlin, Deutschland.
+
+# Quellen Chemokine
+@Article{Chemokin1,
+  title = {Expression of chemokine receptor CXCR4 during chick embryo development.},
+  author = {{Yusuf F., Rehimi R., Dai F.,Brand-Saberi B.}},
+  address = {Anatomy and Embryology 210(1) (35-41)},
+  year = {2005)},
+  url = {https://link.springer.com/article/10.1007/s00429-005-0013-9},
+}
+#Yusuf F., Rehimi R., Dai F.,Brand-Saberi B. 2005. Expression of chemokine receptor CXCR4 during chick embryo development. Anatomy and Embryology 210(1) (35-41)
+@Article{Chemokin2,
+  title = {CXCL12/CXCR4 signalling in neuronal cell migration},
+  author = {{Tiveron M.-C., Cremer H.}},
+  address = {Current Opinion in Neurobiology 18(3) (237-244)},
+  year = {2005)},
+  url = {https://link.springer.com/article/10.1007/s00429-005-0013-9},
+}
+#Tiveron M.-C., Cremer H. 2008. CXCL12/CXCR4 signalling in neuronal cell migration. Current Opinion in Neurobiology 18(3) (237-244).
+
+#Quellen TRA
+@Dissertation{TRA1,
+  title = {Chromosomal clustering of tissue restricted antigens},
+  author = {{Dinkelacker M}},
+  address = {},
+  year = {2019)},
+  url = {https://archiv.ub.uni-heidelberg.de/volltextserver/27270/5/Doktorarbeit_Maria_Dinkelacker.pdf},
+}
+#Dinkelacker M. 2019. Chromosomal clustering of tissue restricted antigens.
+@Book{TRA2,
+  title = {aneway Immunologie. 9. Auflage},
+  author = {{Murphy K., Weaver C.}},
+  address = {Berlin, Deutschland},
+  year = {2018)},
+  url = {https://link.springer.com/content/pdf/10.1007/978-3-662-56004-4.pdf},
+}
+#Murphy K., Weaver C. 2018. Janeway Immunologie. 9. Auflage. Springer-Verlag GmbH Deutschland. Berlin, Deutschland.
+
+```
 
 
 #Introduction
@@ -92,8 +232,7 @@ The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First 
 *Quellen:https://www.sciencedirect.com/science/article/abs/pii/B9780444595652000022?via%3Dihub*
 
 
-Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (O'Connell, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
-
+Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (National Research Council and Institute of Medicine, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
 
 *Quellen: <https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress>; <https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf>*
 
@@ -101,7 +240,7 @@ Chemokines are a group of small proteins, acting as chemoattractors on effector 
 
 *Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
 
-*Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
+
 
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in cluster and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker, 2019; Janeway Immunologie).We use the definition thate TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs has is target in this report.
 
