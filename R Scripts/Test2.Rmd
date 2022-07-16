@@ -153,8 +153,11 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
 ```
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ```{r, fig.width= 10, fig.height= 3, fig.cap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
 =======
+=======
+>>>>>>> Stashed changes
 Fig. \@ref(Organ-dev1) bla bla
 
 ```{r test, fig.width= 10, fig.height= 3, fig.cap= "A. For different expression thresholds the share of differentially expressed transcripts with higher expressions than the threshold is depicted. B. The median "}
@@ -227,9 +230,12 @@ grid.arrange(p_1,p_2,p_3,p_4,p_6,p_7,p_8,p_9,p_10,p_11,p_12,p_13,p_14,p_15,p_16,
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ```{r, include = FALSE}
 #Rearrange the selectet plots so that we can combine the table with a plot 
 =======
+=======
+>>>>>>> Stashed changes
 ```{r ORA-code, include = FALSE, eval = FALSE}
 #Rearrange the selected plots so that we can combine the table with a plot 
 >>>>>>> Stashed changes
@@ -530,9 +536,13 @@ assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression,
 
 ```
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 ```{r, fig.width = 12, fig.height=16, fig.cap = ""}
+=======
+```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs.", eval = FALSE}
+>>>>>>> Stashed changes
 =======
 ```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs.", eval = FALSE}
 >>>>>>> Stashed changes
