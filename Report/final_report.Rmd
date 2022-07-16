@@ -62,216 +62,30 @@ library(ggsci)
 library(ggplotify)
 ```
 
-```{r}
-#Quellen Liver
-@Book{Liver,
-  title = {Pädiatrische Gastroenterologie, Hepatologie und Ernährung. Embryologie und Physiologie der Leber.},
-  author = {{Deutsch,J.}},
-  address = {Berlin, Deutschland},
-  year = {2013},
-  url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/},
-}
-#Deutsch J.  2013. Embryologie und Physiologie der Leber. Pädiatrische Gastroenterologie, Hepatologie und Ernährung. 375–87. German.
-
-# Quellen Gonades
-@Book{Gonades,
-  title = {Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage.},
-  author = {{BENNINGHOFF A.}},
-  address = {München, Deutschland},
-  year = {1933},
-}
-#BENNINGHOFF, A. , 1993. Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München, Wien, Baltimore. Urban und Schwarzenberg
-
-#Quellen Spleen
-@article{Spleen1,
-  title = {Development of the Spleen},
-  author = {{James F., Jones M.D.}},
-  address = {©Georg Thieme Verlag Stuttgart, New York},
-  year = {1933},
-  url = {Lyrnphology 16 (1983) 83-89},
-}
-#James F. Jones, M.D. 1983. Development of the Spleen. Lyrnphology 16 83-89.Georg Thieme Verlag Stuttgart, New York
-@article{Spleen2,
-  title = {The human fetus and newborn: development of the immune response.},
-  author = {{Hayward AR.}},
-  year = {1983},
-}
-#Hayward AR. 1983. The human fetus and newborn: development of the immune response. Birth Defects Orig. Artic. Ser. 19(3):289-94. PMID: 6606446.
-
-#Quellen Herz
-@Book{Heart1,
-  title = {Kurzlehrbuch Embryologie, 2. Auflage},
-  author = {{Ulfig N.}},
-  address = {©Georg Thieme Verlag Stuttgart · New York},
-  year = {20009},
-  url = {},
-}
-#Ulfig N.  2009.  Kurzlehrbuch Embryologie. Georg Thieme Verlag Stuttgart,New York.
-@Article{Heart2,
-  title = {A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development.},
-  author = {{Hikspoors, J.P.J.M., Kruepunga, N., Mommen, G.M.C. et al.}},
-  address = {Commun Biol 5, 226},
-  year = {20022},
-  url = {https://doi.org/10.1038/s42003-022-03153-x},
-}
-#Hikspoors, J.P.J.M., Kruepunga, N., Mommen, G.M.C. et al. 2022. A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development. Commun Biol 5, 226. https://doi.org/10.1038/s42003-022-03153-x
-
-#Quellen Stomach
-@Article{Stomach,
-  title = {A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development.},
-  author = {{Kluth D., Jaeschke-Melli S., Fiegel H.}},
-  address = {Seminars in Pediatric Surgery},
-  year = {20003},
-  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
-}
-#Kluth D., Jaeschke-Melli S., Fiegel H. 2003.The embryology of gut rotation. Seminars in Pediatric Surgery. 12(4) (275-279).
-
-#Quellen Skin
-@Article{Skin,
-  title = {Embryonic skin development and repair.},
-  author = {{Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP., Longaker MT.}},
-  address = {Organogenesis},
-  year = {2018 Jan 2;14(1) (46-63)},
-  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
-}
-#Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP., Longaker MT. 2018. Embryonic skin development and repair. Organogenesis.  14(1) (46-63).
-
-
-#Quellen Skeletal Muscles
-@Book{Skeletal_Muscles,
-  title = {Pediatric Neurology Part III.Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle},
-  author = {{Romero N. B., Mezmezian M., Fidziańska A.}},
-  address = {Elsevier. Handbook of Clinical Neurology 113 (1299-1310)},
-  year = {2013)},
-  url = {https://doi.org/10.1053/j.sempedsurg.2003.08.009},
-}
-#Romero N. B., Mezmezian M., Fidziańska A. 2013. Pediatric Neurology Part III. Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle. Handbook of Clinical Neurology 113 (1299-1310). Elsevier.
-
-#Quellen Brain
-@Article{Brain,
-  title = {Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities},
-  author = {{National Research Council and Institute of Medicine}},
-  address = {Washington, DC},
-  year = {2009)},
-  url = {https://doi.org/10.17226/12480},
-}
-#National Research Council and Institute of Medicine. 2009. Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities. Washington, DC: The National Academies Press.
-@Book{Brain2,
-  title = {Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen. 6. Auflage.},
-  author = {{Müller W. A., Hassel M.}},
-  address = {Berlin, Deutschland},
-  year = {2018)},
-  url = {https://doi.org/10.1007/978-3-662-55534-7},
-}
-#Müller W. A., Hassel M. 2018. Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen. 6. Auflage. Springer-Verlag GmbH Deutschland. Berlin, Deutschland.
-
-# Quellen Chemokine
-@Article{Chemokin1,
-  title = {Expression of chemokine receptor CXCR4 during chick embryo development.},
-  author = {{Yusuf F., Rehimi R., Dai F.,Brand-Saberi B.}},
-  address = {Anatomy and Embryology 210(1) (35-41)},
-  year = {2005)},
-  url = {https://link.springer.com/article/10.1007/s00429-005-0013-9},
-}
-#Yusuf F., Rehimi R., Dai F.,Brand-Saberi B. 2005. Expression of chemokine receptor CXCR4 during chick embryo development. Anatomy and Embryology 210(1) (35-41)
-@Article{Chemokin2,
-  title = {CXCL12/CXCR4 signalling in neuronal cell migration},
-  author = {{Tiveron M.-C., Cremer H.}},
-  address = {Current Opinion in Neurobiology 18(3) (237-244)},
-  year = {2005)},
-  url = {https://link.springer.com/article/10.1007/s00429-005-0013-9},
-}
-#Tiveron M.-C., Cremer H. 2008. CXCL12/CXCR4 signalling in neuronal cell migration. Current Opinion in Neurobiology 18(3) (237-244).
-
-#Quellen TRA
-@Dissertation{TRA1,
-  title = {Chromosomal clustering of tissue restricted antigens},
-  author = {{Dinkelacker M}},
-  address = {},
-  year = {2019)},
-  url = {https://archiv.ub.uni-heidelberg.de/volltextserver/27270/5/Doktorarbeit_Maria_Dinkelacker.pdf},
-}
-#Dinkelacker M. 2019. Chromosomal clustering of tissue restricted antigens.
-@Book{TRA2,
-  title = {aneway Immunologie. 9. Auflage},
-  author = {{Murphy K., Weaver C.}},
-  address = {Berlin, Deutschland},
-  year = {2018)},
-  url = {https://link.springer.com/content/pdf/10.1007/978-3-662-56004-4.pdf},
-}
-#Murphy K., Weaver C. 2018. Janeway Immunologie. 9. Auflage. Springer-Verlag GmbH Deutschland. Berlin, Deutschland.
-
-```
-
+# Abstract
 
 #Introduction
-<<<<<<< Updated upstream
-HEAD
-Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
+Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 
-=======
-=======
+Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch 2013).
 
-##Something subtitle tissues {#intro-tissues}
+The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff 1993). 
 
->>>>>>> Stashed changes
-Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
->>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
+The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in weeks 8 to 9 (James & Jones 1983). The spleen plays an important role in the immunesystem. For example, b-lymphocytes are present in the spleen by week 12 (Hayward 1983).
 
-Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch, 2013).
+The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth and the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place untill week 7 ( Ulfig 2009; Hikspoors et al. 2022)
 
-*Quellen: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7498810/>*
+The stomach develops from the midgut. The primitive gut devides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth et al. 2013).
 
-HEAD
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. the epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) creattes a protective layer for the ectoderm at weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are noteable at week 6 (Hu et al. 2018).
 
+The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the follwing weeks (Romero et al. 2013). 
 
-The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cell forms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonads in weeks 5 to 6. They develop into ovaries and testes in week7 (Benninghoff; 1993). 
-=======
-The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff; 1993). 
->>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
+Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
 
-*Quellen:Benninghoff 1993 BENNINGHOFF, A.:Makroskopische Anatomie, Embryologie und Histologie des Menschen. 15. Auflage. München; Wien; Baltimore : Urban und Schwarzenberg, 1993*
+Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteins (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron & Cremer 2008).
 
-The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in weeks 8 to 9 (James; 1983). The spleen plays an important role in the immunesystem. For example, b-lymphocytes are present in the spleen by week 12 (Hayward; 1983).
-
-*Quellen: https://journals.uair.arizona.edu/index.php/lymph/article/view/20479/20088; https://pubmed.ncbi.nlm.nih.gov/6606446/*
-
-The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth and the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place untill week 7 ( Ulfig; 2009; Hikspoors; 2022)
-
-*Quellen: https://viamedici.thieme.de/lernmodul/542754/532616/herz+entwicklung; https://www.nature.com/articles/s42003-022-03153-x *
-
-The stomach develops from the midgut. The primitive gut devides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth; 2013).
-
-HEAD
-The skeletal muscles start developing at week 5. Skeletal muscles evolve from the myogenic progenitor cells of the myotome and dermomyotome located in the somites. As part of skeletal myogenesis a complex molecular network of independant pathways is reasonable for the development of myogenic progenitor cells into myofibers.
-=======
-*Quellen: https://www.sciencedirect.com/science/article/pii/S1055858603000581?casa_token=hE7Ts9rUPgcAAAAA:pOCIFzjRX__R65pzP_Qb7IgF4loGtl50FE1LtK-W_xBimLfwkRsZShuUhN2H4XnhlJK4Ds-A*
->>>>>>> fa2a7ca9c83164580a3147451e8ce27862ff6a47
-
-
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. the epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) creattes a protective layer for the ectoderm at weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are noteable at week 6 (Hu; 2018).
-
-*Quellen:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6150059/pdf/kogg-14-01-1421882.pdf*
-
-The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the follwing weeks (Romero; 2013). 
-
-*Quellen:https://www.sciencedirect.com/science/article/abs/pii/B9780444595652000022?via%3Dihub*
-
-
-Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (National Research Council and Institute of Medicine, 2009;Müller, 2018). Many signals influence the development of the brain e.g. chemokines.
-
-*Quellen: <https://nap.nationalacademies.org/catalog/12480/preventing-mental-emotional-and-behavioral-disorders-among-young-people-progress>; <https://link.springer.com/content/pdf/10.1007/978-3-662-55534-7.pdf>*
-
-Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteins (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf,2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron 2008).
-
-*Quellen: <https://link.springer.com/article/10.1007/s00429-005-0013-9>; <https://reader.elsevier.com/reader/sd/pii/S0959438808000561?token=EBA0F4DA59B38154C30F1D421B5B2862BBDCC72383E8C74729CDC6C06634C0F7065B6A96BBC72E3CC83E0D075D61D79C&originRegion=eu-west-1&originCreation=20220712150847>*
-
-
-
-Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker, 2019; Janeway Immunologie).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
-
-*Quellen: Dinkelackers Doktorarbeit, Janeway Immuno*
-
+Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 #Methods
 
@@ -1953,6 +1767,36 @@ This approach was used in section \@ref(organ-ora) for eight different tissues.
 For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
 The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
 
+# References
+Benninghoff, A.  (1993), Makroskopische Anatomie, Embryologie und Histologie des Menschen, 15. Auflage, München, Wien, Baltimore, Urban und Schwarzenberg.
+
+Deutsch J.  (2013), Embryologie und Physiologie der Leber, Pädiatrische Gastroenterologie, Hepatologie und Ernährung, 375–87, Berlin Deutschland.
+
+Dinkelacker M., (2019), Chromosomal clustering of tissue restricted antigens.
+
+Hayward AR., (1983), The human fetus and newborn: development of the immune response, Birth Defects Orig. Artic. Ser. 19, 289-94. 
+
+Hikspoors J.P.J.M., Kruepunga N., Mommen G.M.C. et al., (2022), A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development, Commun Biol 5, 226.
+
+Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP. & Longaker MT., (2018) Embryonic skin development and repair, Organogenesis  14, 46-63.
+
+James F. & Jones M.D., (1983), Development of the Spleen, Lymphology 16, 83-89, Georg Thieme Verlag Stuttgart, New York.
+
+Kluth D., Jaeschke-Melli S. & Fiegel H., (2003),The embryology of gut rotation, Seminars in Pediatric Surgery 12, 275-279.
+
+Müller W. A. & Hassel M., (2018), Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen, 6. Auflage, Springer-Verlag GmbH Deutschland, Berlin, Deutschland.
+
+Murphy K. & Weaver C., (2018), Janeway Immunologie, 9. Auflage, Springer-Verlag GmbH Deutschland, Berlin, Deutschland.
+
+National Research Council and Institute of Medicine, (2009), Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities, Washington, DC: The National Academies Press.
+
+Romero N. B., Mezmezian M .& Fidziańska A. (2013), Pediatric Neurology Part III, Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle, Handbook of Clinical Neurology 113, 1299-1310.
+
+Tiveron M.C. & Cremer H., (2008), CXCL12/CXCR4 signalling in neuronal cell migration, Current Opinion in Neurobiology 18, 237-244.
+
+Ulfig N.,  (2009),  Kurzlehrbuch Embryologie, Georg Thieme Verlag Stuttgart,New York.
+
+Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine receptor CXCR4 during chick embryo development, Anatomy and Embryology 210, 35-41.
 
 # Supplementary
 
