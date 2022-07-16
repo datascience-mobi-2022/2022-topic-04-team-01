@@ -66,25 +66,11 @@ library(ggplotify)
 
 #Introduction
 
-Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
-
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
-
-The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades between weeks 5 to 6. They develop into ovaries and testes at week 7 (Benninghoff 1993). 
 
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
-
-The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth, also the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place until week 7 ( Ulfig 2009; Hikspoors et al. 2022)
-
-The stomach develops from the midgut. The primitive gut divides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth et al. 2013).
-
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. The epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) create a protective layer for the ectoderm between weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are notable at week 6 (Hu et al. 2018).
-
-The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the following weeks (Romero et al. 2013). 
-
-Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this period, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
 
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).
@@ -167,7 +153,7 @@ surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, 
 
 ### Quality control of RNA Degradation
 
-We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (**doi: 10.1093/bioinformatics/bts629**). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:RNA-Degradation-Plot)).
+We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:RNA-Degradation-Plot)).
 
 ```{r RNA-Degradation-Plot, fig.width= 8, fig.height= 8, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
 data.rnadegradation <- AffyRNAdeg(data.GSE15744)
@@ -184,7 +170,7 @@ title(sub="RNA Degradation of 18 microarrays, GSE15744")
 
 Intensity values of different chips are affected by sample preparation and array manufacturing and processing resulting in statistical variance and random fluctuation. To access the biological relevant variation the raw data needs to be transformed by normalisation. We chose the vsn rma normalization with its library *vsn* according to Huber *et al.* (2002).
 
-```{r vsn-normalization}
+```{r vsn-normalization, include=FALSE}
 data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 ```
 
@@ -256,7 +242,7 @@ annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: 
 
 ## Annotation
 
-To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
+To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr. Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
 
 ```{r Annotation}
 library(RCurl)
@@ -309,7 +295,7 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 
 ## Limma package
 
-The *limma* package is installed and imported using bioconductor. Among many other things, it determines changes of gene expression over time in intensity values of microarrays, so called differential expressed genes. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It does this by utilizing information borrowing, quantitative weighting, variance modelling and data preprocessing, but importantly, it does not subset the data. doi: 10.1093/nar/gkv007. Because the same linear model was performed on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values, while reducing the variance of residuals. 
+The *limma* package is installed and imported using bioconductor. Among many other things, it determines changes of gene expression over time in intensity values of microarrays, so called differential expressed genes. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It does this by utilizing information borrowing, quantitative weighting, variance modelling and data preprocessing, but importantly, it does not subset the data (Ritchie. et al. 2015) Because the same linear model was performed on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values, while reducing the variance of residuals. 
 
 ## Over representation analysis
 
@@ -317,11 +303,9 @@ The statistical method over-representation analysis
 
 # Results
 
-
-
 ## Limma analysis
 
-To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcrips 
+To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts.
 
 
 ```{r, include = FALSE}
@@ -453,10 +437,16 @@ paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
 
 #Annotation:
 paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
-paper_df_intersec <- paper_df_ann %>% drop_na(ensembl.transcript)
+paper_df_intersec <- paper_df_ann %>% drop_na(ensembl.transcript) # we are able to compare 3203 Transcripts with TRA data
+
+our_df_diff <- as.data.frame(diff_genes_list_0.01)
+our_df_diff$select <- "diff"
+paper_df_ann_diff <- left_join(paper_df_ann, our_df_diff, by = c("ensembl.transcript" = "diff_genes_list_0.01"))
+paper_df_intersec_diff <- paper_df_ann_diff %>% drop_na(select)
+
 number_vec = sapply(c(1:sum(is.na(paper_df_ann$ensembl.transcript))), function(x){str_glue("no_value", x)} )
 paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- number_vec
-#sum(!is.na(paper_df_ann$ensembl.transcript)) # we are able to compare 3203 Transcripts
+#sum(!is.na(paper_df_ann$ensembl.transcript)) 
 #paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
 ```
 
@@ -496,11 +486,11 @@ The intersection showed a number of transcripts worth for further analysis.
 In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
 
-```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = "Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined."}
+```{r paper-trends-cluster, fig.width=17, fig.height=5, fig.cap = "Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined."}
 #Clustered plot of expression levels over time for the spleen
-paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
-paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
-paper_df_arch <- filter(paper_df_intersec, Expression_pattern == "ARCH") # 396
+paper_df_up <- filter(paper_df_intersec_diff, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_intersec_diff, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_intersec_diff, Expression_pattern == "ARCH") # 396
 
 # Functions for later use
 expression_difference = function(x,y) {
@@ -555,14 +545,20 @@ plot_data = create_plot_data(data_plot_raw)
 assign(str_glue( "plot_", i), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = names[i]) + scale_color_npg() + theme_classic()  + ylim(6.5,8.5) + theme(aspect.ratio = 1))
 }
 
+
 Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3),
-                                    nrow=1, widths = c(5,5,5), heights = c(3.5))
+                                    nrow=1, widths = c(5,5,5), heights = c(5))
 
 Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
   draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.37, 0.68), y = c(0.13, 0.13, 0.13)) 
 
-annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be\ndifferentially expressed by the paper", color = "black", face = "bold", size = 16))
+annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be\ndifferentially expressed by authors of the paper", color = "black", face = "bold", size = 16))
+
+
 ```
+
+
+We repeated the same plot with transcripts, which we determined as differentially expressed by our *limma* analysis and the results were highly similar. The Figure can be found on our github ().
 
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
@@ -2062,7 +2058,7 @@ Filtering mentioned four genes for axon guidance:
 
 ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.
 
-ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density. ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density, which is essential for functional neurons (Overhoff et al. 2020). ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.
 
 In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
 
@@ -2221,6 +2217,10 @@ The transcripts for LDLRAD4 show the highest overall expression levels. Their ex
 
 ## Comparison with original paper
 
+In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by clustering and plotting the overlapping Intensity values (Figure \@ref(paper-trends-cluster)). By looking at the trends of the cluster for up and down regulated gene expression
+
+
+
 ## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
@@ -2228,7 +2228,7 @@ In our analysis, we have shown that a number of TRAs are differentially expresse
 This approach was used in section \@ref(organ-ora) for eight different tissues. 
 For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
 The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
-<<<<<<< HEAD
+
 At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes. 
 The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development. 
 The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from  week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development. 
@@ -2238,16 +2238,16 @@ Finally, the skin shows an increased expression of related genes sets from week 
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development
 
-First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale (Fig. \@ref(fig:gene-expression-brain) left). A cause of this might be the process of neuronal migration which starts at week 9 (National Research Council and Institute of Medicine 2009). Ca(2+) is an essential cofactor for actin dependent cell migration.
+First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale (Fig. \@ref(fig:gene-expression-brain) left). A cause of this might be the process of neuronal migration which starts at week 9 (section \@ref(intro-tissues)). Ca(2+) is an essential cofactor for actin dependent cell migration.
 
 Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646) (Fig. \@ref(fig:gene-expression-brain) middle). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff et al. 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.
 
-In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle), this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11 (National Research Council and Institute of Medicine 2009).
-We further identified a strong LSAMP expression associated to the putamen , which is associated to the putamen (Fig. \@ref(fig:gene-expression-brain) middle). The recognized increase in gene expression of LSAMP starting at week 6 might be a preparation for synapse formation at week 9, hence LSMP is an adhesion molecule in axon guidance (National Research Council and Institute of Medicine 2009).
+In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle), this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11 (section \@ref(intro-tissues)).
+We further identified a strong LSAMP expression associated to the putamen , which is associated to the putamen (Fig. \@ref(fig:gene-expression-brain) middle). The recognized increase in gene expression of LSAMP starting at week 6 might be a preparation for synapse formation at week 9, hence LSMP is an adhesion molecule in axon guidance (section \@ref(intro-tissues)).
 
-We further identified that two transcripts associated to two different tissues show identical correlation, this can be caused by false annotations. Nevertheless, they show a strong downregulation of BDNF (Fig. \@ref(fig:gene-expression-brain) middle). This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development (National Research Council and Institute of Medicine 2009).
+We further identified that two transcripts associated to two different tissues show identical correlation, this can be caused by false annotations. Nevertheless, they show a strong downregulation of BDNF (Fig. \@ref(fig:gene-expression-brain) middle). This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development (section \@ref(intro-tissues)).
 
-The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (National Research Council and Institute of Medicine 2009).
+The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (section \@ref(intro-tissues)).
 A decline in  NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in NUP85 genexpression reduce the chances for this binding. A consequence might be that more CCR2  receptors are free for beta type chemokin mediated signals. 
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
@@ -2387,6 +2387,7 @@ boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(
 
 
 The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
+
 ```{r pca-plots}
 
 par(mfrow = c(1, 3))
