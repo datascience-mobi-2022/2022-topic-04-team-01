@@ -277,7 +277,7 @@ Tissues specific antigens (TRAs) are important for the analysis of our dataset. 
 
 ## Programming language and Libraries
 
-The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays. Packages for annotation purposes of microarrays were provided by brainarray.
+The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays and statistical genomics. Packages for annotation purposes of microarrays were provided by brainarray.
 
 Following libraries were used:
 
@@ -315,7 +315,7 @@ data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
 ```
 
-To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the Library *Rfssa*.
+To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the library *Rfssa*.
 
 ```{r loading-data-from-github, eval=FALSE}
 #make data accessible for everyone
@@ -479,16 +479,22 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 #sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
 ```
 
-## Limma analysis
+## Limma package
+
+The *limma* package is installed and imported using bioconductor. Among many other things, it determines changes of gene expression over time in intensity values of microarrays, so called differential expressed genes. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It does this by utilizing information borrowing, quantitative weighting, variance modelling and data preprocessing, but importantly, it does not subset the data. doi: 10.1093/nar/gkv007. Because the same linear model was performed on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values, while reducing the variance of residuals. 
 
 ## Over representation analysis
 
+The statistical method over-representation analysis
 
 # Results
 
-## Limma analysis and Volcano plot
 
-### Limma analysis
+
+## Limma analysis
+
+To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcrips 
+
 
 ```{r, include = FALSE}
 library(limma)
@@ -629,7 +635,7 @@ paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- numbe
 ### Venn diagramm
 
 To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagramm)).
-```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)}
+```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
@@ -662,7 +668,7 @@ The intersection showed a number of transcripts worth for further analysis.
 In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
 
-```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined.}
+```{r paper-trends-cluster, fig.width=17, fig.height=3.5, fig.cap = "Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined."}
 #Clustered plot of expression levels over time for the spleen
 paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
 paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
