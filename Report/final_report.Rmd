@@ -66,21 +66,15 @@ library(ggplotify)
 
 #Introduction
 
-
 Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
-=======
->>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
 
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
 
-
 The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades between weeks 5 to 6. They develop into ovaries and testes at week 7 (Benninghoff 1993). 
-=======
+
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
->>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
-
 
 The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth, also the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place until week 7 ( Ulfig 2009; Hikspoors et al. 2022)
 
@@ -100,10 +94,9 @@ At week 3, the heart consists only of a preliminary tube. From then on the heart
 The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth et al. 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu et al. 2017). 
 Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during  weeks 4 to 8 (Hu et al. 2018).
 The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero et al. 2013). 
-While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
+While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation (starting at week 4), neuronal differentiation (starting at week 4), neuronal migration (starting at week 9), synapse formation (starting at week 9) and programmed cell death (starting at week 20) take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
 
 ## Chemokines and brain development {#intro-brain}
->>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
 
 Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
 
@@ -658,7 +651,9 @@ ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 
 ranks_pca[order(ranks_pca$sum),]
 
 ```
+
 For further analyzation, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+
 ```{r, fig.width=3,fig.height=3}
 
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
@@ -702,9 +697,6 @@ The transcripts for LDLRAD4 show the highest overall expression levels. Their ex
 The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
 
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
-
-
-### Ion channel
 
 ```{r gene-expression-brain,fig.height=5,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and cytokine (right) was plotted for week 4 to 9"}
 # A vektor of ENST numbers and weeks was created
@@ -999,11 +991,8 @@ legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298", "ENST00000555247
 
 ```
 
-<<<<<<< Updated upstream
-=======
 ### Ion channel
 
->>>>>>> Stashed changes
 Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
 
 ### Genes for neuronal development and function
@@ -1043,10 +1032,6 @@ Two interleukin related genes were discovered. ENST00000555247 encodes for IL11R
 #### Chemokine related genes
 
 There is a lot of research targeting the role of chemokines during neuronal development. We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
-=======
->>>>>>> 5931d90dc41575a7fc8be479e9b4c3a651f6f83c
-
-
 
 ## TRAs can infer a basic timeline of organ development {#organ}
 
@@ -1733,6 +1718,7 @@ for (i in selected) {
 assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.2,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
 
 ```
+
 ```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
 library(grid)
