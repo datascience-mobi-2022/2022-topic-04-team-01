@@ -4,10 +4,13 @@ author: "Gruppe 4"
 date: '2022-07-03'
 bibliography: references.bib
 output: 
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     number_sections: TRUE
     toc: TRUE
     theme: united
+geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
+header-includes:
+  - \usepackage[font={small,it}, labelfont={bf}]{caption}
 ---
 
 ```{r knitr_init, echo=FALSE, cache=FALSE}
