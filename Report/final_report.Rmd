@@ -826,7 +826,7 @@ ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 
 ranks_pca[order(ranks_pca$sum),]
 
 ```
-For further analyzation, each transcript was awarded a rank depending on how much it contributes to the specific PCA. We took a closer look at the first five transcripts of PCA1, as this PCA alone already explains over 60% of the variety of our data. These five transcripts with the highest contribution encode for: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+For further analyzation, each transcript was awarded a rank depending on how much it contributes to the specific PCA. We took a closer look at the five first-ranking transcripts of PCA1, as this PCA alone already explains over 60% of the variety of our data. These five transcripts with the highest contribution encode for: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
 ```{r}
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -839,25 +839,25 @@ rep3 <- data.frame(t(PCA1_first_five[,c(3,6,9,12,15,18)]))
 par(mfrow = c(1, 3))
 
 #rep1 first 5 transcripts expression over weeks
-matplot(rep1, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '1 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep1, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 1' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 
 #rep2 first 5 transcripts expression over weeks
-matplot(rep2, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '2 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep2, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 2' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 
 #rep3 first 5 transcripts expression over weeks
-matplot(rep3, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'weeks', ylab = 'expression level', main = '3 transcripts with highest contribution to PCA1' , xaxt='n')
+matplot(rep3, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression level', main = 'replica 3' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16)
+legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 theme(aspect.ratio = 1)
 ```
-The transcripts ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting for that, both transcripts consistently display the same expression levels over all weeks for all three different replicas. The same applies to the transcripts ENST00000241274 and ENST00000475390 as they also encode for the same protein (SLITRK3). 
-The transcripts for LDLRAD4 shown the highest overall expression levels. Their expression levels also don't show many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels for all three replicas over all weeks. Especially replica three shows a near identical expression patterns of KCNMB2 and SLITRK3 between weeks 5 to 8.
+The transcripts ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression levels over all weeks for all three different replicas. The same applies to the transcripts ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3). 
+The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels for all three replicas over all weeks. Especially replica three shows near identical expression patterns of KCNMB2 and SLITRK3 between weeks 5 to 8.
 
 
 
