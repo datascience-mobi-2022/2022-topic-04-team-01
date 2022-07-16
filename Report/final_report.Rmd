@@ -66,25 +66,25 @@ library(ggplotify)
 
 #Introduction
 <<<<<<< HEAD
-Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
+Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 
 Let us start with the liver. At week 4, the liver sprout further develops to hepathocytes and intrahepathic gallic pathways while staying in close contact to the further outbranching vitelline veins. Between weeks 5 to 9 the production of gallic acid starts. Furthermore, glykogengranula develop at week 8 and glykogensynthesis starts at week 9. Between weeks 8 and 9 the expression of cytochrome-P450-enzyme starts (Deutsch 2013).
 
-The next organ are the gonades their progenitors develop next to the progenitor of kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades in week 5 to 6. They develop to ovaries and testis at week7 (Benninghoff 1993). 
+The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades between weeks 5 to 6. They develop into ovaries and testes at week 7 (Benninghoff 1993). 
 
 The spleen first appears in the mesogastrium at week 6. Blood vessels appear in the organ in weeks 8 to 9 (James & Jones 1983). The spleen plays an important role in the immunesystem. For example, b-lymphocytes are present in the spleen by week 12 (Hayward 1983).
 
-The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth and the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place untill week 7 ( Ulfig 2009; Hikspoors et al. 2022)
+The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth, also the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place until week 7 ( Ulfig 2009; Hikspoors et al. 2022)
 
-The stomach develops from the midgut. The primitive gut devides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth et al. 2013).
+The stomach develops from the midgut. The primitive gut divides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth et al. 2013).
 
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. the epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) creattes a protective layer for the ectoderm at weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are noteable at week 6 (Hu et al. 2018).
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. The epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) create a protective layer for the ectoderm between weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are notable at week 6 (Hu et al. 2018).
 
-The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the follwing weeks (Romero et al. 2013). 
+The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the following weeks (Romero et al. 2013). 
 
-Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this periode, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration, synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
+Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this period, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
 
-Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteins (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role for the neuronal cell migration (Tiveron & Cremer 2008).
+Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
 
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
@@ -549,7 +549,7 @@ annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values 
 
 ### Principal component analysis
 
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout weeks 4 to 9. This was performed to reduce dimension while keeping most of the data's variance to gain better insight on the expression of genes between those weeks.
 
 ```{r}
 #pca on rows (genes)
@@ -562,7 +562,7 @@ pca_genes <- prcomp(
 summary(pca_genes)
 ```
 
-To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
+To get a better grasp of how much variance is explained by each PCA, the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
 ```{r pca-variance}
 #visualizing the variance of the PCAs
@@ -663,11 +663,10 @@ first_five <- rbind(week4,week5,week6,week7,week8,week9)
 #plotting the expression over weeks
 matplot(first_five, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression Level', main = 'Five transcripts with most contribution to PCA1' , xaxt='n')
 axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=1,title="Expressed genes")
-
+legend('bottomright', legend = c('ENST00000399848 (LDLRAD4)','ENST00000432997 (KCNMB2)','ENST00000452583 (KCNMB2)','ENST00000241274 (SLITRK3)','ENST00000475390 (SLITRK3)'), col=c('black','red','green','blue','orange'), pch=16, cex=0.8,title="Expressed genes")
 ```
 The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. 
-The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show near identical expression patterns.
+The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show similar identical expression patterns.
 
 
 
