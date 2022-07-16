@@ -66,29 +66,11 @@ library(ggplotify)
 
 #Introduction
 
-
-Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonads, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
-
-
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
-
-
-The next organ are the gonads, their progenitors develop next to the progenitor of the kidney and are made up of three different cellforms, the coelomic epithelium form, the progenitor kidney form and the germline cell form. Those cells move to the gonades between weeks 5 to 6. They develop into ovaries and testes at week 7 (Benninghoff 1993). 
 
 Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
-
-
-The shape of the heart resembles a tube at week 3. The different heart parts develop at week 4 due to curvation and growth, also the ventricles are created. The fundamental layout of the heart is already present by weeks 4 to 5. Further remodeling takes place until week 7 ( Ulfig 2009; Hikspoors et al. 2022)
-
-The stomach develops from the midgut. The primitive gut divides into foregut, midgut and hindgut at week 4. Furthermore a 90 degree rotation along the axis of mesentery vessels takes place at week 8. As a result, the small gut is now on the right side of the midgut and the colorectum is on the left (Kluth et al. 2013).
-
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. The epidermal differentiation of these ectoderm cells is illustrated by gene expression of keratins. Adhered cells (periderm) create a protective layer for the ectoderm between weeks 4 to 8. Antigen presenting immune cells, the Langerhans cells, are notable at week 6 (Hu et al. 2018).
-
-The skeletal muscles, e.g. some head muscles differentiate form mesoderm. First myotubes with central nuclei, where created by the fusion of myotubes between week 10 to 13. Typical muscle proteins develop in the following weeks (Romero et al. 2013). 
-
-Major parts of the brain are developed by week 9. Characteristic neuronal development steps take place during this period, e.g. neuronal proliferation, neuronal differentiation, neuronal immigration and synapse formation (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018). Many signals influence the development of the brain e.g. chemokines.
 
 Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.
 First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).
