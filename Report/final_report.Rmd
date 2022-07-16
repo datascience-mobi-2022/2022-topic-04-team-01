@@ -206,10 +206,16 @@ library(ggplotify)
 
 #Introduction
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 HEAD
 Our expression data was gained from embryos between weeks 4 to 9, hence it's essential to know what happens in organogenesis during these weeks in the most prominent organs: the liver, the gonades, the spleen, the heart the skeletal muscles and the brain.
 
 =======
+=======
+
+##Something subtitle tissues {#intro-tissues}
+
+>>>>>>> Stashed changes
 =======
 
 ##Something subtitle tissues {#intro-tissues}
