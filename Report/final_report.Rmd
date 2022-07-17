@@ -12,7 +12,14 @@ geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
 header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
   - \usepackage{float}
-  - \floatplacement{Fig.}{H}
+  - \renewcommand{\topfraction}{.95}
+  - \renewcommand{\bottomfraction}{.9}
+  - \renewcommand{\textfraction}{.05}
+  - \renewcommand{\floatpagefraction}{.77}
+  - \setcounter{topnumber}{3}
+  - \setcounter{bottomnumber}{3}
+  - \setcounter{totalnumber}{4}
+  #- \floatplacement{figure}{H}
   - \usepackage{caption}
   - \captionsetup[Fig.]{font=footnotesize}
 ---
@@ -369,7 +376,9 @@ The statistical method over-representation analysis determines among other thing
 
 ## Limma analysis {#limma}
 
-To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed transcripts. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts.
+To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed transcripts. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts. For all of those, we found at least 40 differentially expressed transcripts within our dataset. (Fig. \@ref(fig:bar-tissues)). These numbers are sufficient for further analysis within individual tissues.  \
+Volcano plot for differentially expressed transkripts between week 4 and 9 was made to evaluate limma analysis. Genes are categorized as up-regulated, down-regulated or not differentially expressed (Supplementary: Fig. \@ref(fig:Volcano-Plot))). We further used genes between all weeks with an adjusted p-value smaller than 0.01. All results will be based on this dataset with differentially expressed transcripts.
+
 
 ```{r, include = FALSE}
 
@@ -423,10 +432,11 @@ for (i in 1:15) {
 diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 ```
 
-The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to create a volcano plot. The negative log10 of the adjusted p-value was plotted against the logFC value. The -log10 (adjusted p-value) boundary was set at 2 which equals our targeted adjusted p-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression (Supplementary: Fig. \@ref(fig:Volcano-Plot)). The transcripts were categorized in two groups. the first groub are up-regulated, because the logFC value is larger than 1 and the adjusted p-value is smaller than 0.01 and the second groub is down-regulated, because the logFC value is smaller than 1 and the adjusted p-value is smaller than 0.01. \
-Transcripts, which didn't belong in those two groups, were declared as not differentially expressed.
 
-The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testis (Fig. \@ref(fig:barplot-treemap-differentially-expressed)). These numbers are sufficient for further analysis within individual tissues. Therefore, all results will be based on this dataset with differentially expressed transcripts. \
+
+
+
+
 
 ## Comparison of differential expressed transcripts between the original paper and our method {#paper-comp}
 
@@ -623,11 +633,12 @@ count_data$color = cols
 treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
 ```
 
-```{r barplot-treemap-differentially-expressed, fig.width=12, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The plot shows the share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
+
+```{r bar-tissues, fig.width=13, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The plot shows the share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
 lay = rbind(c(1,1,1,2), c(1,1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
-plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.77), y = c(0.1,0.1)) 
-annotate_Fig.(plot_output, top = text_grob("Differentially expressed transcripts of TRAs by tissue", color = "black", face = "bold", size = 16))
+plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.77), y = c(0.1,0.1)) + theme (plot.margin = unit(c(0.2,1.2,0,1.2),"cm"))
+annotate_figure(plot_output, top = text_grob("Differentially expressed transcripts of TRAs by tissue", color = "black", face = "bold", size = 16))
 ```
 
 ```{r, eval = FALSE}
@@ -636,8 +647,11 @@ mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
 
-The TRA dataset covers 53 distinct tissues. Nonetheless, there is a significant overlap between the TRAs associated with different tissues, as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by supplementary Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
+The TRA dataset covers 53 distinct tissues (Fig. \@ref(fig:bar-tissues)). The minimum of differentially expressed transcripts in tissue were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes. \
+Nonetheless, there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by supplementary Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
 
+
+ 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
 In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. For all differencially expressed transcripts associated with one tissue, we analyzed the share of transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of these trascnrips (Fig. \@ref(fig:expression-plot)B). Since both metrics only depicted miniscule changes, we hypothesized that distinct, counteracting trends in expression exist within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C. The clustering graphs for all tissues can be found on our github repository.
@@ -755,7 +769,7 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
 
 plot = arrangeGrob(grobs = list(spleen_percentage_plot, spleen_genes_plot, spleen_clustered_plot), nrow=1, widths = c(3.3,2.7, 4), heights = c(0.7))
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
-annotate_Fig.(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
+annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 14))
 ```
 
 For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could be characterized as either an upregulation or a downregulation. In order to determine the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
@@ -1376,14 +1390,12 @@ ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic fa
 
 ### Chemokine related genes
 
-The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between weeks 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes the  chemotaxis of monocytes. ENST00000579298 is related to the frontal cortex and shows a decline between weeks 5 to 9.
+The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between week 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines). ENST00000579298 is related to the frontal cortex and shows a decline between week 5 to 9.
 
 
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+## No TRAs could be identified as key biomarkers for developmental progression
 
-### Principal component analysis
-
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed transcripts throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA-analysis) A).
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can then be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (supp. Fig. \@ref(fig:PCA-analysis) A).
 
 ```{r, include=FALSE}
 #pca on rows (genes)
@@ -1522,31 +1534,8 @@ dev.off()
 
 ```
 
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA-analysis) B).
 
-```{r PCA-analysis, fig.width = 10, fig.height = 4}
-file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
-download.file(file_fiveplot, "PC1_five.png", mode = "wb")
-first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
-
-lay = rbind(c(1,2))
-PCA_plots = arrangeGrob(grobs = list(PC_contribution, first_five_plot),layout_matrix = lay)
-
-PCA_plots_output = as_ggplot(PCA_plots) +
-  draw_plot_label(label = c("A", "B"), 
-                  size = 15, 
-                  x = c(0.01, 0.5), 
-                  y = c(0.17, 0.17)
-                  ) 
-
-annotate_Fig.(PCA_plots_output, 
-                top = text_grob("Principal component analysis", 
-                                color = "black", 
-                                face = "bold", 
-                                size = 16
-                                )
-                )
-```
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (supp. Fig. \@ref(fig:PCA-analysis) B).
 
 # Discussion
 
@@ -1573,7 +1562,7 @@ Finally, the skin shows an increased expression of related genes sets from week 
 
 ### Brain subtissue-specific gene expression reflects neuronal development processes {#dis-brain}
 
-First, we found a significant increase in the expression of SLN sarcolipin (a Ca-ATPase) (Fig. \@ref(fig:gene-expression-brain) left). Since Ca(2+) is an essential cofactor for actin dependent cell migration, this might be related to neuronal migration startingweek 9 (section \@ref(intro-tissues)). \
+First, we found a significant increase in the expression of SLN sarcolipin (a Ca-ATPase) (Fig. \@ref(fig:gene-expression-brain) left). Since Ca(2+) is an essential cofactor for actin dependent cell migration, this might be related to neuronal migration starting week 9 (section \@ref(intro-tissues)). \
 Additionally, the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646) (Fig. \@ref(fig:gene-expression-brain) middle) was noteworthy. Both proteins are associated with the cerebellar hemisphere and contribute to endocytosis (Overhoff et al. 2020). \
 In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle). An upregulation of this factor can prepare the process of synapse formation which starts at week 11 (section \@ref(intro-tissues)). \
 We further identified a strong LSAMP expression associated to the putamen as well as  NXPH1 linked with the anterior cingulate cortex. (Fig. \@ref(fig:gene-expression-brain) middle). As adhesion molecules for axon guidance, their increases in expression (from week 6/7 on) could be in preparation for synapse formation at week 9 (section \@ref(intro-tissues)). \
@@ -1638,8 +1627,6 @@ Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine r
 
 # Supplementary
 
-## Quality control of the vsn normalization: Plots
-
 ```{r QC-normalization-plots, fig.width=12, fig.height=5, fig.cap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
 
 
@@ -1652,11 +1639,11 @@ OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
 annotate_Fig.(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
-## Differential gene expression - Volcano Plot
 
-```{r Volcano-Plot, fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted p-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+
+```{r, fig.width = 18, fig.height = 10, include = FALSE}
 # Create a dataset for the volcano plot from the limma analysis
-# Ausgabe der Toptabel vom Vergleich Woche 4/9
+# Showing the toptable from week 9 to 4 comparison
 top.table = topTable(fit_all,5, n = Inf)
 
 
@@ -1693,10 +1680,60 @@ volcanizator <- function(data, logFC_thresh_upper, logFC_thresh_lower, max_pValu
     ylab("-log10(adj.P.Val)")
 }
 volcano <- volcanizator(top.table, 1, -1, 0.01)
+png(filename = "volcano.png", width = 1000, height = 600)
 volcano
+dev.off()
 ```
 
-## Organ development
+```{r Volcano-Plot,fig.width = 12, fig.height = 6, fig.cap="Volcano plot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1,which reflects a doubling in the expression. Genes are up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01 and down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01. Genes which didn’t belong in those groups were declared as not differentially expressed."}
+ggdraw() + draw_image("volcano.png")
+```
+
+```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
+
+tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+weights = matrix(nrow =length(tissues), ncol = length(tissues))
+rownames(weights) = tissues
+colnames(weights) = tissues
+for (i in 1:33) {
+  for (j in 1:33) {
+    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
+  }
+} 
+
+heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
+```
+
+```{r heatmap-tissues, fig.width=14, fig.height=12, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
+
+file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
+download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
+ plot = ggdraw() + draw_image("TRA_overlap_edited.png")
+
+grid.arrange(plot) + theme(plot.margin = unit(c(0,0,5,0,0.5),"cm"))
+```
+
+```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
+spleen_boxplot
+
+```
 
 ```{r tissue-links,fig.width= 10, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
 
@@ -1728,49 +1765,6 @@ graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TR
 graph2
 ```
 
-```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
-
-tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-
-node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
-
-weights = matrix(nrow =length(tissues), ncol = length(tissues))
-rownames(weights) = tissues
-colnames(weights) = tissues
-for (i in 1:33) {
-  for (j in 1:33) {
-    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
-  }
-} 
-
-heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
-```
-
-```{r heatmap-tissues, fig.width=14, fig.height=14, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
-
-file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
-download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
-ggdraw() + draw_image("TRA_overlap_edited.png")
-```
-
-```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
-library(ggplot2)
-#Compare the initial expression values of both clusters
-spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
-spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
-spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
-i = 0
-for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
-  i = i+1
-  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
-    {"Down"}),length(genelist)))
-  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
-}
-spleen_boxplot_data = spleen_boxplot_data[-1,]
-spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
-spleen_boxplot
-
-```
 
 ```{r spleen-tables-basics, eval=FALSE}
 get_gene_info = function(transcript_ids){
@@ -1796,29 +1790,6 @@ spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
 spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
 ```
 
-```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
-# Table for downregulated genes
-
-Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
-Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
-           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
-
-spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
-spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
-
-
-spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
-functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
-spleen2_gene_description_sum$Summary = functions_2
-gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
-```
-
-```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
-file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
-download.file(file_spleen_down, "spleen_down.png", mode = "wb")
-ggdraw() + draw_image("spleen_down.png")
-
-```
 
 ```{r spleen-up-code, include = FALSE, eval = FALSE}
 # Create a useful table for all upregulated genes
@@ -1845,9 +1816,34 @@ download.file(file_spleen_up, "spleen_up.png", mode = "wb")
 ggdraw() + draw_image("spleen_up.png")
 ```
 
-## Brain development
 
-```{r boxplot-Cerebral-Hemisphere, fig.height=9,fig.width=12,fig.cap="A boxplot of all Cerebellar Hemisphere genes was made to evaluate their scattering. For the samples of all weeks at the top and only for the three samples of week 4 on the bottom."}
+ \newpage
+
+```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
+# Table for downregulated genes
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
+```
+
+```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
+file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
+download.file(file_spleen_down, "spleen_down.png", mode = "wb")
+ggdraw() + draw_image("spleen_down.png")
+
+```
+
+```{r boxplot-Cerebral-Hemisphere, fig.height=9,fig.width=12,fig.cap="A boxplot of all Cerebellar Hemisphere genes was made to evaluate their scattering. For the samples of all weeks at the top and only for the three samples of week 4 on the bottom.", eval = FALSE}
 
 # Distribution control for Cerebellar Hemisphere 
 Tissues = embryo_df_tissues$max.tissue
@@ -1919,3 +1915,26 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
+```{r PCA-analysis, fig.width = 10, fig.height = 4}
+file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
+download.file(file_fiveplot, "PC1_five.png", mode = "wb")
+first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
+
+lay = rbind(c(1,2))
+PCA_plots = arrangeGrob(grobs = list(PC_contribution, first_five_plot),layout_matrix = lay)
+
+PCA_plots_output = as_ggplot(PCA_plots) +
+  draw_plot_label(label = c("A", "B"), 
+                  size = 15, 
+                  x = c(0.01, 0.5), 
+                  y = c(0.17, 0.17)
+                  ) 
+
+annotate_figure(PCA_plots_output, 
+                top = text_grob("Principal component analysis", 
+                                color = "black", 
+                                face = "bold", 
+                                size = 16
+                                )
+                )
+```
