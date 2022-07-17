@@ -126,7 +126,9 @@ library(XML)
 
 # Abstract
 
+
 A single cell turns into a complex multicellular organism during embryogenesis. While the morphological steps behind this process are mostly understood, the role of molecular pathways as well as transcriptional regulation in  embryonic development is still a topic of research. Tissue restricted antigens (TRAs) may be a key to understanding the relation between  molecular biological cause and morphological consequence. Since TRA expression is specific to their relative tissue, we attempted to draw conclusions about organ development from TRA expression patterns between week 4 and 9 of embryogenesis. Using microarray data from  Yi H *et al.* (2010), we created a dataset of differentially expressed transcripts through limma analysis that includes genes not found by Yi H *et al.*. Based on these data, we could successfully link developmental steps to TRA expression patterns for some of the analyzed organs. Furthermore, we found individual genes associated with processes in neurogenesis. Finally, we attempted without success to define specific TRAs as biomarkers for organogenesis.
+
 
 
 \newpage
