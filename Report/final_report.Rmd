@@ -1145,12 +1145,14 @@ The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in 
 For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. \
 Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. \
 
+
 ## Brain subtissue-specific gene expression reflects neuronal development processes
 
-There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
-1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
+The 13 brain subtissues covered in our data showed a considerable overlap of TRAs. Hence, we decided to investigate the genes associated only with one of all 13 brain subtissues. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
+1.Genes of ion channels 2.Genes for neuronal development 3.Genes of cytokines
 
-```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and related to chemokine (right) was plotted for week 4 to 9."}
+
+```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Gene expression of different genes for an ion channel (left), neuronal development and function (middle) and related to chemokines (right) was plotted for week 4 to 9."}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -1366,16 +1368,16 @@ week_9 = apply(week_9,1,median)
 data.ENST00000579298 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
 data.ENST00000579298 =cbind(data.ENST00000579298,week)
 
-# Plotting of the gained geneexpression data
+# Plotting of the gained gene expression data
 par(mfrow = c(1, 3))
 
 #Plot for ion channel gene
-plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of ion channel gene", xlab = "weeks",ylab = "Expressionlevel",col = "red")
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Gene expression level of ion channel gene", xlab = "weeks",ylab = "Expression level",col = "red")
 legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.8,title="Expressed genes")
 
 
 #Plot for neuronal development and function genes 
-plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of  neuronal development and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Gene expression level of  neuronal development \n and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))
 lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue")
 lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")
 lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")
@@ -1387,7 +1389,7 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 
 # Plot for chemokine related genes
-plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of chemokine related genes", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7))
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Gene expression level of chemokine related genes", xlab = "weeks",ylab = "Expression level",col = "red",ylim = c(7.6,9.7))
 lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "blue"), lty=1, cex=0.8,title="Expressed genes")
 
@@ -1409,6 +1411,7 @@ ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic fa
 ### Chemokine related genes
 
 The last groupe are chemokine, they take up an important part in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
+
 
 ## Using Principal component analysis to find biomarkes for developmental progression
 
