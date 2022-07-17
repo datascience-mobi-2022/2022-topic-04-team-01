@@ -203,11 +203,10 @@ colnames(exprs(data.GSE15744.vsnrma)) <- substr(colnames(exprs(data.GSE15744)), 
 
 temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
 colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
-temp_embryo_df
 embryo_df = temp_embryo_df[63:95721,]
 ```
 
-### Quality control of the vsn normalization
+### Quality control of the vsn normalization {#QC-normalization}
 
 To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:)A). Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:)C).
 
@@ -315,7 +314,7 @@ The *limma* package is installed and imported using bioconductor. Among many oth
 
 ## Over representation analysis
 
-The statistical method over-representation analysis
+The statistical method over-representation analysis determines among other thing the over represented function of genes with associated transcripts in a subset of a mother data set with annotated transcripts and known functions. Categories for functions can be accessed via gene ontology.
 
 # Results
 
@@ -417,17 +416,16 @@ paper_df_intersec_diff <- paper_df_ann_diff %>% drop_na(select)
 
 number_vec = sapply(c(1:sum(is.na(paper_df_ann$ensembl.transcript))), function(x){str_glue("no_value", x)} )
 paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- number_vec
-#sum(!is.na(paper_df_ann$ensembl.transcript)) 
-#paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
 
-
-
+string_ENST <- toString(paper_df_ann$ensembl.transcript)
+contain_bool_diff = sapply(diff_genes_list_0.01, function(x) {grepl(x, string_ENST)})
+df_unique_diff <- diff_genes_ann_0.01[!contain_bool_diff,]
 ```
 
-### Venn diagramm
+### Venn diagram
 
-To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagramm)).
-```{r Venn-Diagramm, fig.width=7, fig.height=7, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagram)).
+```{r Venn-Diagram, fig.width=7, fig.height=7, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
@@ -457,14 +455,15 @@ The intersection showed a number of transcripts worth for further analysis.
 
 ### Verifing the trends postulated in the paper with our data
 
-In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
+In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes doi: 10.1096/fj.10-158782. In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k-means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
 
-```{r paper-trends-cluster, fig.width=17, fig.height=5, fig.cap = "Clustering of the common transcripts reveals similar trends. We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (A and B) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (C) we see clusters, with same matching the *arch* pattern and some who are rather undetermined."}
+```{r paper-trends-cluster, fig.width=17, fig.height=10, fig.cap = "**Clustering of the common transcripts reveals similar trends and but our additional data shows missing differentially expressed genes.** We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (**A** and **B**) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (**C**) we see clusters, with same matching the *arch* pattern and some who are rather undetermined. Of 396 transcripts only 39 of our differentially expressed genes by *limma* analyis share this *arch* property (**D**). Here we clearly see differential gene expression. In **E** we plotted data of our differntially expressed genes. There are *up* and *down* regulated genes determined by our *limma* analysis, that are not included in the data set of the authors of the original paper"}
 #Clustered plot of expression levels over time for the spleen
-paper_df_up <- filter(paper_df_intersec_diff, Expression_pattern == "UP") # 759
-paper_df_down <- filter(paper_df_intersec_diff, Expression_pattern == "DOWN") # 1096
-paper_df_arch <- filter(paper_df_intersec_diff, Expression_pattern == "ARCH") # 396
+paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_intersec, Expression_pattern == "ARCH") # 396
+paper_df_arch_diff <- filter(paper_df_intersec_diff, Expression_pattern == "ARCH")
 
 # Functions for later use
 expression_difference = function(x,y) {
@@ -491,14 +490,14 @@ create_plot_data = function(dataset) {
   return(data_plot)
 }
 
-paper_df_diff_list = list(as.data.frame(paper_df_up),as.data.frame(paper_df_down),as.data.frame(paper_df_arch))
+paper_df_diff_list = list(as.data.frame(paper_df_up[8:25]),as.data.frame(paper_df_down[8:25]),as.data.frame(paper_df_arch[8:25]),as.data.frame(paper_df_arch_diff[8:25]),  as.data.frame(df_unique_diff[,1:18]))
 # Select an modify the data used for kmeans
 i = 0
-names <- c("Up-regulated", "Down-regulated","Arch-regulated")
+names <- c("Up-regulated", "Down-regulated","Arch-regulated","Arch-regulated which intersect our differentially expressed genes","Differentially expressed genes not included" )
 for (data_temp in paper_df_diff_list){
   i= i+1
-data_abs = data.frame(Week4 = apply(data_temp[8:10], 1, median), Week5 =  apply(data_temp[11:13], 1, median), Week6 =  apply(data_temp[14:16], 1, median),
-                        Week7=apply(data_temp[17:19], 1, median), Week8 =  apply(data_temp[20:22], 1, median), Week9 =  apply(data_temp[23:25], 1, median))
+data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
 data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
                   "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
                   "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
@@ -516,23 +515,30 @@ km = kmeans(data, centers = n_cluster, nstart = 25)
 data_plot_raw = cbind(data_abs, Cluster = km$cluster)
 plot_data = create_plot_data(data_plot_raw)
 
-assign(str_glue( "plot_", i), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = names[i]) + scale_color_npg() + theme_classic()  + ylim(6.5,8.5) + theme(aspect.ratio = 1))
+assign(str_glue( "plot_", i), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = names[i]) + scale_color_npg() + theme_classic()  + ylim(6.5,8.5) + theme(aspect.ratio = 1, plot.margin = unit(c(0.5,0,0.5,0),"cm")))
 }
 
+#Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3),
+#                                    nrow=1, widths = c(5,5,5), heights = c(5))
 
-Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3),
-                                    nrow=1, widths = c(5,5,5), heights = c(5))
+lay = rbind(c(1,2,3), c(4,5,NA))
+
+Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3, plot_4, plot_5),
+                                    layout_matrix = lay)
 
 Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
-  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.37, 0.68), y = c(0.13, 0.13, 0.13)) 
+  draw_plot_label(label = c("A", "B", "C", "D", "E"), size = 15, x = c(0.01, 0.34, 0.68, 0.01, 0.34), y = c(0.55, 0.55, 0.55, 0.05, 0.05)) 
 
-annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be\ndifferentially expressed by authors of the paper", color = "black", face = "bold", size = 16))
+annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be differentially expressed by authors of the paper and supplimented by our data", color = "black", face = "bold", size = 16))
 
 
 ```
 
+We repeated the Figure\@ref(fig:paper-trends-cluster)A and B with our differentially expressed genes aswell and the results were highly similar. The Figure can be found on our github (Report/Comparison with paper differentially expressed.png).
 
-We repeated the same plot with transcripts, which we determined as differentially expressed by our *limma* analysis and the results were highly similar. The Figure can be found on our github ().
+For Figure \@ref(fig:paper-trends-cluster)C cluster 1, 6, 7, 8 clearly show an *arch* regulated pattern, but for clusters 4 and 5 the data rather appears to be *down* regulated, or *up* regulated in the case of cluster 10. And the final clusters 2, 3 and 9 with a total of 156 transcripts are not differentially expressed at all. When we cluster our differentially expressed genes annotated with the *arch* pattern (Figure \@ref(fig:paper-trends-cluster)D), we recieve only 10% of the amount of transcripts which are clearly clusters.
+
+Figure \@ref(fig:paper-trends-cluster)E reveals, that there clearly *up* and *down* regulated genes of 646 transcripts or about 10%, that are missed by the method used by the authors of the paper.
 
 ## TRAs can infer a basic timeline of organ development {#organ}
 
@@ -1565,13 +1571,16 @@ legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST000004
 The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. 
 The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show near identical expression patterns.
 
-
-
 # Discussion
 
 ## Comparison with original paper
 
-In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by clustering and plotting the overlapping Intensity values (Figure \@ref(paper-trends-cluster)). By looking at the trends of the cluster for up and down regulated gene expression
+In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper (Yi H *et al.*, 2010) of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by k-means clustering and plotting the overlapping Intensity values (Figure \@ref(fig:paper-trends-cluster)). By looking at the trends of the cluster for *up* and *down* regulated gene expression, we can validate the method used by the authors. In contrast the *arch* regulated genes-clusters do not present a clear result and show a weakness of the method used. It falsely detects some genes as differentially expressed, assuming our *vsn* normalization is correct, which is indicated by the quality control (section \@ref(QC-normalization)).
+
+Furthermore, we showed in our Venn diagram (Figure \@ref(fig:Venn-Diagram)), that our method detected differentially expressed genes not included in their data. This questions the significance of either the papers results or again our *vsn* normalization and subsequent *limma* analysis, which is rather unlikely given our quality control and plots.
+
+The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances doi: 10.1093/nar/gkv007.
+Overall, this ensured the quality of our data set and differentially expressed genes while also pointing out some flaws of the data set of the paper.
 
 
 
