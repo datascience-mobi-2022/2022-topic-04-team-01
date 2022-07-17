@@ -192,7 +192,7 @@ The data was generated using Affymetrix U133 plus 2.0 human GeneChip arrays, cot
 
 We downloaded the raw data from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). We imported it with the library package *affy*, which allows more manageable data analysis and manipulation of microarray intensity values.
 
-```{r importing-the-data-from-harddrive}
+```{r importing-the-data-from-harddrive, eval = FALSE}
 setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
@@ -200,7 +200,7 @@ data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
 
 To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the library *Rfssa*.
 
-```{r loading-data-from-github, eval=FALSE}
+```{r loading-data-from-github, include = FALSE}
 #make data accessible for everyone
 githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/data.GSE15744.RData"
 load_github_data(githubURL)
@@ -500,7 +500,7 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
 )
 ```
 
-```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)", eval = FALSE}
 ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
@@ -587,7 +587,7 @@ annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values 
 
 ```
 
-We repeated the Figure\@ref(fig:paper-trends-cluster)A and B with our differentially expressed genes aswell and the results were highly similar. The Figure can be found on our github (Report/Comparison with paper differentially expressed.png).
+We repeated the Figure\@ref(fig:paper-trends-cluster)A and B with our differentially expressed genes as well and the results were highly similar. The Figure can be found on our github (Report/Comparison with paper differentially expressed.png).
 
 For Figure \@ref(fig:paper-trends-cluster)C cluster 1, 6, 7, 8 clearly show an *arch* regulated pattern, but for clusters 4 and 5 the data rather appears to be *down* regulated, or *up* regulated in the case of cluster 10. And the final clusters 2, 3 and 9 with a total of 156 transcripts are not differentially expressed at all. When we cluster our differentially expressed genes annotated with the *arch* pattern (Figure \@ref(fig:paper-trends-cluster)D), we recieve only 10% of the amount of transcripts which are clearly clusters.
 
@@ -1093,8 +1093,8 @@ for (i in selected) {
   data_plot[data_plot$Function == enr_GO_tissue$Description[i],"Expression"] = expr_path
 }
 assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression, group = Function))  + geom_line(aes(colour =Function), position = position_dodge(0)) + geom_point(aes(colour = Function, shape = Function), position = position_dodge(0)) + labs(title = tissue) +  theme_classic() + scale_color_npg()  + theme(legend.title = element_text(size = 9), legend.text = element_text(size = 7), aspect.ratio = 1, legend.position = "bottom", legend.spacing.y = unit(0.1, "cm"),legend.key.size = unit(0.4, "cm"), plot.margin = unit(c(0.5,0.8,0.8,0),"cm")) + guides(colour = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE), shape = guide_legend(nrow = length(selected), title.position = "top",byrow = TRUE)))
-
 ```
+
 
 ```{r ORA-plot, fig.width = 12, fig.height=15, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 gene sets, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
