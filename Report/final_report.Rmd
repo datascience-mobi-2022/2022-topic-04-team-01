@@ -100,10 +100,10 @@ Our expression data was gained from embryos between week 4 to 9, hence it's esse
 First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).\
 The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993). \
 The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen’s role in the human  immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
-At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors et al. 2022).\
-The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth et al. 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu et al. 2017).\
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during  weeks 4 to 8 (Hu et al. 2018).\
-The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero et al. 2013). \
+At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors *et al.* 2022).\
+The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth *et al.* 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu *et al.* 2017).\
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during  weeks 4 to 8 (Hu *et al.* 2018).\
+The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero *et al.*. 2013). \
 While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation (starting at week 4), neuronal differentiation (starting at week 4), neuronal migration (starting at week 9), synapse formation (starting at week 9) and programmed cell death (starting at week 20) take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
 
 ## Chemokines and brain development {#intro-brain}
@@ -1147,13 +1147,10 @@ The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in 
 For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. \
 Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. \
 
-## Hypothesis: Neural TRA expression patterns reflect morphological brain development
+## Brain subtissue-specific gene expression reflects neuronal development processes
 
-The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
-
+There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
-
-### Ion channel
 
 ```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and related to chemokine (right) was plotted for week 4 to 9."}
 # A vektor of ENST numbers and weeks was created
@@ -1390,36 +1387,22 @@ legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "bl
 
 ```
 
-### Ion channel
+### Ion channel 
 
 Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
 
 ### Genes for neuronal development and function
 
-The second group are genes with a specific function in the neuronal development and function.
-
-#### Genes for neuronal function 
-
-Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.
-
-#### Genes for axon guidance
-
-Filtering mentioned four genes for axon guidance:
-
-ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.
-
-ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density, which is essential for functional neurons (Overhoff et al. 2020). ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.
-
-In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.
-
-#### Genes for neuronal survival
-
+The second group are genes with a specific function in the neuronal development and function. Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.\
+Filtering mentioned four genes for axon guidance:\
+ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.\
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density, which is essential for functional neurons (Overhoff et al. 2020). ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.\
+In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.\
 ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheless, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
 
 ### Chemokine related genes
 
 The last groupe are chemokine, they take up an important part in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
-
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
@@ -1596,11 +1579,15 @@ Benninghoff, A.  (1993), Makroskopische Anatomie, Embryologie und Histologie des
 
 Deutsch J.  (2013), Embryologie und Physiologie der Leber, Pädiatrische Gastroenterologie, Hepatologie und Ernährung, 375–87, Berlin Deutschland.
 
-Dinkelacker M., (2019), Chromosomal clustering of tissue restricted antigens.
+Dinkelacker M., (2019), Chromosomal clustering of tissue restricted antigens, Dissertation, University Heidelberg, Germany.
 
 Esrefoglu M., Taslindere E. & Cetin A. (2017), Development of the Esophagus and Stomach, Bezmialem sci. 5, 175-82.
 
 Fasold M. & Binder H., (2013), AffyRNADegradation: control and correction of RNA quality effects in GeneChip expression data, Bioinformatics, 29, 129-31. 
+GTEX 2013, (2013), The Genotype-Tissue Expression (GTEx) project, GTEx Consortium, Nat Genet. 45, 580-5.
+
+GTEX 2015, (2015), Human genomics, The Genotype-Tissue Expression (GTEx) pilot analysis: multitissue gene regulation in humans, GTEx Consortium, Science 348, 648-60.
+
 Hayward AR., (1983), The human fetus and newborn: development of the immune response, Birth Defects Orig. Artic. Ser. 19, 289-94. 
 
 Hikspoors J.P.J.M., Kruepunga N., Mommen G.M.C. et al., (2022), A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development, Commun. Biol. 5, 226.
@@ -1638,7 +1625,7 @@ Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine r
 
 ## Differential gene expression - Volcano Plot
 
-```{r Volcano-Plot, fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+```{r Volcano-Plot,fig.height= 3.5, fig.height=3.5fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
