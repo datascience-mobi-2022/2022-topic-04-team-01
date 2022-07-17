@@ -1145,13 +1145,7 @@ The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in 
 For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. \
 Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. \
 
-<<<<<<< HEAD
 ## Brain subtissue-specific gene expression reflects neuronal development processes
-=======
-## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#brain}
-
-The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
->>>>>>> 1b752cc3fa1eed0b9f3aded69956577977c5a218
 
 There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
