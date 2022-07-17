@@ -160,7 +160,8 @@ With neurulation happening around week 4, the major parts of the brain are alrea
 
 ## Chemokines and brain development {#intro-brain}
 
-Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf *et al.* 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
+Chemokines are a group of small proteins, acting as chemoattractors on effector cells inducing their cell migration. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf *et al.* 2005). The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
+
 
 # Methods
 
@@ -1381,7 +1382,7 @@ ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic fa
 
 ### Chemokine related genes
 
-The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between weeks 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes the  chemotaxis of monocytes. ENST00000579298 is related to the frontal cortex and shows a decline between weeks 5 to 9.
+The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between week 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines). ENST00000579298 is related to the frontal cortex and shows a decline between week 5 to 9.
 
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
