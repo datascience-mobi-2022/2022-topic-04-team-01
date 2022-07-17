@@ -126,8 +126,7 @@ library(XML)
 
 # Abstract
 
-A single cell turns into a complex multicellular organism during embryogenesis. The morphological steps behind this process are mostly understood. The role of molecular biological pathways and molecules like chemokines in the embryonic development is quite unknown and has to be investigated. Tissue restricted antigens (TRA) may be a key in understanding the relation between  molecular biological cause and morphological consequence.TRAs originate from negative selection in thymus, where medullary epithelial cells (mTECs) express them on their surface to remove self-antigen reactive T-cells. Those TRA represent a wide range of self-antigen, hence we can use them to determine the gene expression in our dataset (Dinkelacker 2019; Murphy & Weaver 2018).\
-First of all, we want to compare our methods, e.g. limma analysis to the methods of the paper, e.g. **One-way analysis of variance** to find differentially expressed genes. We want validate, if TRAs represent the timeline in the early stage of embryonic development between week 4 to 9. And give us an insight in the molecular biological process in those weeks. Furthermore, we want to identify, if the expression of specific gens can be related to milestones in neurogenesis. Last but not least, we want to illustrate the role of specific TRAs as biomarkers for organogenesis.
+A single cell turns into a complex multicellular organism during embryogenesis. While the morphological steps behind this process are mostly understood, the role of molecular pathways as well as transcriptional regulation in  embryonic development is still a topic of research. Tissue restricted antigens (TRAs) may be a key to understanding the relation between  molecular biological cause and morphological consequence. Since TRA expression is specific to their relative tissue, we attempted to draw conclusions about organ development from TRA expression patterns between week 4 and 9 of embryogenesis. Using microarray data from  Yi H *et al.* (2010), we created a dataset of differentially expressed transcripts through limma analysis that includes genes not found by Yi H *et al.*. Based on these data, we could successfully link developmental steps to TRA expression patterns for some of the analyzed organs. Furthermore, we found individual genes associated with processes in neurogenesis. Finally, we attempted without success to define specific TRAs as biomarkers for organogenesis.
 
 
 \newpage
@@ -136,19 +135,19 @@ First of all, we want to compare our methods, e.g. limma analysis to the methods
 
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
 
-Tissues restricted antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
+Tissues restricted antigens (TRAs) are originally a concept from immunology. There, they are sets of genes for auto-antigens that enable e negative selection in the thymus, which prevents autoimmune reactions. These TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in the  medullary epithelial cells (mTECs) and represent the diversity of antigens in the different tissues of an organism (Dinkelacker 2019; Murphy & Weaver 2018). For aur research, we use a broader definition. Here,TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). In contrast to housekeeping genes, this makes TRAs highly specific for individual tissues. Therefore, the existence and functionally of an organ should be correlated with the expression of its associated TRAs. We will use this connection to gain insight into organ development based on gene expression data between week 4 and 9 of embryogenesis. 
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
 
-Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.\
-First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).\
-The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993).\
-The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen's role in the human immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
-At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors *et al.* 2022).\
+In order to compare the results based on expression patterns, it is essential to give an overview about organogenesis during this time. As they are the focus of our research, we will summarize the developments in a few important organs: the liver, testes, spleen, heart, stomach, skin, skeletal muscles and brain.\
+First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9, the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).\
+The testes initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testes occurs first by week 7 (Benninghoff 1993).\
+The spleen appears at week 6 of embryonic development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen's role in the human immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
+At week 3, the heart consists only of a preliminary tube. From then on, it undergoes extensive growth and development with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, at which point the major steps are already completed (Ulfig 2009; Hikspoors *et al.* 2022).\
 The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth *et al.* 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu *et al.* 2017).\
 Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during weeks 4 to 8 (Hu *et al.* 2018).\
 The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero *et al.*. 2013).\
-While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation (starting at week 4), neuronal differentiation (starting at week 4), neuronal migration (starting at week 9), synapse formation (starting at week 9) and programmed cell death (starting at week 20) take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
+With neurulation happening around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation and differentiation (starting at week 4) as well as neuronal migration and synapse formation (starting at week 9) a take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
 
 ## Chemokines and brain development {#intro-brain}
 
@@ -523,7 +522,6 @@ The intersection showed a number of transcripts worth for further analysis.
 
 In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes (Yi H *et. al*, 2010). In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k-means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
-
 ```{r paper-trends-cluster, fig.width=17, fig.height=8, fig.cap = "**Clustering of the common transcripts reveals similar trends and but our additional data shows missing differentially expressed genes.** We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (**A** and **B**) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (**C**) we see clusters, with same matching the *arch* pattern and some who are rather undetermined. Of 396 transcripts only 39 of our differentially expressed genes by *limma* analyis share this *arch* property (**D**). Here we clearly see differential gene expression. In **E** we plotted data of our differntially expressed genes. There are *up* and *down* regulated genes determined by our *limma* analysis, that are not included in the data set of the authors of the original paper"}
 
 #Clustered plot of expression levels over time for the spleen
@@ -611,8 +609,6 @@ Figure \@ref(fig:paper-trends-cluster)E reveals, that there clearly *up* and *do
 
 ### Differentially expressed transcripts can be linked to all analyzed tissues {#organ-overview}
 
-The TRA Data covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum was found with 46 stomach-linked transcripts, the maximum were 837 TRAs for the testes.
-
 ```{r, fig.width=8, fig.height=6, include=FALSE}
 # Create a barplot for the TRA count of each tissue based on our dataset of differentially expressed genes
 
@@ -639,7 +635,7 @@ count_data$color = cols
 treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
 ```
 
-```{r, fig.width=12, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
+```{r, fig.width=12, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The plot shows the share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
 lay = rbind(c(1,1,1,2), c(1,1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.77), y = c(0.1,0.1)) 
@@ -651,41 +647,12 @@ annotate_figure(plot_output, top = text_grob("Differentially expressed transcrip
 mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
-These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
-
-```{r tissue-links,fig.width= 10, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
-
-nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-
-edges = data.frame (rep(nodes, 32), NA)
-for (i in 1:32) {
-  a = c(edges[(i+1):33,1], edges[1:i,1])
-  edges[(33*(i-1)+1):(33*i),2] = a
-}
-colnames(edges) = c("Tissue1", "Tissue2")
-graph1 = graph_from_data_frame(edges, directed = FALSE)
-
-
-node_weight = data.frame(tissue = nodes, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
-
-edge_combined = edges %>% unite(tissues, c("Tissue1", "Tissue2"), sep = "|")
-edge_weight = data.frame(edges, weight = apply(edges,1, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y[1], toString(x)) && grepl(y[2], toString(x))}))}))
-
-edge_weight_adj = edge_weight
-edge_weight_adj$weight = sapply(edge_weight_adj$weight, function(x) { if(x < 100) {x = 0} else {x = x/100}})
-edge_weight_cleared = edge_weight_adj[!(edge_weight_adj$weight == 0),]
-
-
-graph2 = ggnet2(edge_weight_cleared[,1:2], label = TRUE, edge.size = edge_weight_cleared$weight)
-node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
-
-graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues") +  theme(plot.title = element_text(hjust = 0.5))
-graph2
-```
+The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes.These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all results will be based on our dataset with differentially expressed genes from limma analysis. \
+Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by supplementary Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
-In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. \@ref(fig:expression-plot)B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C. The clustering graphs for all tissues can be found on our github repository (LINK!!!).
+In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. For all differencially expressed transcripts associated with one tissue, we analyzed the share of transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of these trascnrips (Fig. \@ref(fig:expression-plot)B). Since both metrics only depicted miniscule changes, we hypothesized that distinct, counteracting trends in expression exist within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C. The clustering graphs for all tissues can be found on our github repository.
 
 ```{r expression-threshold, include=FALSE}
 # Create dataframe with median expression levels for each transcript and week (combining the replicates)
@@ -803,11 +770,9 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size =
 annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
 ```
 
-For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could each be characterized as either an upregulation or a downregulation. In order to analyze the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
+For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could be characterized as either an upregulation or a downregulation. In order to determine the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
 
 ### The clusters of up- and downregulated transcripts can be linked to distinct gene functions. {#organ-tables}
-
-For all differentially expressed spleen-associated transcripts, we used the NCBI gene database to get a functional annotation.
 
 ```{r spleen-clusters}
 #Get the spleen dataset with the clusters
@@ -843,30 +808,11 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
-library(ggplot2)
-#Compare the initial expression values of both clusters
-spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
-spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
-spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
-i = 0
-for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
-  i = i+1
-  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
-    {"Down"}),length(genelist)))
-  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
-}
-spleen_boxplot_data = spleen_boxplot_data[-1,]
-spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
-spleen_boxplot
-
-```
-
-As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed transcripts, we used the NCBI gene database to get a functional annotation. Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)).
+As shown in supplementary Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed transcripts, we used the NCBI gene database to get a functional annotation. Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)).
 
 ### Overrepresentation Analysis can create plots that signify organ development {#organ-ora}
 
-For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig: ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
+For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig:ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
 
 ```{r ORA-code, include = FALSE}
 #Rearrange the selected plots so that we can combine the table with a plot 
@@ -1162,7 +1108,7 @@ assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression,
 
 ```
 
-```{r ORA-plot, fig.width = 12, fig.height=15, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
+```{r ORA-plot, fig.width = 12, fig.height=15, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 gene sets, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
 lay = rbind(c(1,2,2,3,4,4),c(5,6,6,7,8,8), c(9,10,10,11,12,12),c(13,14,14,15,16,16))
 plot = arrangeGrob(grobs = list(Spleen_t,Spleen_plot, Brain_t, Brain_plot, Heart_t, Heart_plot, Liver_t, Liver_plot,get("Muscle - Skeletal_t"), get("Muscle - Skeletal_plot"), Testis_t, Testis_plot, Stomach_t, Stomach_plot, Skin_t, Skin_plot), norw =4)
@@ -1170,13 +1116,13 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E
 annotate_figure(plot_output, top = text_grob("Main functions from overrepresentation analysis plotted by tissue", color = "black", face = "bold", size = 16))
 ```
 
-For the spleen (Fig. \@ref(fig:ORA-plot)A), we determined a largely constant expression of immune-related genes throughout the time frame, with a slight increase in some functions from week 7-9.\
-The brain (Fig. \@ref(fig:ORA-plot)B) showed an increase in neuron projection morphogenesis from a previously inactive state (expression \< 6.8) in week 4 to a significant expression (\>7.5) by week 8. Synaptic signaling stayed at relatively constant expression levels.\
-Heart-associated functions (Fig. \@ref(fig:ORA-plot)C) can be grouped into two categories. Cardiac functions (cardiac muscle tissue development, heart contraction) are highly expressed in week 4 and fall continously until week 8. In contrast, general muscle gene sets are rising from originally lower expression levels during the observed time.\
-The liver (Fig. \@ref(fig:ORA-plot)D) shows no clear expression patterns, with some metabolic functions increasing through time (organic hydroxy compound metabolic process) while others stay mostly constant (cellular amino acid metabolic process) or fall (organic acid catabolic process). In contrast, skeletal muscle gene sets (Fig. \@ref(fig:ORA-plot)E) show a very clear trend. After a mostly slight increase between week 4 and 8, a sharp rise in expression levels is visible from week 8 to 9.\
-The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in expression from week 5 onward.\
-For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9.\
-Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9.\
+For the spleen (Fig. \@ref(fig:ORA-plot)A), we determined a largely constant expression of immune-related genes throughout the time frame, with a slight increase in some functions from week 7-9.
+The brain (Fig. \@ref(fig:ORA-plot)B) showed an increase in neuron projection morphogenesis from a previously inactive state (expression \< 6.8) in week 4 to a significant expression (\>7.5) by week 8. Synaptic signaling stayed at relatively constant expression levels.
+Heart-associated functions (Fig. \@ref(fig:ORA-plot)C) can be grouped into two categories. Cardiac functions (cardiac muscle tissue development, heart contraction) are highly expressed in week 4 and fall continously until week 8. In contrast, general muscle gene sets are rising from originally lower expression levels during the observed time.
+The liver (Fig. \@ref(fig:ORA-plot)D) shows no clear expression patterns, with some metabolic functions increasing through time (organic hydroxy compound metabolic process) while others stay mostly constant (cellular amino acid metabolic process) or fall (organic acid catabolic process). In contrast, skeletal muscle gene sets (Fig. \@ref(fig:ORA-plot)E) show a very clear trend. After a mostly slight increase between week 4 and 8, a sharp rise in expression levels is visible from week 8 to 9.
+The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in expression from week 5 onward.
+For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9.
+Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9.
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#brain}
 
@@ -1616,41 +1562,45 @@ annotate_figure(PCA_plots_output,
 
 # Discussion
 
-## Comparison with original paper
+### Comparison with original paper
 
 In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper (Yi H *et al.*, 2010) of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by k-means clustering and plotting the overlapping Intensity values (Figure \@ref(fig:paper-trends-cluster)). By looking at the trends of the cluster for *up* and *down* regulated gene expression, we can validate the method used by the authors. In contrast the *arch* regulated genes-clusters do not present a clear result and show a weakness of the method used. It falsely detects some genes as differentially expressed, assuming our *vsn* normalization is correct, which is indicated by the quality control (section \@ref(QC-normalization)).\
 Furthermore, we showed in our Venn diagram (Figure \@ref(fig:Venn-Diagram)), that our method detected differentially expressed genes not included in their data. This questions the significance of either the papers results or again our *vsn* normalization and subsequent *limma* analysis, which is rather unlikely given our quality control and plots.\
-The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances doi: 10.1093/nar/gkv007. Overall, this ensured the quality of our data set and differentially expressed genes while also pointing out some flaws of the data set of the paper.
+The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances (Ritchie. et al. 2015).\
+Overall, this ensured the quality of our data set and differentially expressed genes while also pointing out some flaws of the data set of the paper.
 
-## TRAs can infer a basic timeline of organ development {dis-organ}
+### TRAs can infer a basic timeline of organ development {#dis-organ}
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development.
 
-This approach was used in section \@ref(organ-ora) for eight different tissues. For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus.\
-The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8.\
-At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (\>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes.\
-The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development.\
-The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development.\
-The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:ORA-plot)E). This is in contrast to the embryonic development, where the gonads start to form at around the same time (section \@ref(intro-tissues)).\
-For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes.\
-Finally, the skin shows an increased expression of related genes sets from week 5 through 9 (Fig. \@ref(fig:ORA-plot)H). This broadly reflects the embryonic development, with the epidermis starting to form in week 4 (section \@ref(intro-tissues)). We also found this expression pattern in the keratinization gene set that is suggested by literature as a good indicator for skin formation.
+This approach was used in section \@ref(organ-ora) for eight different tissues. 
+For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops in week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. \
+The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. \
+At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes. \
+The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development. \
+The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from  week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development. \
+The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:ORA-plot)E). This is in contrast to the embryonic development, where the gonads start to form at around the same time (section \@ref(intro-tissues)). \
+For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes. \
+Finally, the skin shows an increased expression of related genes sets from week 5 to 9 (Fig. \@ref(fig:ORA-plot)H). This broadly reflects the embryonic development, with the epidermis starting to form in week 4 (section \@ref(intro-tissues)). We also found this expression pattern in the keratinization gene set that is suggested by literature as a good indicator for skin formation.  
 
-## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#dis-brain}
+### Brain subtissue-specific gene expression reflects neuronal development processes {#dis-brain}
 
-First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale (Fig. \@ref(fig:gene-expression-brain) left). A cause of this might be the process of neuronal migration which starts at week 9 (section \@ref(intro-tissues)). Ca(2+) is an essential cofactor for actin dependent cell migration.\
-Another point is the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646) (Fig. \@ref(fig:gene-expression-brain) middle). Both proteins were associated with the Cerebellar Hemisphere and contribute to endocytosis, which is essential for functional neurons and contributes to neuronal survival (Overhoff et al. 2020). One point to mention here is, that ENST00000521485 and ENST00000518312 were both associated with SNAP91, nevertheless to different isoforms. But both show identical correlation in expression, hence a failure in annotation might be possible.\
-In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle), this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11 (section \@ref(intro-tissues)).\
-We further identified a strong LSAMP expression associated to the putamen , which is associated to the putamen (Fig. \@ref(fig:gene-expression-brain) middle). The recognized increase in gene expression of LSAMP starting at week 6 might be a preparation for synapse formation at week 9, hence LSMP is an adhesion molecule in axon guidance (section \@ref(intro-tissues)).\
-We further identified that two transcripts associated to two different tissues show identical correlation, this can be caused by false annotations. Nevertheless, they show a strong downregulation of BDNF (Fig. \@ref(fig:gene-expression-brain) middle). This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development (section \@ref(intro-tissues)).\
-The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (section \@ref(intro-tissues)). A decline in NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in NUP85 genexpression reduce the chances for this binding. A consequence might be that more CCR2 receptors are free for beta type chemokin mediated signals.
+First, we found a significant increase in the expression of SLN sarcolipin (a Ca-ATPase) (Fig. \@ref(fig:gene-expression-brain) left). Since Ca(2+) is an essential cofactor for actin dependent cell migration, this might be related to neuronal migration startingweek 9 (section \@ref(intro-tissues)). \
+Additionally, the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646) (Fig. \@ref(fig:gene-expression-brain) middle) was noteworthy. Both proteins are associated with the cerebellar hemisphere and contribute to endocytosis (Overhoff et al. 2020). \
+In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle), this refers to the NXPH1-promoted adhesion between axons and dendrites. An upregulation of this supplementary factor can prepare the process of synapse formation which starts at week 11 (section \@ref(intro-tissues)). \
+We further identified a strong LSAMP expression associated to the putamen , and a NXPH1 associaated to Anterior cingulate cortex. (Fig. \@ref(fig:gene-expression-brain) middle). The increased gene expression of LSAMP starts at week 6 and by NXPH1 between week 7 and 8. Tmight be a preparation for synapse formation at week 9, hence LSMP and NXPH1 are adhesion molecules in axon guidance (section \@ref(intro-tissues)). \
+ Nevertheless, they show a strong downregulation of BDNF (Fig. \@ref(fig:gene-expression-brain) middle). This factor normally promotes neuronal survival. A downregulation of BDNF can be a preparation for the phase of programmed cell death, which starts at week 20 in neuronal development (section \@ref(intro-tissues)). \
+The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (section \@ref(intro-tissues)).\
+A decline in  NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in NUP85 genexpression reduce the chances for this binding. A consequence might be that more CCR2  receptors are free for beta type chemokin mediated signals. 
+Overall, there were two cases were two closely related transcripts (linked to the same gene) showed identical expression values. This phenomenon could be caused by failures in annotation, e.g. associating two transcripts with one probe. 
 
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+### No TRAs could be identified as key biomarkers for developmental progression {#dis-pca}
 
 Principal component analysis helped to identify transcripts that have a high contribution to our data's variance. The high variance explained by PC1 alone made it possible to focus our further analysis only on this PC. Ranking the transcripts according to their contribution led us to identify the three proteins LDLRAD4, KCNMB2 and SLITRK3 as main contributors to only principal component 1. Nonetheless, the loadings for these genes are not significantly larger than those of other genes. Therefore, the information gained trough PCA was not sufficient to reliably classify these or any TRAs as biomarkers for embryonic development. More in-depth analysis is necessary to determine whether PCA is an insufficient method to identify TRAs these biomarkers, or if using TRAs as markers is an unsuccessful approach in general.
 
-##Conclusion
+### Conclusion
 
-The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA. There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research.
+The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA (section \@ref(dis-pca)). There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research.
 
 \newpage
 
@@ -1748,6 +1698,36 @@ volcano
 
 ## Organ development
 
+```{r tissue-links,fig.width= 10, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
+
+nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+edges = data.frame (rep(nodes, 32), NA)
+for (i in 1:32) {
+  a = c(edges[(i+1):33,1], edges[1:i,1])
+  edges[(33*(i-1)+1):(33*i),2] = a
+}
+colnames(edges) = c("Tissue1", "Tissue2")
+graph1 = graph_from_data_frame(edges, directed = FALSE)
+
+
+node_weight = data.frame(tissue = nodes, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+edge_combined = edges %>% unite(tissues, c("Tissue1", "Tissue2"), sep = "|")
+edge_weight = data.frame(edges, weight = apply(edges,1, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y[1], toString(x)) && grepl(y[2], toString(x))}))}))
+
+edge_weight_adj = edge_weight
+edge_weight_adj$weight = sapply(edge_weight_adj$weight, function(x) { if(x < 100) {x = 0} else {x = x/100}})
+edge_weight_cleared = edge_weight_adj[!(edge_weight_adj$weight == 0),]
+
+
+graph2 = ggnet2(edge_weight_cleared[,1:2], label = TRUE, edge.size = edge_weight_cleared$weight)
+node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
+
+graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues") +  theme(plot.title = element_text(hjust = 0.5, face = "bold"), plot.margin = unit(c(0.2,2,0,2),"cm"))
+graph2
+```
+
 ```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
 
 tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
@@ -1771,6 +1751,25 @@ heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, 
 file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
 download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
 ggdraw() + draw_image("TRA_overlap_edited.png")
+```
+
+```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
+spleen_boxplot
+
 ```
 
 ```{r spleen-tables-basics, eval=FALSE}
@@ -1920,30 +1919,3 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
-## PCA
-
-The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
-
-par
-
-```{r pca-plots}
-
-
-
-#PC 1&2
-pc_12 <- ggbiplot(pca_genes) +
-theme(aspect.ratio = 1)
-
-#PC 2&3
-pc_23 <- ggbiplot(pca_genes, choices=c(2,3)) +
-theme(aspect.ratio = 1)
-
-#PC 1&3
-pc_13 <- ggbiplot(pca_genes, choices=c(1,3)) +
-theme(aspect.ratio = 1)
-
-par(mfrow=c(1,3))
-pc_12
-pc_23
-pc_13
-```
