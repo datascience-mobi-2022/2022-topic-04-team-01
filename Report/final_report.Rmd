@@ -8,7 +8,7 @@ output:
     number_sections: TRUE
     toc: TRUE
     theme: united
-geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
+geometry: "left=1.5cm,right=1.5cm,top=1cm,bottom=1.5cm"
 header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
   - \usepackage{float}
