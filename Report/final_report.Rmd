@@ -1887,30 +1887,3 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
-## PCA
-
-The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
-
-par
-
-```{r pca-plots}
-
-
-
-#PC 1&2
-pc_12 <- ggbiplot(pca_genes) +
-theme(aspect.ratio = 1)
-
-#PC 2&3
-pc_23 <- ggbiplot(pca_genes, choices=c(2,3)) +
-theme(aspect.ratio = 1)
-
-#PC 1&3
-pc_13 <- ggbiplot(pca_genes, choices=c(1,3)) +
-theme(aspect.ratio = 1)
-
-par(mfrow=c(1,3))
-pc_12
-pc_23
-pc_13
-```
