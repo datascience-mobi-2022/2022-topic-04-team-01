@@ -1,7 +1,8 @@
 ---
-title: "Final Report"
-author: "Gruppe 4"
-date: '2022-07-03'
+title: "Final Report - Datascience MoBi 2022\nTopic 04 - Team 01"
+
+author: "Paul Christmann, Joshua Eigenmann, David Jewanski, Verena Merke"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 #bibliography: references.bib
 output: 
   bookdown::pdf_document2:
@@ -13,8 +14,8 @@ header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
   - \usepackage{float}
   - \floatplacement{figure}{H}
-  #\usepackage{caption}
-  #\captionsetup[figure]{font=footnotesize}
+  - \usepackage{caption}
+  - \captionsetup[figure]{font=footnotesize}
 ---
 
 ```{r knitr_init, echo=FALSE, cache=FALSE}
@@ -83,14 +84,15 @@ library(webshot)
 library(XML)
 ```
 
-
 \newpage
+
 # Abstract
 
 A single cell turns into a complex multicellular organism during embryogenesis. The morphological steps behind this process are mostly understood. The role of molecular biological pathways and molecules like chemokines in the embryonic development is quite unknown and has to be investigated. Tissue restricted antigens (TRA) may be a key in understanding the relation between  molecular biological cause and morphological consequence.TRAs originate from negative selection in thymus, where medullary epithelial cells (mTECs) express them on their surface to remove self-antigen reactive T-cells. Those TRA represent a wide range of self-antigen, hence we can use them to determine the gene expression in our dataset (Dinkelacker 2019; Murphy & Weaver 2018).\
 First of all, we want to compare our methods, e.g. limma analysis to the methods of the paper, e.g. **One-way analysis of variance** to find differentially expressed genes. We want validate, if TRAs represent the timeline in the early stage of embryonic development between week 4 to 9. And give us an insight in the molecular biological process in those weeks. Furthermore, we want to identify, if the expression of specific gens can be related to milestones in neurogenesis. Last but not least, we want to illustrate the role of specific TRAs as biomarkers for organogenesis.
 
 \newpage
+
 # Introduction
 
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
@@ -99,20 +101,19 @@ Tissues restricted antigens (TRAs) are important for the analysis of our dataset
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
 
-Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain. \
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.\
 First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).\
-The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993). \
-The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen’s role in the human  immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
+The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993).\
+The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen's role in the human immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
 At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors *et al.* 2022).\
 The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth *et al.* 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu *et al.* 2017).\
-Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during  weeks 4 to 8 (Hu *et al.* 2018).\
-The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero *et al.*. 2013). \
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during weeks 4 to 8 (Hu *et al.* 2018).\
+The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero *et al.*. 2013).\
 While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation (starting at week 4), neuronal differentiation (starting at week 4), neuronal migration (starting at week 9), synapse formation (starting at week 9) and programmed cell death (starting at week 20) take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
 
 ## Chemokines and brain development {#intro-brain}
 
-Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
-
+Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf *et al.* 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
 
 # Methods
 
@@ -144,7 +145,6 @@ vsn                    & 3.64             & webshot          & 0.5.3            
 \end{tabular}}
 \end{table}
 ```
-
 ## Dataset
 
 We obtained the data set from Yi H *et al.* (2010). We chose this data set by the following criteria, it contains human embryonic data and it covers every week between the 4th and 9th week, which are interesting stages of embryogenesis and organ development. Three replica at each point in time were tested, hence data from 18 embryos were acquired. The timezone covers the Carnegie stages 10-23, finishing the process of embryogenesis and organogenesis. This peroid of embryogenesis is highly regulated with considerable differential gene expression. Overall, the data set suits the requirements for our purpose.
@@ -204,7 +204,6 @@ dev.off()
 #title(sub="Human embryo (GSE15744, Raw data)")
 ```
 
-
 ```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 6, fig.height= 3, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
 surface_image_plot = ggdraw() + draw_image("Surface image.png")
 RNA_degradation_plot = ggdraw() + draw_image("RNA degradation plot.png")
@@ -215,7 +214,7 @@ OC_chip_plot = arrangeGrob(grobs = list(surface_image_plot, RNA_degradation_plot
 OC_chip_plot_output = as_ggplot(OC_chip_plot) +
   draw_plot_label(label = c("A", "B"), size = 15, x = c(0.01, 0.50), y = c(0.17, 0.17)) 
 
-annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface\nimage and RNA degradation", color = "black", face = "bold", size = 16))
+annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface\nimage and RNA degradation", color = "black", face = "bold", size = 12))
 ```
 
 ## Normalising the data set
@@ -225,10 +224,6 @@ Intensity values of different chips are affected by sstatistical variance and ra
 ```{r vsn-normalization, include=FALSE}
 data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 ```
-
-
-
-
 
 ```{r silent-Data-Cleaning, include=FALSE}
 #adjusting the microarray names by cutting the .cel
@@ -242,7 +237,7 @@ embryo_df = temp_embryo_df[63:95721,]
 
 ### Quality control of the vsn normalization {#QC-normalization}
 
-To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:)A). Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:)C).
+To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:QC-normalization-plots)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:QC-normalization-plots)A). Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:QC-normalization-plots)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:QC-normalization-plots)C).
 
 ```{r mean-sd-plot, include=FALSE}
 meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
@@ -272,7 +267,7 @@ scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma) +
   theme_bw() +
   geom_point(mapping = aes(exprs.GSE15744.vsnrma[,4], exprs.GSE15744.vsnrma[,5]), size = 0.5) +
   geom_abline(intersept = 0, slope = 1, col = "red", aes(size=1)) +
-  labs(title = "Scatterplot of microarrays,\ntwo replicas of week 5",
+  labs(title = "Scatterplot of microarrays,\ntwo replica of week 5",
        x = colnames(data.GSE15744.vsnrma)[4],
        y = colnames(data.GSE15744.vsnrma)[5])+ theme(aspect.ratio = 1) 
 ```
@@ -288,7 +283,6 @@ OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
 
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
-
 
 ## Annotation
 
@@ -344,7 +338,7 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 
 ## Limma package
 
-The *limma* package determines among many other things the changes of gene expression over time in intensity values of microarrays. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It uses information borrowing, quantitative weighting, variance modelling and data preprocessing, while not subset the data (Ritchie. et al. 2015). Because the linear model was casted on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values. 
+The *limma* package determines among many other things the changes of gene expression over time in intensity values of microarrays. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It uses information borrowing, quantitative weighting, variance modelling and data preprocessing, while not subset the data (Ritchie. *et al.* 2015). Because the linear model was casted on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values. 
 
 ## Over representation analysis
 
@@ -355,7 +349,6 @@ The statistical method over-representation analysis determines among other thing
 ## Limma analysis {#limma}
 
 To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts.
-
 
 ```{r, include = FALSE}
 
@@ -416,13 +409,18 @@ The gathered dataset from limma analysis of the differential expression between 
 
 Genes which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
 
-
 ## Comparison of differential expressed genes between the original paper and our method {#paper-comp}
 
 We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our data set because the both have the same probe set IDs from the same microarray.
+
 ```{r importing-data-paper}
 #importing the data from xls file
-paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls") # 5385 Probe IDs
+file_paper = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/differentially_expressed_transcripts_paper.csv")
+paper_df_diff <- as.data.frame(read.csv(text = file_paper, sep = ";")) # 5385 Probe IDs
+for (i in 1:length(paper_df_diff)) {
+  vec1 <- sapply(paper_df_diff[,i], function(x){x==""})
+  paper_df_diff[vec1,i] = NA
+}
 for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
   if(is.na(paper_df_diff$Probe_Set_ID[i])){
     j=1
@@ -457,6 +455,7 @@ df_unique_diff <- diff_genes_ann_0.01[!contain_bool_diff,]
 ### Venn diagram
 
 To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagram)).
+
 ```{r Vernn-Diagram-code, include=FALSE}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
@@ -482,7 +481,7 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
 )
 ```
 
-```{r Venn-Diagram, fig.width=3, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
@@ -490,10 +489,10 @@ The intersection showed a number of transcripts worth for further analysis.
 
 ### Verifing the trends postulated in the paper with our data
 
-In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes (Yi H *et al.* (2010)). In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k-means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
+In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes (Yi H *et. al*, 2010). In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k-means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
 
+```{r paper-trends-cluster, fig.width=17, fig.height=8, fig.cap = "**Clustering of the common transcripts reveals similar trends and but our additional data shows missing differentially expressed genes.** We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (**A** and **B**) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (**C**) we see clusters, with same matching the *arch* pattern and some who are rather undetermined. Of 396 transcripts only 39 of our differentially expressed genes by *limma* analyis share this *arch* property (**D**). Here we clearly see differential gene expression. In **E** we plotted data of our differntially expressed genes. There are *up* and *down* regulated genes determined by our *limma* analysis, that are not included in the data set of the authors of the original paper"}
 
-```{r paper-trends-cluster, fig.width=17, fig.height=10, fig.cap = "**Clustering of the common transcripts reveals similar trends and but our additional data shows missing differentially expressed genes.** We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (**A** and **B**) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (**C**) we see clusters, with same matching the *arch* pattern and some who are rather undetermined. Of 396 transcripts only 39 of our differentially expressed genes by *limma* analyis share this *arch* property (**D**). Here we clearly see differential gene expression. In **E** we plotted data of our differntially expressed genes. There are *up* and *down* regulated genes determined by our *limma* analysis, that are not included in the data set of the authors of the original paper"}
 #Clustered plot of expression levels over time for the spleen
 paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
 paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
@@ -830,8 +829,7 @@ spleen_boxplot
 
 ```
 
-As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed  transcripts, we used the NCBI gene database to get a functional annotation. 
-Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)). 
+As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed transcripts, we used the NCBI gene database to get a functional annotation. Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)).
 
 ### Overrepresentation Analysis can create plots that signify organ development {#organ-ora}
 
@@ -1139,21 +1137,22 @@ plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E
 annotate_figure(plot_output, top = text_grob("Main functions from overrepresentation analysis plotted by tissue", color = "black", face = "bold", size = 16))
 ```
 
-For the spleen (Fig. \@ref(fig:ORA-plot)A), we determined a largely constant expression of immune-related genes throughout the time frame, with a slight increase in some functions from week 7-9. \
-The brain (Fig. \@ref(fig:ORA-plot)B) showed an increase in neuron projection morphogenesis from a previously inactive state (expression < 6.8) in week 4 to a significant expression (>7.5) by week 8. Synaptic signaling stayed at relatively constant expression levels. \
-Heart-associated functions (Fig. \@ref(fig:ORA-plot)C) can be grouped into two categories. Cardiac functions (cardiac muscle tissue development, heart contraction) are highly expressed in week 4 and fall continously until week 8. In contrast, general muscle gene sets are rising from originally lower expression levels during the observed time. \
-The liver (Fig. \@ref(fig:ORA-plot)D) shows no clear expression patterns, with some metabolic functions increasing through time (organic hydroxy compound metabolic process) while others stay mostly constant (cellular amino acid metabolic process) or fall (organic acid catabolic process). 
-In contrast, skeletal muscle gene sets (Fig. \@ref(fig:ORA-plot)E) show a very clear trend. After a mostly slight increase between week 4 and 8, a sharp rise in expression levels is visible from week 8 to 9. \
-The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in expression from week 5 onward. \
-For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. \
-Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. \
+For the spleen (Fig. \@ref(fig:ORA-plot)A), we determined a largely constant expression of immune-related genes throughout the time frame, with a slight increase in some functions from week 7-9.\
+The brain (Fig. \@ref(fig:ORA-plot)B) showed an increase in neuron projection morphogenesis from a previously inactive state (expression \< 6.8) in week 4 to a significant expression (\>7.5) by week 8. Synaptic signaling stayed at relatively constant expression levels.\
+Heart-associated functions (Fig. \@ref(fig:ORA-plot)C) can be grouped into two categories. Cardiac functions (cardiac muscle tissue development, heart contraction) are highly expressed in week 4 and fall continously until week 8. In contrast, general muscle gene sets are rising from originally lower expression levels during the observed time.\
+The liver (Fig. \@ref(fig:ORA-plot)D) shows no clear expression patterns, with some metabolic functions increasing through time (organic hydroxy compound metabolic process) while others stay mostly constant (cellular amino acid metabolic process) or fall (organic acid catabolic process). In contrast, skeletal muscle gene sets (Fig. \@ref(fig:ORA-plot)E) show a very clear trend. After a mostly slight increase between week 4 and 8, a sharp rise in expression levels is visible from week 8 to 9.\
+The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in expression from week 5 onward.\
+For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9.\
+Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9.\
 
-## Brain subtissue-specific gene expression reflects neuronal development processes
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#brain}
 
-There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
+The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
+
+Our data covered 13 different brain subtissues, whose TRAs showed a signficant overlap. Hence, we filtered the differentially expressed transcripts for those that are only related to one of all 13 subtissues. The discovered genes were examined using the NCBI database. The resulting genes of interest can be categorized as follows: \
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
 
-```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and related to chemokine (right) was plotted for week 4 to 9."}
+```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap=" The gene expression of different transcripts coding for an ion channel (left), neuronal development and function proteins (middle) and chemokine-related genes (right) was plotted for week 4 to 9."}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -1373,12 +1372,12 @@ data.ENST00000579298 =cbind(data.ENST00000579298,week)
 par(mfrow = c(1, 3))
 
 #Plot for ion channel gene
-plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Ion channel gene", xlab = "weeks",ylab = "Expressionlevel",col = "red")
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Ion channel gene", xlab = "weeks",ylab = "Expression level",col = "red")
 legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.8,title="Expressed genes")
 
 
 #Plot for neuronal development and function genes 
-plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Neuronal development and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Neuronal development and function genes", xlab = "weeks",ylab = "Expression level",col = "red", ylim = c(6.3,8.4))
 lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue")
 lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")
 lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")
@@ -1390,43 +1389,47 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 
 # Plot for chemokine related genes
-plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Chemokine related genes", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7))
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Chemokine-related genes", xlab = "weeks",ylab = "Expression level",col = "red",ylim = c(7.6,9.7))
 lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "blue"), lty=1, cex=0.8,title="Expressed genes")
 
 ```
 
-### Ion channel 
+### Ion channel
 
-Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
+Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in the nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a sarcoplasmic reticulum Ca-ATPase.
 
 ### Genes for neuronal development and function
 
-The second group are genes with a specific function in the neuronal development and function. Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.\
-ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density, which is essential for functional neurons (Overhoff et al. 2020). ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.\
-Filtering mentioned four genes for axon guidance:\
-ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.\
-In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.\
-ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheless, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
+The second group are genes with a specific role in neuronal development and function. There, we discovered that ENST00000276646 and ENST00000529690 expression increases significantly over time. Both transcripts are associated with the cerebellar hemisphere and code for SYBU (syntabulin), a protein that contributes to activity-dependent presynaptic assembly in neuronal development.\
+Furthermore, we found four transcripts for axon goudance: ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. These proteins promote adhesion between axons and dendrites.  The transcript shows a strong rise in expression, especially from weeks 7 to 8, and is connected to  the anterior cingulate cortex.\
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91), which plays a role in regulation of clathrin-dependent endocytosis. Therefore, SNAP91 is important for essential axonal functions of neurons like postsynaptic density (Overhoff et al. 2020). The gene is associated with the cerebellar hemisphere and also shows a significant increase between weeks 7 to 8.\
+In addition, ENST00000539563  encodes for LSAMP (limbic system associated membrane protein) which plays a role in axon guidance. The encoded preprotein is processed into  a neuronal surface glycoprotein which functions as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with the  Putamen, a part of the basal ganglia that are associated with the limbic system-
+ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both transcripts show an identical decline in expression over the weeks. Nonetheless, ENST00000356660 is connected to cerebellar hemisphere while  ENST00000439476 to related to the hippocampus.
+
 
 ### Chemokine related genes
 
-The last groupe are chemokine, they take up an important part in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
+The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between weeks 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes the  chemotaxis of monocytes. ENST00000579298 is related to the frontal cortex and shows a decline between weeks 5 to 9.
 
-## Using Principal component analysis to find biomarkes for developmental progression
 
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA_analysis) A).
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+
+### Principal component analysis
+
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA-analysis) A).
 
 ```{r, include=FALSE}
 #pca on rows (genes)
 pca_genes <- prcomp(
   t(diff_genes_ann_0.01[,1:18]), # transposed matrix
   scale. = TRUE # data scaled to have unit variance
-)
+  )
 
 #taking a first look
 summary(pca_genes)
 ```
+
 
 ```{r pca-variance, fig.width = 5, fig.height=5}
 #visualizing the variance of the PCAs
@@ -1450,7 +1453,6 @@ PC_contribution <- pc_eigenvalues %>%
   theme(plot.title = element_text(hjust = 0.5,face = "bold")) +
   labs(x = "Principal component", y = "Fraction variance explained") +
   theme(aspect.ratio = 1)
-
 ```
 
 ```{r, include=FALSE}
@@ -1460,6 +1462,9 @@ pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
 ```
 
 ```{r, include=FALSE}
+#PCA for Heart transripts
+#tissue = "Heart"
+#bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
 test_genes = diff_genes_ann_0.01  #[bool_contained,]
 
 #pca on rows (genes)
@@ -1495,27 +1500,27 @@ For further analysis, each transcript was awarded a rank depending on how much i
 
 ```{r, fig.width=5,fig.height=5, include = FALSE, eval = FALSE}
 
-PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
+PC1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
 
 #median of the transcripts for each week
-PCA1_4 <- PCA1_first_five[,c(1,2,3)]
-week4 <- t(data.frame(apply(PCA1_4,1,median)))
+PC1_4 <- PC1_first_five[,c(1,2,3)]
+week4 <- t(data.frame(apply(PC1_4,1,median)))
 
-PCA1_5 <- PCA1_first_five[,c(4,5,6)]
-week5 <- t(data.frame(apply(PCA1_5,1,median)))
+PC1_5 <- PC1_first_five[,c(4,5,6)]
+week5 <- t(data.frame(apply(PC1_5,1,median)))
 
-PCA1_6 <- PCA1_first_five[,c(7,8,9)]
-week6 <- t(data.frame(apply(PCA1_6,1,median)))
+PC1_6 <- PC1_first_five[,c(7,8,9)]
+week6 <- t(data.frame(apply(PC1_6,1,median)))
 
-PCA1_7 <- PCA1_first_five[,c(10,11,12)]
-week7 <- t(data.frame(apply(PCA1_7,1,median)))
+PC1_7 <- PC1_first_five[,c(10,11,12)]
+week7 <- t(data.frame(apply(PC1_7,1,median)))
 
-PCA1_8 <- PCA1_first_five[,c(13,14,15)]
-week8 <- t(data.frame(apply(PCA1_8,1,median)))
+PC1_8 <- PC1_first_five[,c(13,14,15)]
+week8 <- t(data.frame(apply(PC1_8,1,median)))
 
-PCA1_9 <- PCA1_first_five[,c(16,17,18)]
-week9 <- t(data.frame(apply(PCA1_9,1,median)))
+PC1_9 <- PC1_first_five[,c(16,17,18)]
+week9 <- t(data.frame(apply(PC1_9,1,median)))
 
 
 #combining in a dataframe
@@ -1551,9 +1556,9 @@ dev.off()
 
 ```
 
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA_analysis) B).
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA-analysis) B).
 
-```{r PCA_analysis, fig.width = 10, fig.height = 4}
+```{r PCA-analysis, fig.width = 10, fig.height = 4}
 file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
 download.file(file_fiveplot, "PC1_five.png", mode = "wb")
 first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
@@ -1577,19 +1582,18 @@ annotate_figure(PCA_plots_output,
                 )
 ```
 
-
 # Discussion
 
 ## Comparison with original paper
 
-In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper (Yi H *et al.*, 2010) of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by k-means clustering and plotting the overlapping Intensity values (Figure \@ref(fig:paper-trends-cluster)). By looking at the trends of the cluster for *up* and *down* regulated gene expression, we can validate the method used by the authors. In contrast the *arch* regulated genes-clusters do not present a clear result and show a weakness of the method used. It falsely detects some genes as differentially expressed, assuming our *vsn* normalization is correct, which is indicated by the quality control (section \@ref(QC-normalization)). \
+In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper (Yi H *et al.*, 2010) of our data set used *One-way analysis of variance* to acquire differential expressed genes. We compared both data subsets by k-means clustering and plotting the overlapping Intensity values (Figure \@ref(fig:paper-trends-cluster)). By looking at the trends of the cluster for *up* and *down* regulated gene expression, we can validate the method used by the authors. In contrast the *arch* regulated genes-clusters do not present a clear result and show a weakness of the method used. It falsely detects some genes as differentially expressed, assuming our *vsn* normalization is correct, which is indicated by the quality control (section \@ref(QC-normalization)).\
 Furthermore, we showed in our Venn diagram (Figure \@ref(fig:Venn-Diagram)), that our method detected differentially expressed genes not included in their data. This questions the significance of either the papers results or again our *vsn* normalization and subsequent *limma* analysis, which is rather unlikely given our quality control and plots.\
-The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances (Ritchie. et al. 2015).
+The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances (Ritchie. et al. 2015).\
 Overall, this ensured the quality of our data set and differentially expressed genes while also pointing out some flaws of the data set of the paper.
 
 ## TRAs can infer a basic timeline of organ development {dis-organ}
 
-In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
+In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development.
 
 This approach was used in section \@ref(organ-ora) for eight different tissues. 
 For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops in week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. \
@@ -1611,41 +1615,39 @@ In addition, we identified that two transcripts associated to two different tiss
 The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (section \@ref(intro-tissues)).\
 A decline in  NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in NUP85 genexpression reduce the chances for this binding. A consequence might be that more CCR2  receptors are free for beta type chemokin mediated signals. 
 
-## No TRAs could be identified as key biomarkers for developmental progression
+## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
-Principal component analysis helped to identify transcripts that have a high contribution to our data's variance. The high variance explained by PC1 alone made it possible to focus our further analysis only on this PC. Ranking the transcripts according to their contribution led us to identify the three proteins LDLRAD4, KCNMB2 and SLITRK3 as main contributors to only principal component 1. Nonetheless, the loadings for these genes are not significantly larger than those of other genes. Therefore, the information gained trough PCA was not sufficient to reliably classify these or any TRAs as biomarkers for embryonic development.  More in-depth analysis is necessary to determine whether PCA is an insufficient method to identify TRAs these biomarkers, or if using TRAs as markers is an unsuccessful approach in general. 
+Principal component analysis helped to identify transcripts that have a high contribution to our data's variance. The high variance explained by PC1 alone made it possible to focus our further analysis only on this PC. Ranking the transcripts according to their contribution led us to identify the three proteins LDLRAD4, KCNMB2 and SLITRK3 as main contributors to only principal component 1. Nonetheless, the loadings for these genes are not significantly larger than those of other genes. Therefore, the information gained trough PCA was not sufficient to reliably classify these or any TRAs as biomarkers for embryonic development. More in-depth analysis is necessary to determine whether PCA is an insufficient method to identify TRAs these biomarkers, or if using TRAs as markers is an unsuccessful approach in general.
 
 ##Conclusion
 
-The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function  that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA. There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research. 
-
+The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA. There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research.
 
 \newpage
+
 # References
-Benninghoff, A.  (1993), Makroskopische Anatomie, Embryologie und Histologie des Menschen, 15. Auflage, München, Wien, Baltimore, Urban und Schwarzenberg.
 
-Deutsch J.  (2013), Embryologie und Physiologie der Leber, Pädiatrische Gastroenterologie, Hepatologie und Ernährung, 375–87, Berlin Deutschland.
+Benninghoff, A. (1993), Makroskopische Anatomie, Embryologie und Histologie des Menschen, 15. Auflage, München, Wien, Baltimore, Urban und Schwarzenberg.
 
-Dinkelacker M., (2019), Chromosomal clustering of tissue restricted antigens, Dissertation, University Heidelberg, Germany.
+Deutsch J. (2013), Embryologie und Physiologie der Leber, Pädiatrische Gastroenterologie, Hepatologie und Ernährung, 375--87, Berlin Deutschland.
 
-Esrefoglu M., Taslindere E. & Cetin A. (2017), Development of the Esophagus and Stomach, Bezmialem sci. 5, 175-82.
+Dinkelacker M., (2019), Chromosomal clustering of tissue restricted antigens.
 
-Fasold M. & Binder H., (2013), AffyRNADegradation: control and correction of RNA quality effects in GeneChip expression data, Bioinformatics, 29, 129-31. 
-GTEX 2013, (2013), The Genotype-Tissue Expression (GTEx) project, GTEx Consortium, Nat Genet. 45, 580-5.
+Esrefoglu M., Taslindere E. & Cetin A. (2017), Development of the Esophagus and Stomach, Bezmialem sci. *5*, 175-82.
 
-GTEX 2015, (2015), Human genomics, The Genotype-Tissue Expression (GTEx) pilot analysis: multitissue gene regulation in humans, GTEx Consortium, Science 348, 648-60.
+Fasold M. & Binder H., (2013), AffyRNADegradation: control and correction of RNA quality effects in GeneChip expression data, Bioinformatics, *29*, 129-31. 
 
-Hayward AR., (1983), The human fetus and newborn: development of the immune response, Birth Defects Orig. Artic. Ser. 19, 289-94. 
+Hayward AR., (1983), The human fetus and newborn: development of the immune response, Birth Defects Orig. Artic. Ser. *19*, 289-94. 
 
-Hikspoors J.P.J.M., Kruepunga N., Mommen G.M.C. et al., (2022), A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development, Commun. Biol. 5, 226.
+Hikspoors J.P.J.M., Kruepunga N., Mommen G.M.C. et al., (2022), A pictorial account of the human embryonic heart between 3.5 and 8 weeks of development, Commun. Biol. *5*, 226.
 
-Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP. & Longaker MT., (2018) Embryonic skin development and repair, Organogenesis  14, 46-63.
+Hu MS., Borrelli MR., Hong WX., Malhotra S., Cheung ATM., Ransom RC., Rennert RC., Morrison SD., Lorenz HP. & Longaker MT., (2018) Embryonic skin development and repair, Organogenesis *14*, 46-63.
 
-Huber W., von Heydebreck A., Sültmann H., Poustka A., Vingron M., (2002), Variance stabilization applied to microarray data calibration and to the quantification of differential expression, Bioinformatics. 18 ,Suppl 1, 96-104.
+Huber W., von Heydebreck A., Sültmann H., Poustka A., Vingron M., (2002), Variance stabilization applied to microarray data calibration and to the quantification of differential expression, Bioinformatics. *18* ,Suppl 1, 96-104.
 
-James F. & Jones M.D., (1983), Development of the Spleen, Lymphology 16, 83-89, Georg Thieme Verlag Stuttgart, New York.
+James F. & Jones M.D., (1983), Development of the Spleen, Lymphology *16*, 83-89, Georg Thieme Verlag Stuttgart, New York.
 
-Kluth D., Jaeschke-Melli S. & Fiegel H., (2003),The embryology of gut rotation, Semin. Pediatr. Surg. 12, 275-279.
+Kluth D., Jaeschke-Melli S. & Fiegel H., (2003),The embryology of gut rotation, Semin. Pediatr. Surg. *12*, 275-279.
 
 Müller W. A. & Hassel M., (2018), Entwicklungsbiologie und Reproduktionsbiologie des Menschen und bedeutender Modellorganismen, 6. Auflage, Springer-Verlag GmbH Deutschland, Berlin, Deutschland.
 
@@ -1653,26 +1655,27 @@ Murphy K. & Weaver C., (2018), Janeway Immunologie, 9. Auflage, Springer-Verlag 
 
 National Research Council and Institute of Medicine, (2009), Preventing Mental, Emotional, and Behavioral Disorders Among Young People: Progress and Possibilities, Washington, DC: The National Academies Press.
 
-Overhoff M., De Bruyckere E. & Kononenko N- L., (2020), Mechanisms of neuronal survival safeguarded by endocytosis and autophagy, J. Neurochem. 157, 263-296.
+Overhoff M., De Bruyckere E. & Kononenko N- L., (2020), Mechanisms of neuronal survival safeguarded by endocytosis and autophagy, J. Neurochem. *157*, 263-296.
 
-Ritchie ME., Phipson B., Wu D., Hu Y., Law CW., Shi W. & Smyth GK., (2015), limma powers differential expression analyses for RNA-sequencing and microarray studies, Nucleic Acids Res. 43, e47.
+Ritchie ME., Phipson B., Wu D., Hu Y., Law CW., Shi W. & Smyth GK., (2015), limma powers differential expression analyses for RNA-sequencing and microarray studies, Nucleic Acids Res. *43*, e47.
 
-Romero N. B., Mezmezian M .& Fidziańska A. (2013), Pediatric Neurology Part III, Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle, Handb. Clin. Neurol. 113, 1299-1310.
+Romero N. B., Mezmezian M .& Fidziańska A. (2013), Pediatric Neurology Part III, Chapter 137 - Main steps of skeletal muscle development in the human: Morphological analysis and ultrastructural characteristics of developing human muscle, Handb. Clin. Neurol. *113*, 1299-1310.
 
-Tiveron M.C. & Cremer H., (2008), CXCL12/CXCR4 signalling in neuronal cell migration, Curr. Opin. Neurobiol. 18, 237-244.
+Tiveron M.C. & Cremer H., (2008), CXCL12/CXCR4 signalling in neuronal cell migration, Curr. Opin. Neurobiol. *18*, 237-244.
 
-Ulfig N.,  (2009),  Kurzlehrbuch Embryologie, Georg Thieme Verlag Stuttgart,New York.
+Ulfig N., (2009), Kurzlehrbuch Embryologie, Georg Thieme Verlag Stuttgart,New York.
 
-Yi H., Xue L., Guo MX., Ma J., Zeng Y., Wang W., Cai JY., Hu HM., Shu HB., Shi YB. et al., (2010), Gene expression atlas for human embryogenesis, FASEB. J. 24, 3341-50.. 
+Yi H., Xue L., Guo MX., Ma J., Zeng Y., Wang W., Cai JY., Hu HM., Shu HB., Shi YB. et al., (2010), Gene expression atlas for human embryogenesis, FASEB. J. *24*, 3341-50.. 
 
-Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine receptor CXCR4 during chick embryo development, Anat. Embryol. 210, 35-41.
+Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine receptor CXCR4 during chick embryo development, Anat. Embryol. *210*, 35-41.
 
 \newpage
+
 # Supplementary
 
 ## Differential gene expression - Volcano Plot
 
-```{r Volcano-Plot,fig.height= 3.5, fig.height=3.5fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+```{r Volcano-Plot, fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
@@ -1740,7 +1743,6 @@ file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-top
 download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
 ggdraw() + draw_image("TRA_overlap_edited.png")
 ```
-
 
 ```{r spleen-tables-basics, eval=FALSE}
 get_gene_info = function(transcript_ids){
@@ -1832,7 +1834,6 @@ Cerebellar_Hemisphere = t(Cerebellar_Hemisphere)
 colnames(Cerebellar_Hemisphere) <- Cerebellar_Hemisphere_names
 Cerebellar_Hemisphere = as.data.frame(Cerebellar_Hemisphere)
 Cerebellar_Hemisphere_sorted = Cerebellar_Hemisphere %>% select(sort(colnames(Cerebellar_Hemisphere)))
-Cerebellar_Hemisphere_sorted
 
 # As contrast, only for week 4 only
 Cerebellar_Hemisphere_week4= Cerebellar_Hemisphere_sorted[1:3,]
@@ -1890,24 +1891,30 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
-
 ## PCA
 
 The first three PCAs were now plotted against each other. This helps to analyze the genes contributions to the PCAs. The more parallel a gene's vector is to the PCA axis, the more the gene contributes to that PCA. The lenght of the vectors shows how much variability of the gene is explained by the PCAs. The longer the vector, the better it is represented in this dimension. The angels between the vectors give insight about the correlation between the genes. Small angels demonstrate a high correlation whereas opposite angles demonstrate a high negative correlation.
 
+par
+
 ```{r pca-plots}
 
-par(mfrow = c(1, 3))
 
-#PCA 1&2
-ggbiplot(pca_genes) +
+
+#PC 1&2
+pc_12 <- ggbiplot(pca_genes) +
 theme(aspect.ratio = 1)
 
-#PCA 2&3
-ggbiplot(pca_genes, choices=c(2,3)) +
+#PC 2&3
+pc_23 <- ggbiplot(pca_genes, choices=c(2,3)) +
 theme(aspect.ratio = 1)
 
-#PCA 1&3
-ggbiplot(pca_genes, choices=c(1,3)) +
+#PC 1&3
+pc_13 <- ggbiplot(pca_genes, choices=c(1,3)) +
 theme(aspect.ratio = 1)
+
+par(mfrow=c(1,3))
+pc_12
+pc_23
+pc_13
 ```
