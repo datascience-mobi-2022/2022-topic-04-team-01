@@ -180,6 +180,7 @@ diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in
 
 ```
 
+\newpage
 ## TRAs can infer a basic timeline of organ development {#organ}
 
 ### Differentially expressed transcripts can be linked to all analyzed tissues {#organ-overview}

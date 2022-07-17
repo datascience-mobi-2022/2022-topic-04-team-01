@@ -578,8 +578,6 @@ Figure \@ref(fig:paper-trends-cluster)E reveals, that there clearly *up* and *do
 
 ### Differentially expressed transcripts can be linked to all analyzed tissues {#organ-overview}
 
-The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes.
-
 ```{r, fig.width=8, fig.height=6, include=FALSE}
 # Create a barplot for the TRA count of each tissue based on our dataset of differentially expressed genes
 
@@ -618,37 +616,8 @@ annotate_figure(plot_output, top = text_grob("Differentially expressed transcrip
 mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
-These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all results will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
-
-```{r tissue-links,fig.width= 14, fig.height=4, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
-
-nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-
-edges = data.frame (rep(nodes, 32), NA)
-for (i in 1:32) {
-  a = c(edges[(i+1):33,1], edges[1:i,1])
-  edges[(33*(i-1)+1):(33*i),2] = a
-}
-colnames(edges) = c("Tissue1", "Tissue2")
-graph1 = graph_from_data_frame(edges, directed = FALSE)
-
-
-node_weight = data.frame(tissue = nodes, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
-
-edge_combined = edges %>% unite(tissues, c("Tissue1", "Tissue2"), sep = "|")
-edge_weight = data.frame(edges, weight = apply(edges,1, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y[1], toString(x)) && grepl(y[2], toString(x))}))}))
-
-edge_weight_adj = edge_weight
-edge_weight_adj$weight = sapply(edge_weight_adj$weight, function(x) { if(x < 100) {x = 0} else {x = x/100}})
-edge_weight_cleared = edge_weight_adj[!(edge_weight_adj$weight == 0),]
-
-
-graph2 = ggnet2(edge_weight_cleared[,1:2], label = TRUE, edge.size = edge_weight_cleared$weight)
-node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
-
-graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues") +  theme(plot.title = element_text(hjust = 0.5, face = "bold"), plot.margin = unit(c(0.2,6.5,0,6.5),"cm"))
-graph2
-```
+The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes.These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all results will be based on our dataset with differentially expressed genes from limma analysis. \
+Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by supplementary Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
@@ -808,26 +777,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
-library(ggplot2)
-#Compare the initial expression values of both clusters
-spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
-spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
-spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
-i = 0
-for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
-  i = i+1
-  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
-    {"Down"}),length(genelist)))
-  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
-}
-spleen_boxplot_data = spleen_boxplot_data[-1,]
-spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
-spleen_boxplot
-
-```
-
-As shown in Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed transcripts, we used the NCBI gene database to get a functional annotation. Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)).
+As shown in supplementary Fig. \@ref(fig:spleen-boxplot), the spleen is a clear example of two dinstict clusters with one consisting of upregulated previously inactive genes and one with downregulated highly active genes. For all these differentially expressed transcripts, we used the NCBI gene database to get a functional annotation. Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were clearly associated with immune system or blood functions and thus relevant for the functional thymus. We further found 157 downregulated genes. There, 70 were annotated and 45 of those displayed a relation to the cell cycle or cell division. The tables of the transcripts with a relevant function are visible in the suppplementary material (Fig. \@ref(fig:spleen-up-table) and Fig. \@ref(fig:spleen-down-table)).
 
 ### Overrepresentation Analysis can create plots that signify organ development {#organ-ora}
 
@@ -1716,6 +1666,36 @@ volcano
 
 ## Organ development
 
+```{r tissue-links,fig.width= 10, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
+
+nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+edges = data.frame (rep(nodes, 32), NA)
+for (i in 1:32) {
+  a = c(edges[(i+1):33,1], edges[1:i,1])
+  edges[(33*(i-1)+1):(33*i),2] = a
+}
+colnames(edges) = c("Tissue1", "Tissue2")
+graph1 = graph_from_data_frame(edges, directed = FALSE)
+
+
+node_weight = data.frame(tissue = nodes, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+edge_combined = edges %>% unite(tissues, c("Tissue1", "Tissue2"), sep = "|")
+edge_weight = data.frame(edges, weight = apply(edges,1, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y[1], toString(x)) && grepl(y[2], toString(x))}))}))
+
+edge_weight_adj = edge_weight
+edge_weight_adj$weight = sapply(edge_weight_adj$weight, function(x) { if(x < 100) {x = 0} else {x = x/100}})
+edge_weight_cleared = edge_weight_adj[!(edge_weight_adj$weight == 0),]
+
+
+graph2 = ggnet2(edge_weight_cleared[,1:2], label = TRUE, edge.size = edge_weight_cleared$weight)
+node_size = sapply(graph2$data$label, function(x) {node_weight[x,2]})
+
+graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TRUE, color.palette = c() ,edge.size = edge_weight_cleared$weight, size = (ceiling(node_size/30))) + guides(size = FALSE, color = FALSE) + scale_color_viridis(option = "D", discrete = TRUE) + labs(title = "Overlap between the TRAs associated with different tissues") +  theme(plot.title = element_text(hjust = 0.5, face = "bold"), plot.margin = unit(c(0.2,2,0,2),"cm"))
+graph2
+```
+
 ```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
 
 tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
@@ -1739,6 +1719,25 @@ heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, 
 file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
 download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
 ggdraw() + draw_image("TRA_overlap_edited.png")
+```
+
+```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
+spleen_boxplot
+
 ```
 
 ```{r spleen-tables-basics, eval=FALSE}
