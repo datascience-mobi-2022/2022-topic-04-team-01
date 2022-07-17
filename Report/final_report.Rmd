@@ -349,7 +349,7 @@ The statistical method over-representation analysis determines among other thing
 
 # Results
 
-## Limma analysis
+## Limma analysis {#limma}
 
 To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts.
 
@@ -406,8 +406,6 @@ for (i in 1:15) {
 diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 ```
 
-### Volcano plot
-
 The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10 (adjusted P-value) boundary was set at 2 which equals our targeted adjusted P-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression (Supplementary: Figure \@ref(fig:Volcano-Plot)). The genes were categorized in two groups:
 
 1.  up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01
@@ -416,7 +414,7 @@ The gathered dataset from limma analysis of the differential expression between 
 Genes which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
 
 
-## Comparison of differential expressed genes between the original paper and our method
+## Comparison of differential expressed genes between the original paper and our method {#paper-comp}
 
 We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our data set because the both have the same probe set IDs from the same microarray.
 ```{r importing-data-paper}
@@ -652,7 +650,7 @@ graph2
 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
-In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. \@ref(fig:expression-plot)B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C.
+In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. \@ref(fig:expression-plot)B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C. The clustering graphs for all tissues can be found on our github repository (LINK!!!).
 
 ```{r expression-threshold, include=FALSE}
 # Create dataframe with median expression levels for each transcript and week (combining the replicates)
@@ -1147,7 +1145,13 @@ The testis-associated sets (Fig. \@ref(fig:ORA-plot)F) continuously decrease in 
 For the stomach (Fig. \@ref(fig:ORA-plot)G), we found a initially high expression in week 4 that then falls until week 6 and then increases again towards week 9. \
 Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed a constant rise in expression levels from week 5 to 9. \
 
+<<<<<<< HEAD
 ## Brain subtissue-specific gene expression reflects neuronal development processes
+=======
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#brain}
+
+The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
+>>>>>>> 1b752cc3fa1eed0b9f3aded69956577977c5a218
 
 There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
@@ -1540,7 +1544,7 @@ Overall, this ensured the quality of our data set and differentially expressed g
 
 
 
-## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010
+## TRAs can infer a basic timeline of organ development {dis-organ}
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
 
@@ -1555,7 +1559,7 @@ The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:O
 For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes. 
 Finally, the skin shows an increased expression of related genes sets from week 5 through 9 (Fig. \@ref(fig:ORA-plot)H). This broadly reflects the embryonic development, with the epidermis starting to form in week 4 (section \@ref(intro-tissues)). We also found this expression pattern in the keratinization gene set that is suggested by literature as a good indicator for skin formation.  
 
-## Hypothesis: Neural TRA expression patterns reflect morphological brain development
+## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#dis-brain}
 
 First point to discuss is the significant increase in the gene expression of Ca(2+)ATPase (SLN sarcolipin) by factor 2 in logarithmic scale (Fig. \@ref(fig:gene-expression-brain) left). A cause of this might be the process of neuronal migration which starts at week 9 (section \@ref(intro-tissues)). Ca(2+) is an essential cofactor for actin dependent cell migration. 
 
@@ -1573,7 +1577,9 @@ A decline in  NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:g
 
 ##Conclusion
 
+The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function  that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA. There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research. 
 
+\newpage
 # References
 Benninghoff, A.  (1993), Makroskopische Anatomie, Embryologie und Histologie des Menschen, 15. Auflage, München, Wien, Baltimore, Urban und Schwarzenberg.
 
@@ -1620,7 +1626,7 @@ Yi H., Xue L., Guo MX., Ma J., Zeng Y., Wang W., Cai JY., Hu HM., Shu HB., Shi Y
 
 Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine receptor CXCR4 during chick embryo development, Anat. Embryol. 210, 35-41.
 
-
+\newpage
 # Supplementary
 
 ## Differential gene expression - Volcano Plot
@@ -1695,7 +1701,6 @@ ggdraw() + draw_image("TRA_overlap_edited.png")
 ```
 
 
-
 ```{r spleen-tables-basics, eval=FALSE}
 get_gene_info = function(transcript_ids){
   table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
@@ -1718,6 +1723,30 @@ get_single_transcript = function(single_transcript) {
 
 spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
 spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
+# Table for downregulated genes
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
+```
+
+```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
+file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
+download.file(file_spleen_down, "spleen_down.png", mode = "wb")
+ggdraw() + draw_image("spleen_down.png")
+
 ```
 
 ```{r spleen-up-code, include = FALSE, eval = FALSE}
@@ -1743,31 +1772,6 @@ gtsave(table_spleen1, "spleen_up.png")
 file_spleen_up = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_up.png"
 download.file(file_spleen_up, "spleen_up.png", mode = "wb")
 ggdraw() + draw_image("spleen_up.png")
-```
-
-
-```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
-# Table for downregulated genes
-
-Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
-Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
-           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
-
-spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
-spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
-
-
-spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
-functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
-spleen2_gene_description_sum$Summary = functions_2
-gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
-```
-
-```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
-file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
-download.file(file_spleen_down, "spleen_down.png", mode = "wb")
-ggdraw() + draw_image("spleen_down.png")
-
 ```
 
 ## Brain development
