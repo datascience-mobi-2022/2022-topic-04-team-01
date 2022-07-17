@@ -1404,7 +1404,7 @@ The last groupe are chemokine, they take up an important part in the signaling p
 
 ## Using Principal component analysis to find biomarkes for developmental progression
 
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA_analysis) A).
 
 ```{r, include=FALSE}
 #pca on rows (genes)
@@ -1416,8 +1416,6 @@ pca_genes <- prcomp(
 #taking a first look
 summary(pca_genes)
 ```
-
-To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
 ```{r pca-variance, fig.width = 5, fig.height=5}
 #visualizing the variance of the PCAs
@@ -1432,19 +1430,17 @@ pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)),
 
 
 #actual plot
-PCA_contribution <- pc_eigenvalues %>% 
+PC_contribution <- pc_eigenvalues %>% 
   ggplot(aes(x = PC)) +
   geom_col(aes(y = pct)) +
   geom_line(aes(y = pct_cum, group = 1)) + 
   geom_point(aes(y = pct_cum)) +
-  ggtitle('PCA variance') +
+  ggtitle('PC variance') +
   theme(plot.title = element_text(hjust = 0.5,face = "bold")) +
   labs(x = "Principal component", y = "Fraction variance explained") +
   theme(aspect.ratio = 1)
 
 ```
-
-This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. The first three PCAs already explain over 80% of the data's variance. Notably, the first PCA alone already explains over 60% of the data's variance and all following PCAs explain significantly less variance(Fig. \@ref(fig:PCA_analysis) A).
 
 ```{r, include=FALSE}
  loadings = pca_genes$rotation[,"PC1"]
@@ -1483,9 +1479,10 @@ ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 
 ranks_pca[order(ranks_pca$sum),]
 
 ```
-For further analysis, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
 
-```{r, fig.width=5,fig.height=5}
+For further analysis, each transcript was awarded a rank depending on how much it contributes to each PC. Then, a score was calculated for maximum contribution to PC1 and minimal loadings for all other relevant PCs (PC2-5). We took a closer look at the five best socring transcripts for PC1, as this PC alone already explains the brunt of the variance of our data. These transcripts encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+
+```{r, fig.width=5,fig.height=5, include = FALSE, eval = FALSE}
 
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -1515,7 +1512,7 @@ first_five <- rbind(week4,week5,week6,week7,week8,week9)
 
 #plotting the expression over weeks
 
-png(filename = "PCA1_five.png", res = 100)
+png(filename = "PC1_five.png", res = 100)
 par(mar=c(4, 4, 4, 7), xpd=TRUE)
 matplot(first_five, 
         type = 'b',
@@ -1523,7 +1520,7 @@ matplot(first_five,
         col = c('black','red','green','blue','orange'), 
         xlab = 'Weeks', 
         ylab = 'Expression Level', 
-        main = 'Most contribution to PCA1' , 
+        main = 'Most contribution to PC1' , 
         xaxt='n'
 )
 axis(side = 1,
@@ -1541,18 +1538,17 @@ legend('topright',
 
 dev.off()
 
-first_five_plot <- ggdraw() + draw_image("PCA1_five.png") 
-
 ```
 
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels.\ The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show really similar expression levels (Fig. \@ref(fig:PCA_analysis) B).
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA_analysis) B).
 
-```{r PCA_analysis}
-PCA_plots = arrangeGrob(grobs = list(PCA_contribution, first_five_plot),
-                                    nrow=1, 
-                                    widths = c(3,3.5), 
-                                    heights = c(3.5)
-                        )
+```{r PCA_analysis, fig.width = 10, fig.height = 4}
+file_fiveplot = ""
+download.file(file_fiveplot, "PC1_five.png", mode = "wb")
+first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
+
+lay = rbind(c(1,2))
+PCA_plots = arrangeGrob(grobs = list(PC_contribution, first_five_plot),layout_matrix = lay)
 
 PCA_plots_output = as_ggplot(PCA_plots) +
   draw_plot_label(label = c("A", "B"), 
@@ -1580,21 +1576,18 @@ Furthermore, we showed in our Venn diagram (Figure \@ref(fig:Venn-Diagram)), tha
 The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed genes more precisely. The *vsn* and the *limma* package are up to date with frequent advances doi: 10.1093/nar/gkv007.
 Overall, this ensured the quality of our data set and differentially expressed genes while also pointing out some flaws of the data set of the paper.
 
-
-
 ## TRAs can infer a basic timeline of organ development {dis-organ}
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
 
 This approach was used in section \@ref(organ-ora) for eight different tissues. 
-For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. 
-The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. 
-
-At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes. 
-The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development. 
-The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from  week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development. 
-The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:ORA-plot)E). This is in contrast to the embryonic development, where the gonads start to form at around the same time (section \@ref(intro-tissues)). 
-For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes. 
+For the spleen, the results of our analysis (Fig. \@ref(fig:ORA-plot)A) largely do not reflect the embryonic development (section \@ref(intro-tissues)). While some of the immune-related gene sets are already expressed in week 4, the spleen only develops by week 6 and contains immune cells by week 12. This shows that while the spleen plays a role in the immune system and such gene sets are therefore rightly linked to the spleen, the expression of these transcripts alone does not necessarily relate to the development of the organ. It is still noteworthy that functions related to the adaptive immune system increase in expression form week 7 onward, which correlates with the beginning of T-cell development in the thymus. \
+The observed timeframe is an important part of brain development (section \@ref(intro-tissues)). This is also visible in the expression data (Fig. \@ref(fig:ORA-plot)B), with a already high but still continously increasing expression of synaptic gene sets. Furthermore, as the brain starts to form, the expression of neuron projection morphogenesis transcripts increases continuously from week 5 to 8. \
+At week 4, the clearly heart-associated gene sets (Fig. \@ref(fig:ORA-plot)C) are at their highest expression level and decrease until week 8. The cardiac muscle tissue development transcripts still remain highly expressed (>7.5). This corresponds to the early development of the heart as noted in the introduction (section \@ref(intro-tissues)). It is noteworthy that the heart contraction gene set rises in expression again from week 8 to 9, but here an explanation is not possible without further analyzing the individual genes. \
+The liver-associated TRAs showed no clear expression pattern (Fig. \@ref(fig:ORA-plot)D). Thus, even though the liver forms mostly during the analyzed timeframe (section \@ref(intro-tissues)), we cannot link the gene expression to the organ's development. The detected functions are mostly metabolic pathways whose activity could also be related to processes outside the liver. As a result, it is plausible that their expression is independent of liver development. \
+The skeletal muscle functions are expressed only late within the observed time, as shown by the large increase in expression from  week 8 to 9 (Fig. \@ref(fig:ORA-plot)E). As muscle fibers begin to develop later than week 9 and the first related proteins appear from week 7 on (section \@ref(intro-tissues)), these expression data correspond well to the embryonic development. \
+The testis gene sets decrease in expression from week 5 onward (Fig. \@ref(fig:ORA-plot)E). This is in contrast to the embryonic development, where the gonads start to form at around the same time (section \@ref(intro-tissues)). \
+For the stomach, the expression pattern indicates a decrease until week 6 followed by rising expression levels until week 9 (Fig. \@ref(fig:ORA-plot)G). However, the literature indicates that these results are unrelated to the stomach development. Functions like digestion or peptide hormone secretion are impossible to occure at this time, since the specific cells needed for this only appear later in embryogenesis (section \@ref(intro-tissues)). Therfore, the cause of the changing expression would have to be determined through a more in-depth analysis of the involved genes. \
 Finally, the skin shows an increased expression of related genes sets from week 5 through 9 (Fig. \@ref(fig:ORA-plot)H). This broadly reflects the embryonic development, with the epidermis starting to form in week 4 (section \@ref(intro-tissues)). We also found this expression pattern in the keratinization gene set that is suggested by literature as a good indicator for skin formation.  
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#dis-brain}
