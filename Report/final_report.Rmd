@@ -2,7 +2,7 @@
 title: "Final Report"
 author: "Gruppe 4"
 date: '2022-07-03'
-bibliography: references.bib
+#bibliography: references.bib
 output: 
   bookdown::pdf_document2:
     number_sections: TRUE
@@ -85,7 +85,7 @@ library(XML)
 
 # Abstract
 
-#Introduction
+# Introduction
 
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
 
@@ -108,7 +108,7 @@ While to neurulation happens around week 4, the major parts of the brain are alr
 Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf et al. 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
 
 
-#Methods
+# Methods
 
 ## Programming language and Libraries
 
@@ -118,7 +118,7 @@ Following libraries were used:
 
 ```{=latex}
 \begin{table}[htb]
-\caption{Table 1: All libraries nessecary for the code of this report installed from CRAN, Bioconductor and brainarray}
+\caption{All libraries used for the code of this report, libraries installed from CRAN, Bioconductor and brainarray}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}ll|ll|ll|ll@{}}
 \toprule
@@ -199,28 +199,28 @@ dev.off()
 ```
 
 
-```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 8, fig.height= 4, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 6, fig.height= 3, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
 surface_image_plot = ggdraw() + draw_image("Surface image.png")
 RNA_degradation_plot = ggdraw() + draw_image("RNA degradation plot.png")
 
 OC_chip_plot = arrangeGrob(grobs = list(surface_image_plot, RNA_degradation_plot),
-                                    nrow=1, widths = c(4,4), heights = c(4))
+                                    nrow=1, widths = c(3,3), heights = c(3))
 
 OC_chip_plot_output = as_ggplot(OC_chip_plot) +
   draw_plot_label(label = c("A", "B"), size = 15, x = c(0.01, 0.50), y = c(0.17, 0.17)) 
 
-annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface image and RNA degradation", color = "black", face = "bold", size = 16))
+annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface\nimage and RNA degradation", color = "black", face = "bold", size = 16))
 ```
 
 ## Normalising the data set
 
-Intensity values of different chips are affected by sample preparation and array manufacturing and processing resulting in statistical variance and random fluctuation. To access the biological relevant variation the raw data needs to be transformed by normalisation. We chose the vsn rma normalization with its library *vsn* according to Huber *et al.* (2002).
+Intensity values of different chips are affected by sstatistical variance and random fluctuation. To access the biological relevant variation the raw data is normalised. We chose the vsn rma normalization with its library *vsn* according to Huber *et al.* (2002). This library is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
 
 ```{r vsn-normalization, include=FALSE}
 data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
 ```
 
-The library vsn is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
+
 
 
 
@@ -266,7 +266,7 @@ scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma) +
   theme_bw() +
   geom_point(mapping = aes(exprs.GSE15744.vsnrma[,4], exprs.GSE15744.vsnrma[,5]), size = 0.5) +
   geom_abline(intersept = 0, slope = 1, col = "red", aes(size=1)) +
-  labs(title = paste(" Scatterplot of microarray\n", substr(colnames(data.GSE15744.vsnrma)[4], 1, nchar(colnames(data.GSE15744.vsnrma)[4])), "and", substr(colnames(data.GSE15744.vsnrma)[5], 1, nchar(colnames(data.GSE15744.vsnrma)[5])), "in week 5", sep=" ", collapse = NULL),
+  labs(title = "Scatterplot of microarrays,\ntwo replicas of week 5",
        x = colnames(data.GSE15744.vsnrma)[4],
        y = colnames(data.GSE15744.vsnrma)[5])+ theme(aspect.ratio = 1) 
 ```
@@ -478,7 +478,7 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
 )
 ```
 
-```{r Venn-Diagram, fig.width=4, fig.height=4, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+```{r Venn-Diagram, fig.width=3, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
@@ -577,7 +577,7 @@ Figure \@ref(fig:paper-trends-cluster)E reveals, that there clearly *up* and *do
 
 The TRA Data covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum was found with 46 stomach-linked transcripts, the maximum were 837 TRAs for the testes.
 
-```{r, fig.width=8, fig.height=6}
+```{r, fig.width=8, fig.height=6, include=FALSE}
 # Create a barplot for the TRA count of each tissue based on our dataset of differentially expressed genes
 
 all_tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex", "Colon - Sigmoid", "Colon - Transverse", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix",  "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid", "Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra",  "Nerve - Tibial")
@@ -586,7 +586,7 @@ tissue_count = data.frame(tissue = all_tissues, count = sapply(all_tissues, func
 tissue_count_barplot =  ggplot(tissue_count, aes(x = tissue, y = count, fill = tissue))  + geom_bar(stat = "identity") + labs(x = "Tissue", y = "Number of Transcripts")  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(fill = FALSE) 
 ```
 
-```{r, fig.width=5, fig.height=5}
+```{r, fig.width=5, fig.height=5, include=FALSE}
 
 select_tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
@@ -600,7 +600,6 @@ for (tissue in select_tissues){
 }
 cols = rainbow(33, s=.6, v=.9) #[sample(1:33,33)] #61
 count_data$color = cols
-count_data
 treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
 ```
 
@@ -1499,7 +1498,7 @@ summary(pca_genes)
 
 To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
-```{r pca-variance, fig.width = 5, fig.height=5}
+```{r pca-variance, fig.width = 3.5, fig.height=3.5}
 #visualizing the variance of the PCAs
 pc_eigenvalues <- pca_genes$sdev^2
 
@@ -1565,7 +1564,7 @@ ranks_pca[order(ranks_pca$sum),]
 ```
 For further analysis, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
 
-```{r, fig.width=5,fig.height=5}
+```{r, fig.width=4.5,fig.height=4.5}
 
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -1725,7 +1724,7 @@ ggdraw() + draw_image("TRA_overlap_edited.png")
 
 
 
-```{r}
+```{r, eval=FALSE}
 get_gene_info = function(transcript_ids){
   table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
   for(x in transcript_ids) {
@@ -1798,7 +1797,7 @@ gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregu
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
-head(top.table)
+
 
 # Create a function for volcano plot
 volcanizator <- function(data, logFC_thresh_upper, logFC_thresh_lower, max_pValue){
