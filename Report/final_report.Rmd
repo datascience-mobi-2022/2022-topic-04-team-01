@@ -430,12 +430,7 @@ for (i in 1:15) {
 diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
 ```
 
-The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10 (adjusted P-value) boundary was set at 2 which equals our targeted adjusted P-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression (Supplementary: Figure \@ref(fig:Volcano-Plot)). The genes were categorized in two groups:
-
-1.  up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01
-2.  down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01
-
-Genes which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
+Volcano plot for differentially expressed transkripts between week 4 and 9 was made to evaluate limma analysis. Genes are categorized as up-regulated, down-regulated or not differentially expressed  (Supplementary: Figure \@ref(fig:Volcano-Plot))). We further used genes between all weeks with an adjusted P-value smaller than 0.01.
 
 ## Comparison of differential expressed genes between the original paper and our method {#paper-comp}
 
@@ -1582,7 +1577,7 @@ Finally, the skin shows an increased expression of related genes sets from week 
 
 ### Brain subtissue-specific gene expression reflects neuronal development processes {#dis-brain}
 
-First, we found a significant increase in the expression of SLN sarcolipin (a Ca-ATPase) (Fig. \@ref(fig:gene-expression-brain) left). Since Ca(2+) is an essential cofactor for actin dependent cell migration, this might be related to neuronal migration startingweek 9 (section \@ref(intro-tissues)). \
+First, we found a significant increase in the expression of SLN sarcolipin (a Ca-ATPase) (Fig. \@ref(fig:gene-expression-brain) left). Since Ca(2+) is an essential cofactor for actin dependent cell migration, this might be related to neuronal migration starting week 9 (section \@ref(intro-tissues)). \
 Additionally, the strong correlation between the expression of SNAP91 genes and one SYBU gene (ENST00000276646) (Fig. \@ref(fig:gene-expression-brain) middle) was noteworthy. Both proteins are associated with the cerebellar hemisphere and contribute to endocytosis (Overhoff et al. 2020). \
 In addition we identified a significant increase in expression of NXPH1 (Fig. \@ref(fig:gene-expression-brain) middle). An upregulation of this factor can prepare the process of synapse formation which starts at week 11 (section \@ref(intro-tissues)). \
 We further identified a strong LSAMP expression associated to the putamen as well as  NXPH1 linked with the anterior cingulate cortex. (Fig. \@ref(fig:gene-expression-brain) middle). As adhesion molecules for axon guidance, their increases in expression (from week 6/7 on) could be in preparation for synapse formation at week 9 (section \@ref(intro-tissues)). \
@@ -1659,9 +1654,10 @@ OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
+
 ```{r, fig.width = 18, fig.height = 10, include = FALSE}
 # Create a dataset for the volcano plot from the limma analysis
-# Ausgabe der Toptabel vom Vergleich Woche 4/9
+# Showing the toptable from week 9 to 4 comparison
 top.table = topTable(fit_all,5, n = Inf)
 
 
@@ -1703,7 +1699,7 @@ volcano
 dev.off()
 ```
 
-```{r Volcano-Plot,fig.width = 12, fig.height = 6, fig.cap="Volcano plot for differential gene expression between week 4 and 9. The adjusted p-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+```{r Volcano-Plot,fig.width = 12, fig.height = 6, fig.cap="Volcano plot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1,which reflects a doubling in the expression. Genes are up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01 and down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01. Genes which didn’t belong in those groups were declared as not differentially expressed."}
 ggdraw() + draw_image("volcano.png")
 ```
 

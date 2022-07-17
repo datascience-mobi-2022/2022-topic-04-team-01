@@ -1,0 +1,54 @@
+---
+title: "Import_Data_Correct"
+author: "Paul Christmann"
+date: '2022-05-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(GEOquery)
+
+# Download and open the data
+gse <- getGEO("GSE15744", GSEMatrix = TRUE)
+show(gse)
+
+
+```
+
+
+
+```{r}
+library(affy)
+setwd("C:/Users/pcson/Downloads/GSE15744_RAW")
+gse.exp = ReadAffy()
+
+
+```
+
+```{r}
+GSE15744.vsnrma <- vsnrma(gse.exp)
+save(GSE15744.vsnrma, file = "GSE15744.vsnrma.rda")
+```
+
+```{r}
+# Plot: Boxplot
+
+## Before
+boxplot(gse.exp, col = rainbow(15),
+        cex.axis=0.5,
+        las=2,                                            # Vertical x-axis text
+        ylab="Relative expression",
+        main="Raw Gene expression in human embryo (GSE15744, raw data)")
+## After
+boxplot(exprs(GSE15744.vsnrma), col = rainbow(15),
+        cex.axis=0.5,
+        las=2,                                            # Vertical x-axis text
+        ylab="Relative expression",
+        main="Raw Gene expression in human embryo (GSE15744, normalized)")
+
+```
+

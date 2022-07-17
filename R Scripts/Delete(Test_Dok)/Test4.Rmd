@@ -1,0 +1,450 @@
+---
+title: "Test4"
+author: "Paul Christmann"
+date: '2022-07-12'
+output: pdf_document
+geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
+header-includes:
+  - \usepackage[font={small,it}, labelfont={bf}]{caption}
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+#library(rmdformats)
+## Global options
+#options(max.print="120")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+#opts_knit$set(width=120)
+#opts_knit$set(root.dir  = "~/")
+```
+```{r}
+library(affy)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(Rcpp)
+library(tidyverse)
+library(vsn)
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
+library(kableExtra)
+library(Rfssa)
+library(ggbiplot)
+library(magrittr) 
+library(dplyr)
+library(stringr)
+library(ggrepel)
+library(readxl)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(cowplot)
+library(RCurl)
+library(readxl)
+library(ggforce)
+library(VennDiagram)
+library(png)
+library(factoextra)
+library(cluster)
+library(ggplot2)
+library(ggsci)
+library(ggplotify)
+library(clusterProfiler)
+library(enrichplot)
+library(org.Hs.eg.db)
+library(ggupset)
+library(gt)
+library(gtExtras)
+library(svglite)
+library(webshot)
+library(rentrez)
+library(XML)
+library(igraph)
+library(ggnet)
+library(viridis)
+library(treemapify)
+library(magick)
+```
+
+```{r}
+library(tidyverse)
+load("diff_genes_ann_0.01.RData")
+load("embryo_df_tissues.RData")
+```
+
+```{r loading-data-from-github}
+#make data accessible for everyone
+githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/data.GSE15744.RData"
+load_github_data(githubURL)
+```
+
+```{r vsn-normalization, include=FALSE}
+data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
+```
+
+```{r silent-Data-Cleaning, include=FALSE}
+#adjusting the microarray names by cutting the .cel
+rownames(pData(data.GSE15744.vsnrma)) <- substr(rownames(pData(data.GSE15744)), 1, nchar(rownames(pData(data.GSE15744)))-4)
+colnames(exprs(data.GSE15744.vsnrma)) <- substr(colnames(exprs(data.GSE15744)), 1, nchar(colnames(exprs(data.GSE15744)))-4)
+
+temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
+colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
+embryo_df = temp_embryo_df[63:95721,]
+```
+
+```{r Annotation, include=FALSE}
+file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
+ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
+TranscriptID_orig = rownames(embryo_df)
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
+
+
+embryo_df["Transcript.stable.ID"] = gsub("[//._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by their Transcript ID
+rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
+colnames(embryo_df_ann) = c("Week4_1", "Week4_2", "Week4_3", "Week5_1", "Week5_2", "Week5_3", "Week6_1", "Week6_2", "Week6_3", "Week7_1", "Week7_2", "Week7_3", "Week8_1", "Week8_2", "Week8_3", "Week9_1", "Week9_2", "Week9_3", "Transcript.stable.ID", "Gene.stable.ID", "Chromosome.scaffold.name", "HGNC.symbol", "AFFY.HG.U133.Plus.2.probe")
+
+
+file_tra = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/tra.2017.human.gtex.5x.table.tsv")
+tra_gtex = as.data.frame(read.csv(text = file_tra, sep = "\t"))
+embryo_df_tra = embryo_df_ann[embryo_df_ann$Transcript.stable.ID %in% tra_gtex$ensembl.transcript ,]
+embryo_df_tra = embryo_df_tra %>%  dplyr::rename(ensembl.transcript = Transcript.stable.ID)
+embryo_df_tra =  left_join(embryo_df_tra, tra_gtex, by="ensembl.transcript") 
+
+
+#Make Tissue names more accessible by creating a vector for them
+a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+embryo_df_tissues = a
+```
+
+```{r further-silent-Data-Cleaning}
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] 
+
+#Chromosome Spalte aufhübschen und unnötiges löschen
+embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
+embryo_df_tissues <- embryo_df_tissues %>%
+  filter(Chromosome.scaffold.name != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name!=  "CHR_HSCHR7_2_CTG6" )
+embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
+
+# Nach NA values suchen
+#sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+```
+
+```{r, include = FALSE}
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+#summary(results_all)
+
+
+#Create list of all differentially expressed genes
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+length(diff_genes_list_0.01) #4522
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01) #1814
+
+#Select differential genes from annotated dataframe
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+
+```
+
+\newpage
+## Brain subtissue-specific gene expression reflects neuronal development processes
+
+Our data covered 13 different brain subtissues, whose TRAs showed a signficant overlap. Hence, we filtered the differentially expressed transcripts for those that are only related to one of all 13 subtissues. The discovered genes were examined using the NCBI database. The resulting genes of interest can be categorized as follows: \
+1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
+
+```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap=" The gene expression of different transcripts coding for an ion channel (left), neuronal development and function proteins (middle) and chemokine-related genes (right) was plotted for week 4 to 9."}
+# A vektor of ENST numbers and weeks was created
+ENST = embryo_df_tissues$ensembl.transcript
+week = c(4,5,6,7,8,9)
+
+# Data for Ion channel geneexpression was generated
+# ENST00000531293
+data.ENST00000531293 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000531293")))
+data.ENST00000531293 = data.ENST00000531293[,1:18]
+week_4 =data.ENST00000531293[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000531293[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000531293[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000531293[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000531293[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000531293[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000531293 = c(week_4,week_5,week_6,week_7,week_8,week_9)
+data.ENST00000531293 =cbind(data.ENST00000531293,week)
+
+# Data for neuronal development and function geneexpression was generated
+# ENST00000602349
+data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
+data.ENST00000602349 = data.ENST00000602349[,1:18]
+week_4 =data.ENST00000602349[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000602349[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000602349[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000602349[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000602349[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000602349[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000602349 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000602349 =cbind(data.ENST00000602349,week)
+
+# ENST00000276646 & ENST00000529690
+data.ENST00000276646 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000276646")))
+data.ENST00000276646 = data.ENST00000276646[,1:18]
+week_4 =data.ENST00000276646[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000276646[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000276646[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000276646[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000276646[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000276646[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000276646 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000276646 =cbind(data.ENST00000276646,week)
+
+data.ENST00000529690 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000529690")))
+data.ENST00000529690 = data.ENST00000529690[,1:18]
+week_4 =data.ENST00000529690[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000529690[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000529690[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000529690[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000529690[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000529690[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000529690 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000529690 =cbind(data.ENST00000529690,week)
+
+# ENST00000356660
+data.ENST00000356660 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000356660")))
+data.ENST00000356660 = data.ENST00000356660[,1:18]
+week_4 =data.ENST00000356660[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000356660[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000356660[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000356660[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000356660[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000356660[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000356660 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000356660 =cbind(data.ENST00000356660,week)
+
+# ENST00000518312 & ENST00000521485
+data.ENST00000518312 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000518312")))
+data.ENST00000518312 = data.ENST00000518312[,1:18]
+week_4 =data.ENST00000518312[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000518312[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000518312[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000518312[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000518312[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000518312[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000518312 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000518312 =cbind(data.ENST00000518312,week)
+
+data.ENST00000521485 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000521485")))
+data.ENST00000521485 = data.ENST00000521485[,1:18]
+week_4 =data.ENST00000521485[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000521485[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000521485[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000521485[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000521485[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000521485[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000521485 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000521485 =cbind(data.ENST00000521485,week)
+
+# ENST00000439476
+data.ENST00000439476 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000439476")))
+data.ENST00000439476 = data.ENST00000439476[,1:18]
+week_4 =data.ENST00000439476[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000439476[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000439476[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000439476[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000439476[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000439476[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000439476 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000439476 =cbind(data.ENST00000439476,week)
+
+
+# ENST00000539563
+data.ENST00000539563 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000539563")))
+data.ENST00000539563 = data.ENST00000539563[,1:18]
+week_4 =data.ENST00000539563[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000539563[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000539563[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000539563[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000539563[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000539563[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000539563 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000539563 =cbind(data.ENST00000539563,week)
+
+# Data for chemokine geneexpression was generated 
+# ENST00000337225
+data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
+data.ENST00000337225 = data.ENST00000337225[,1:18]
+week_4 =data.ENST00000337225[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000337225[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000337225[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000337225[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000337225[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000337225[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000337225 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000337225 =cbind(data.ENST00000337225,week)
+
+# ENST00000579298
+data.ENST00000579298 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000579298")))
+data.ENST00000579298 = data.ENST00000579298[,1:18]
+week_4 =data.ENST00000579298[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000579298[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000579298[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000579298[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000579298[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000579298[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000579298 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000579298 =cbind(data.ENST00000579298,week)
+
+# Plotting of the gained geneexpression data
+par(mfrow = c(1, 3))
+
+#Plot for ion channel gene
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Ion channel gene", xlab = "weeks",ylab = "Expression level",col = "red")
+legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.8,title="Expressed genes")
+
+
+#Plot for neuronal development and function genes 
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Neuronal development and function genes", xlab = "weeks",ylab = "Expression level",col = "red", ylim = c(6.3,8.4))
+lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue")
+lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")
+lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")
+lines(data.ENST00000518312[,2],data.ENST00000518312[,1],type = "b",lwd=1,pch=19,col = "black")
+lines(data.ENST00000521485[,2],data.ENST00000521485[,1],type = "b",lwd=1,pch=19,col = "pink")
+lines(data.ENST00000439476[,2],data.ENST00000439476[,1],type = "b",lwd=1,pch=19,col = "purple")
+lines(data.ENST00000539563[,2],data.ENST00000539563[,1],type = "b",lwd=1,pch=19,col = "yellowgreen")
+legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690", "ENST00000356660", "ENST00000518312", "ENST00000521485",  "ENST00000439476", "ENST00000539563"),col=c("red", "blue", "orange", "green","black", "pink", "purple", "yellowgreen"), lty=1, cex=0.8,title="Expressed genes")
+
+
+# Plot for chemokine related genes
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Chemokine-related genes", xlab = "weeks",ylab = "Expression level",col = "red",ylim = c(7.6,9.7))
+lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")
+legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "blue"), lty=1, cex=0.8,title="Expressed genes")
+
+```
+
+### Ion channel 
+
+Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in the nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a sarcoplasmic reticulum Ca-ATPase.
+
+### Genes for neuronal development and function
+
+The second group are genes with a specific role in neuronal development and function. There, we discovered that ENST00000276646 and ENST00000529690 expression increases significantly over time. Both transcripts are associated with the cerebellar hemisphere and code for SYBU (syntabulin), a protein that contributes to activity-dependent presynaptic assembly in neuronal development.\
+Furthermore, we found four transcripts for axon goudance: ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. These proteins promote adhesion between axons and dendrites.  The transcript shows a strong rise in expression, especially from weeks 7 to 8, and is connected to  the anterior cingulate cortex.\
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91), which plays a role in regulation of clathrin-dependent endocytosis. Therefore, SNAP91 is important for essential axonal functions of neurons like postsynaptic density (Overhoff et al. 2020). The gene is associated with the cerebellar hemisphere and also shows a significant increase between weeks 7 to 8.\
+In addition, ENST00000539563  encodes for LSAMP (limbic system associated membrane protein) which plays a role in axon guidance. The encoded preprotein is processed into  a neuronal surface glycoprotein which functions as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with the  Putamen, a part of the basal ganglia that are associated with the limbic system-
+ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both transcripts show an identical decline in expression over the weeks. Nonetheless, ENST00000356660 is connected to cerebellar hemisphere while  ENST00000439476 to related to the hippocampus.
+
+### Chemokine related genes
+
+The last group are chemokines, proteins with an important role in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). It shows a strong increase in expression between weeks 4 to 6 and is associated with the anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes the  chemotaxis of monocytes. ENST00000579298 is related to the frontal cortex and shows a decline between weeks 5 to 9.
