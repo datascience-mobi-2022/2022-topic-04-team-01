@@ -1419,9 +1419,7 @@ ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic fa
 The last groupe are chemokine, they take up an important part in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
 
 
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
-
-### Principal component analysis
+## Using Principal component analysis to find biomarkes for developmental progression
 
 Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
 
