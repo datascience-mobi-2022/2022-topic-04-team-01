@@ -1555,7 +1555,7 @@ Overall, this ensured the quality of our data set and differentially expressed g
 
 
 
-## Hypothesis: TRAs can infer a timeline of organ development similar to the results by Yi et al. 2010 {dis-organ}
+## TRAs can infer a basic timeline of organ development {dis-organ}
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development. 
 
