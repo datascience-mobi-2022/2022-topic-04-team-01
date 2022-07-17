@@ -90,7 +90,7 @@ library(XML)
 
 A single cell turns into a complex multicellular organism during embryogenesis. The morphological steps behind this process are mostly understood. The role of molecular biological pathways and molecules like chemokines in the embryonic development is quite unknown and has to be investigated. Tissue restricted antigens (TRA) may be a key in understanding the relation between molecular biological cause and morphological consequence.TRAs originate from negative selection in the thymus, where medullary epithelial cells (mTECs) express them on their surface to remove self-antigen reactive T-cells. Those TRAs represent a wide range of self-antigens, hence we can use them to determine the gene expression in our dataset (Dinkelacker 2019; Murphy & Weaver 2018).\
 First of all, we want to compare our methods, e.g. limma analysis to the methods of the paper, e.g. **One-way analysis of variance** to find differentially expressed genes. We want to inspect if TRAs represent the timeline in the early stage of embryonic development between weeks 4 to 9 and if they can give us an insight on the molecular biological process in those weeks. Furthermore, we want to identify if the expression of specific gens can be related to milestones in neurogenesis. Last but not least, we want to illustrate the role of specific TRAs as biomarkers for organogenesis.
-
+ 
 
 \newpage
 
