@@ -490,7 +490,7 @@ To determine the number of transcripts which overlap between the data of the pap
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
             category.names = c("data from paper", "our TRA data", "our diff. data"),
-            filename = 'venn_diagramm_comparison_paper.png',
+            filename = 'venn_diagram_comparison_paper.png',
             output=TRUE,
             imagetype="png",
             #na = "none",
@@ -505,13 +505,13 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
             cat.cex = 1.4,
             cat.pos = c(350,10,0),
             #margin = 0
-            main = "Venn diagramm of differentially expressed transcripts\nfrom our TRA data and data of the original paper"
+            main = "Venn diagram of differentially expressed transcripts\nfrom our TRA data and data of the original paper"
             
 )
 ```
 
 ```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
-ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
+ggdraw() + draw_image("venn_diagram_comparison_paper.png")
 ```
 
 ### Verifing the trends postulated in the paper with our data
