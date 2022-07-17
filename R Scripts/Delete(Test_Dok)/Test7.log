@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 18:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 20:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -420,53 +420,42 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {c:/Users/User/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<Test7_files/figure-latex/unnamed-chunk-5-1.pdf, id=32, 867.24pt x 433.62pt>
+<Test7_files/figure-latex/unnamed-chunk-5-1.pdf, id=56, 867.24pt x 433.62pt>
 File: Test7_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
 <use Test7_files/figure-latex/unnamed-chunk-5-1.pdf>
-Package pdftex.def Info: Test7_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 91.
+Package pdftex.def Info: Test7_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 86.
 (pdftex.def)             Requested size: 528.9627pt x 264.48134pt.
-<Test7_files/figure-latex/tissue-links-1.pdf, id=33, 1011.78pt x 289.08pt>
-File: Test7_files/figure-latex/tissue-links-1.pdf Graphic file (type pdf)
-<use Test7_files/figure-latex/tissue-links-1.pdf>
-Package pdftex.def Info: Test7_files/figure-latex/tissue-links-1.pdf  used on input line 110.
-(pdftex.def)             Requested size: 528.93843pt x 151.12526pt.
-[2 <./Test7_files/figure-latex/unnamed-chunk-5-1.pdf> <./Test7_files/figure-latex/tissue-links-1.pdf>]
-<Test7_files/figure-latex/expression-plot-1.pdf, id=59, 722.7pt x 216.81pt>
+<Test7_files/figure-latex/expression-plot-1.pdf, id=57, 722.7pt x 216.81pt>
 File: Test7_files/figure-latex/expression-plot-1.pdf Graphic file (type pdf)
 <use Test7_files/figure-latex/expression-plot-1.pdf>
-Package pdftex.def Info: Test7_files/figure-latex/expression-plot-1.pdf  used on input line 137.
+Package pdftex.def Info: Test7_files/figure-latex/expression-plot-1.pdf  used on input line 128.
 (pdftex.def)             Requested size: 528.93402pt x 158.68019pt.
-<Test7_files/figure-latex/spleen-boxplot-1.pdf, id=60, 867.24pt x 216.81pt>
-File: Test7_files/figure-latex/spleen-boxplot-1.pdf Graphic file (type pdf)
-<use Test7_files/figure-latex/spleen-boxplot-1.pdf>
-Package pdftex.def Info: Test7_files/figure-latex/spleen-boxplot-1.pdf  used on input line 159.
-(pdftex.def)             Requested size: 528.9627pt x 132.24066pt.
-[3 <./Test7_files/figure-latex/expression-plot-1.pdf> <./Test7_files/figure-latex/spleen-boxplot-1.pdf>]
-<Test7_files/figure-latex/ORA-plot-1.pdf, id=80, 867.24pt x 1084.05pt>
+[2 <./Test7_files/figure-latex/unnamed-chunk-5-1.pdf>]
+<Test7_files/figure-latex/ORA-plot-1.pdf, id=77, 867.24pt x 1084.05pt>
 File: Test7_files/figure-latex/ORA-plot-1.pdf Graphic file (type pdf)
 <use Test7_files/figure-latex/ORA-plot-1.pdf>
-Package pdftex.def Info: Test7_files/figure-latex/ORA-plot-1.pdf  used on input line 193.
+Package pdftex.def Info: Test7_files/figure-latex/ORA-plot-1.pdf  used on input line 172.
 (pdftex.def)             Requested size: 528.9627pt x 661.20338pt.
 
-LaTeX Warning: Float too large for page by 16.59164pt on input line 203.
+LaTeX Warning: Float too large for page by 16.59164pt on input line 182.
 
-[4] [5 <./Test7_files/figure-latex/ORA-plot-1.pdf>] (./Test7.aux)
+[3 <./Test7_files/figure-latex/expression-plot-1.pdf>] [4 <./Test7_files/figure-latex/ORA-plot-1.pdf>] [5] [6] [7] (./Test7.aux)
 Package rerunfilecheck Info: File `Test7.out' has not changed.
-(rerunfilecheck)             Checksum: 28569859B09D9517F7EB01ABAD0E7603;2344.
+(rerunfilecheck)             Checksum: FAD76708E39E915E3B3B75E555B8E37D;4179.
  ) 
 Here is how much of TeX's memory you used:
- 11761 strings out of 479983
- 190763 string characters out of 5886474
- 482607 words of memory out of 5000000
- 29774 multiletter control sequences out of 15000+600000
- 508047 words of font info for 52 fonts, out of 8000000 for 9000
+ 11775 strings out of 479983
+ 190834 string characters out of 5886474
+ 488607 words of memory out of 5000000
+ 29777 multiletter control sequences out of 15000+600000
+ 518307 words of font info for 55 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,6n,77p,762b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb>
-Output written on Test7.pdf (5 pages, 433373 bytes).
+ 72i,6n,77p,761b,441s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb>
+Output written on Test7.pdf (7 pages, 451676 bytes).
 PDF statistics:
- 143 PDF objects out of 1000 (max. 8388607)
- 102 compressed objects within 2 object streams
- 21 named destinations out of 1000 (max. 500000)
- 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 175 PDF objects out of 1000 (max. 8388607)
+ 134 compressed objects within 2 object streams
+ 33 named destinations out of 1000 (max. 500000)
+ 104 words of extra memory for PDF output out of 10000 (max. 10000000)
 
