@@ -235,7 +235,7 @@ dev.off()
 #title(sub="Human embryo (GSE15744, Raw data)")
 ```
 
-```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 6, fig.height= 3, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 8, fig.height= 3, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
 surface_image_plot = ggdraw() + draw_image("Surface image.png")
 RNA_degradation_plot = ggdraw() + draw_image("RNA degradation plot.png")
 
@@ -243,7 +243,7 @@ OC_chip_plot = arrangeGrob(grobs = list(surface_image_plot, RNA_degradation_plot
                                     nrow=1, widths = c(3,3), heights = c(3))
 
 OC_chip_plot_output = as_ggplot(OC_chip_plot) +
-  draw_plot_label(label = c("A", "B"), size = 15, x = c(0.01, 0.50), y = c(0.17, 0.17)) 
+  draw_plot_label(label = c("A", "B"), size = 15, x = c(0.09, 0.58), y = c(0.17, 0.17)) 
 
 annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface\nimage and RNA degradation", color = "black", face = "bold", size = 12))
 ```
@@ -268,7 +268,7 @@ embryo_df = temp_embryo_df[63:95721,]
 
 ### Quality control of the vsn normalization {#QC-normalization}
 
-To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:QC-normalization-plots)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. To control this, we plotted the rank of the mean against the standard deviation, which resulted in a reasonable horizontal line indicated in red (Figure \@ref(fig:QC-normalization-plots)A).\ To further control the normalization we visualized the intensity values. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance (Figure \@ref(fig:QC-normalization-plots)B). We deduced that all arrays fit.. The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:QC-normalization-plots)C).
+To verify the transformed data intensity values, some test can be performed (supplementary Figure \@ref(fig:QC-normalization-plots)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. To control this, we plotted the rank of the mean against the standard deviation, which resulted in a reasonable horizontal line indicated in red (supplementary Figure \@ref(fig:QC-normalization-plots)A).\ To further control the normalization we visualized the intensity values. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance (supplementary Figure \@ref(fig:QC-normalization-plots)B). We deduced that all arrays fit.. The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (supplementary Figure \@ref(fig:QC-normalization-plots)C).
 
 ```{r mean-sd-plot, include=FALSE}
 meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
@@ -303,20 +303,10 @@ scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma) +
        y = colnames(data.GSE15744.vsnrma)[5])+ theme(aspect.ratio = 1) 
 ```
 
-```{r QC-normalization-plots, fig.width=12, fig.height=3.5, fig.cap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
 
 
-OC_normalization_plot = arrangeGrob(grobs = list(meansdplot.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, scatterplot.GSE15744.vsnrma),
-                                    nrow=1, widths = c(3,3,3), heights = c(3.5))
-
-OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
-  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.36, 0.71), y = c(0.13, 0.13, 0.13)) 
-
-annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
-```
-
-## Annotation
-
+## Analytical methods
+1. Annotation
 To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr. Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
 
 ```{r Annotation, include=FALSE}
@@ -367,12 +357,10 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 #sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
 ```
 
-## Limma package
-
+2. Limma
 The *limma* package determines among many other things the changes of gene expression over time in intensity values of microarrays. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It uses information borrowing, quantitative weighting, variance modelling and data preprocessing, while not subset the data (Ritchie. *et al.* 2015). Because the linear model was casted on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values. 
 
-## Over representation analysis
-
+3. Over representation analysis
 The statistical method over-representation analysis determines among other thing the over represented function of genes with associated transcripts in a subset of a mother data set with annotated transcripts and known functions. Categories for functions can be accessed via gene ontology.
 
 # Results
@@ -1651,6 +1639,20 @@ Yusuf F., Rehimi R., Dai F. & Brand-Saberi B., (2005), Expression of chemokine r
 \newpage
 
 # Supplementary
+
+## Quality control of the vsn normalization: Plots
+
+```{r QC-normalization-plots, fig.width=12, fig.height=5, fig.cap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
+
+
+OC_normalization_plot = arrangeGrob(grobs = list(meansdplot.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, scatterplot.GSE15744.vsnrma),
+                                    nrow=1, widths = c(3,3,3), heights = c(5))
+
+OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
+  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.36, 0.71), y = c(0.13, 0.13, 0.13)) 
+
+annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
+```
 
 ## Differential gene expression - Volcano Plot
 
