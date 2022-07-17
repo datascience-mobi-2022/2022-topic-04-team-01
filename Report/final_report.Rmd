@@ -11,6 +11,10 @@ output:
 geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
 header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+  #\usepackage{caption}
+  #\captionsetup[figure]{font=footnotesize}
 ---
 
 ```{r knitr_init, echo=FALSE, cache=FALSE}
@@ -29,55 +33,54 @@ opts_chunk$set(echo=FALSE,
 #opts_knit$set(root.dir  = "~/")
 ```
 
-```{r}
+```{r, include=FALSE}
 library(affy)
 library(AnnotationDbi)
-library(hgu133plus2hsenstprobe)
-library(hgu133plus2hsenstcdf) 
-library(Rcpp)
-library(tidyverse)
-library(vsn)
-library(limma)
-library(pheatmap)
-library(hexbin)
 library(biomaRt)
-library(kableExtra)
-library(Rfssa)
-library(ggbiplot)
-library(magrittr) 
+library(cluster)
+library(clusterProfiler)
+library(cowplot)
 library(dplyr)
-library(stringr)
-library(ggrepel)
-library(readxl)
+library(enrichplot)
+library(factoextra)
+library(ggbiplot)
+library(ggforce)
+library(GGally)
+library(ggplot2)
+library(ggplotify)
 library(ggpubr)
+library(ggrepel)
+library(ggsci)
+library(ggupset)
 library(grid)
 library(gridExtra)
-library(cowplot)
-library(RCurl)
-library(readxl)
-library(ggforce)
-library(VennDiagram)
-library(png)
-library(factoextra)
-library(cluster)
-library(ggplot2)
-library(ggsci)
-library(ggplotify)
-library(clusterProfiler)
-library(enrichplot)
-library(org.Hs.eg.db)
-library(ggupset)
 library(gt)
 library(gtExtras)
-library(svglite)
-library(webshot)
-library(rentrez)
-library(XML)
+library(hexbin)
+library(hgu133plus2hsenstcdf)
+library(hgu133plus2hsenstprobe)
 library(igraph)
-library(ggnet)
-library(viridis)
-library(treemapify)
+library(kableExtra)
+library(limma)
 library(magick)
+library(magrittr)
+library(org.Hs.eg.db)
+library(pheatmap)
+library(png)
+library(Rcpp)
+library(RCurl)
+library(readxl)
+library(rentrez)
+library(Rfssa)
+library(stringr)
+library(svglite)
+library(tidyverse)
+library(treemapify)
+library(VennDiagram)
+library(viridis)
+library(vsn)
+library(webshot)
+library(XML)
 ```
 
 # Abstract
@@ -113,20 +116,27 @@ The freely available programming language R version 4.2.0 and its IDE RStudio we
 
 Following libraries were used:
 
-```{r table-with-all-libraries, eval = FALSE}
-all_libraries <- tibble::tribble(
-  ~Library...package,                        ~Version, 
-              "affy",                              NA, 
-               "vsn",                              NA, 
-     "AnnotationDbi",                              NA, 
-         "tidyverse", "library used for Datacleaning", 
-           "Version",                   "Description"
-  
-
-all_libraries %>%
-  kable(all_libraries, digits = 3, row.names = FALSE, align = "c", caption = "Table 1: summary of all libraries used") %>%
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
-
+```{=latex}
+\begin{table}[htb]
+\caption{Table 1: All libraries nessecary for the code of this report installed from CRAN, Bioconductor and brainarray}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}ll|ll|ll|ll@{}}
+\toprule
+\textbf{Library}       & \textbf{Version} & \textbf{Library} & \textbf{Version} & \textbf{Library} & \textbf{Version} & \textbf{Library}     & \textbf{Version} \\ \midrule
+affy                   & 1.74             & AnnotationDbi    & 1.58             & biomaRt          & 2.52             & cluster              & 2.1.3            \\
+clusterProfiler        & 4.4.4            & cowplot          & 1.1.1            & dplyr            & 1.0.9            & enrichplot           & 1.16.1           \\
+factoextra             & 1.0.7            & ggbiplot         & 0.55             & ggforce          & 0.3.3            & GGally               & 2.1.2            \\
+ggplot2                & 3.3.6            & ggplotify        & 0.1.0            & ggpubr           & 0.4.0            & ggrepel              & 0.9.1            \\
+ggsci                  & 2.9              & ggupset          & 0.3.0            & grid             & 4.2.0            & gridExtra            & 2.3              \\
+gt                     & 0.6.0            & gtExtras         & 0.4.1            & hexbin           & 1.28.2           & hgu133plus2hsenstcdf & 25.0             \\
+hgu133plus2hsenstprobe & 25.0             & igraph           & 1.3.2            & kableExtra       & 1.3.4            & limma                & 3.52             \\
+magick                 & 2.7.3            & magrittr         & 2.0.3            & org.Hs.eg.db     & 3.15             & pheatmap             & 1.0.12           \\
+png                    & 0.7              & Rcpp             & 1.0.9            & RCurl            & 1.98             & readxl               & 1.4              \\
+rentrez                & 1.2.3            & Rfssa            & 2.0.1            & stringr          & 1.4              & svglite              & 2.1              \\
+tidyverse              & 1.3.1            & treemapify       & 2.5.5            & VennDiagram      & 1.7.3            & viridis              & 0.6.2            \\
+vsn                    & 3.64             & webshot          & 0.5.3            & XML              & 3.99             &                      &                  \\ \bottomrule
+\end{tabular}}
+\end{table}
 ```
 
 ## Dataset
@@ -141,7 +151,7 @@ The data was generated from embryos by using Affymetrix U133 plus 2.0 human Gene
 
 We downloaded the raw data to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). We imported it with the help of the library *affy* and is connected to the correct Annotation by the brainarray package. The *affy* package allows more manageable data analysis and manipulation of microarray intensity values.
 
-```{r importing-the-data-from-harddrive, eval = FALSE}
+```{r importing-the-data-from-harddrive}
 setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
 data.GSE15744 <- ReadAffy()
 data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
@@ -159,10 +169,12 @@ load_github_data(githubURL)
 
 To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example
 
-As shown in Figure \@ref(fig:QC-surface-images) as an example, the surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+As shown in Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)A as an example, the surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
 
-```{r QC-surface-images, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: a selected surface image of the microarrays showing no damage or artefacts.** The microarray inspection shows no irregularities and every chip is accepted for further data analysis"}
+```{r QC-surface-images, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: a selected surface image of the microarrays showing no damage or artefacts.** The microarray inspection shows no irregularities and every chip is accepted for further data analysis", include=FALSE}
+png(filename = "Surface image.png")
 surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, end = 0.75)[100:1])
+dev.off()
 ## To generate all images please use:
 #for (i in 1:18) {
 #  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
@@ -171,17 +183,33 @@ surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, 
 
 ### Quality control of RNA Degradation
 
-We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:RNA-Degradation-Plot)).
+We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)B).
 
-```{r RNA-Degradation-Plot, fig.width= 8, fig.height= 8, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+```{r RNA-Degradation-Plot, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data.", include=FALSE}
 data.rnadegradation <- AffyRNAdeg(data.GSE15744)
 
+png(filename = "RNA degradation plot.png")
 plotAffyRNAdeg(data.rnadegradation, col=rainbow(18))
 title(sub="RNA Degradation of 18 microarrays, GSE15744")
+dev.off()
 
 ## Not scaled
 #plotAffyRNAdeg(data.rnadegradation, col=rainbow(18), transform = "shift.only")
 #title(sub="Human embryo (GSE15744, Raw data)")
+```
+
+
+```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 8, fig.height= 4, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+surface_image_plot = ggdraw() + draw_image("Surface image.png")
+RNA_degradation_plot = ggdraw() + draw_image("RNA degradation plot.png")
+
+OC_chip_plot = arrangeGrob(grobs = list(surface_image_plot, RNA_degradation_plot),
+                                    nrow=1, widths = c(4,4), heights = c(4))
+
+OC_chip_plot_output = as_ggplot(OC_chip_plot) +
+  draw_plot_label(label = c("A", "B"), size = 15, x = c(0.01, 0.50), y = c(0.17, 0.17)) 
+
+annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface image and RNA degradation", color = "black", face = "bold", size = 16))
 ```
 
 ## Normalising the data set
@@ -215,7 +243,7 @@ meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", y
 meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data\nGSE15744") + theme(aspect.ratio = 1)
 ```
 
-```{r boxplot-vsn-normalization include=FALSE}
+```{r boxplot-vsn-normalization, include=FALSE}
 weeks <- c("Week 4.1", "Week 4.2", "Week 4.3", "Week 5.1", "Week 5.2", "Week 5.3", "Week 6.1", "Week 6.2", "Week 6.3", "Week 7.1", "Week 7.2", "Week 7.3", "Week 8.1", "Week 8.2", "Week 8.3", "Week 9.1", "Week 9.2", "Week 9.3")
 png(filename = "boxplot_GSE15744_vsnrma.png", res = 115)
 boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
@@ -260,7 +288,7 @@ annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: 
 
 To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr. Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
 
-```{r Annotation}
+```{r Annotation, include=FALSE}
 file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
 ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
 TranscriptID_orig = rownames(embryo_df)
@@ -310,7 +338,7 @@ embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosom
 
 ## Limma package
 
-The *limma* package is installed and imported using bioconductor. Among many other things, it determines changes of gene expression over time in intensity values of microarrays, so called differential expressed genes. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It does this by utilizing information borrowing, quantitative weighting, variance modelling and data preprocessing, but importantly, it does not subset the data (Ritchie. et al. 2015) Because the same linear model was performed on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values, while reducing the variance of residuals. 
+The *limma* package determines among many other things the changes of gene expression over time in intensity values of microarrays. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It uses information borrowing, quantitative weighting, variance modelling and data preprocessing, while not subset the data (Ritchie. et al. 2015). Because the linear model was casted on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values. 
 
 ## Over representation analysis
 
@@ -425,7 +453,7 @@ df_unique_diff <- diff_genes_ann_0.01[!contain_bool_diff,]
 ### Venn diagram
 
 To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagram)).
-```{r Venn-Diagram, fig.width=7, fig.height=7, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+```{r Vernn-Diagram-code, include=FALSE}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
@@ -448,6 +476,9 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
             main = "Venn diagramm of differentially expressed genes\nfrom our TRA data and data of the original paper"
             
 )
+```
+
+```{r Venn-Diagram, fig.width=4, fig.height=4, fig.cap = "The Venn diagram shows overlapping sections between our data and the data from the original paper. According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
@@ -555,7 +586,7 @@ tissue_count = data.frame(tissue = all_tissues, count = sapply(all_tissues, func
 tissue_count_barplot =  ggplot(tissue_count, aes(x = tissue, y = count, fill = tissue))  + geom_bar(stat = "identity") + labs(x = "Tissue", y = "Number of Transcripts")  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(fill = FALSE) 
 ```
 
-```{r, fig.width=7, fig.height=7}
+```{r, fig.width=5, fig.height=5}
 
 select_tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
@@ -573,7 +604,7 @@ count_data
 treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
 ```
 
-```{r, fig.width=9, fig.height=6, fig.subcap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
+```{r, fig.width=9, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
 lay = rbind(c(1,1,2), c(1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.7), y = c(0.1,0.1)) 
@@ -587,7 +618,7 @@ mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 
 These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all further analysis will be based on our dataset with differentially expressed genes from limma analysis. Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is further illustrated by Fig. \@ref(fig:tissue-links).
 
-```{r tissue-links,fig.width=9, fig.height=7, fig.subcap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
+```{r tissue-links,fig.width=7, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
 
 nodes = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
 
@@ -621,7 +652,7 @@ graph2
 
 In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. Therefore, we analyzed the share of differentially expressed transcripts above a certain expression level over time, as shown in Fig. ???A. Furthermore, we observed trends within the median expression of all differentially expressed transcripts associated with a tissue (Fig. ???B). Since both metrics only showed in miniscule changes, we hypothesized that distinct, counteracting trends in expression exsisted within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. ???C.
 
-```{r}
+```{r, include=FALSE}
 # Create dataframe with median expression levels for each transcript and week (combining the replicates)
 embryo_df_tissues_median  = data.frame(Week4 = apply(embryo_df_tissues[1:3], 1, median), Week5 =  apply(embryo_df_tissues[4:6], 1, median), Week6 =  apply(embryo_df_tissues[7:9], 1, median), Week7=apply(embryo_df_tissues[10:12], 1, median), Week8 =  apply(embryo_df_tissues[13:15], 1, median), Week9 =  apply(embryo_df_tissues[16:18], 1, median))
 embryo_df_tissues_median = cbind(embryo_df_tissues_median, embryo_df_tissues[,c(19,29)])
@@ -652,7 +683,7 @@ spleen_percentage_plot =  ggplot(data_plot, aes(x = Week, y= Percentage, group =
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #Plot of median expression level of all spleen-related genes over time
 
 #Select genes only of target tissue
@@ -669,7 +700,7 @@ spleen_genes_plot = ggplot(spleen_genes_graph, aes(x = Week, y= Expression))  + 
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #Clustered plot of expression levels over time for the spleen
 
 tissue = "Spleen"
@@ -777,7 +808,7 @@ bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen"
 
 ```
 
-```{r spleen-boxplot, fig.width= 5, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+```{r spleen-boxplot, fig.width= 4, fig.height= 4, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
 library(ggplot2)
 #Compare the initial expression values of both clusters
 spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
@@ -791,7 +822,7 @@ for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$W
   spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
 }
 spleen_boxplot_data = spleen_boxplot_data[-1,]
-spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts")
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1)
 spleen_boxplot
 
 ```
@@ -804,7 +835,7 @@ Of the 98 upregulated genes, 48 had a functional annotation. 17 of those were cl
 
 For this analysis, the eight tissues with the most meaningful results were chosen.In Fig. \@ref(fig: ORA-plot), the most important functions for these tissue were determined through overrepresentation analysis. In addition, the Expression of the associated transcripts was plotted.
 
-```{r ORA-code, include = FALSE}
+```{r ORA-code, include = FALSE, eval=FALSE}
 #Rearrange the selected plots so that we can combine the table with a plot 
 
 
@@ -1089,7 +1120,7 @@ assign(str_glue(tissue, "_plot"), ggplot(data_plot, aes(x = Week, y= Expression,
 
 ```
 
-```{r ORA-plot, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
+```{r ORA-plot, eval=FALSE, fig.width = 12, fig.height=16, fig.cap = "For eight tissues A to H, the tables show the 10 most significant results from overrepresentation analysis. There, the functional GO annotation of all transcripts in our dataset (not only the differentially expressed ones) was compared to the functions associated with all TRAs of one tissue. The significance was determined by an adjusted p-value. Of those 10 functions, up to 5 were chosen to represent different groups of functions and avoid the overlap of highly related processes. For each of those, the median expression for each week was calculated and plotted, as seen in the expression graphs."}
 #Arrange the plots for all eight tissues
 plot = arrangeGrob(grobs = list(Spleen_t,Spleen_plot, Brain_t, Brain_plot, Heart_t, Heart_plot, Liver_t, Liver_plot,get("Muscle - Skeletal_t"), get("Muscle - Skeletal_plot"), Testis_t, Testis_plot, Stomach_t, Stomach_plot, Skin_t, Skin_plot), nrow = 4)
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C", "D", "E", "F", "G", "H"), size = 15, x = c(0.01, 0.51,0.01, 0.51,0.01, 0.51,0.01, 0.51), y = c(0.79,0.79,0.52,0.52,0.28,0.28,0.02,0.02)) 
@@ -1114,7 +1145,7 @@ The annotated dataset after limma analysis was filtered to determine which genes
 
 ### Ion channel
 
-```{r gene-expression-brain,fig.height=5,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and cytokine (right) was plotted for week 4 to 9."}
+```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and cytokine (right) was plotted for week 4 to 9."}
 # A vektor of ENST numbers and weeks was created
 ENST = embryo_df_tissues$ensembl.transcript
 week = c(4,5,6,7,8,9)
@@ -1455,7 +1486,7 @@ There is a lot of research targeting the role of chemokines during neuronal deve
 
 Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance.
 
-```{r}
+```{r, include=FALSE}
 #pca on rows (genes)
 pca_genes <- prcomp(
   t(diff_genes_ann_0.01[,1:18]), # transposed matrix
@@ -1468,7 +1499,7 @@ summary(pca_genes)
 
 To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
-```{r pca-variance}
+```{r pca-variance, fig.width = 5, fig.height=5}
 #visualizing the variance of the PCAs
 pc_eigenvalues <- pca_genes$sdev^2
 
@@ -1492,13 +1523,13 @@ pc_eigenvalues %>%
 
 This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. The first three PCAs already explain over 80% of the data's variance. Notably, the first PCA alone already explains over 60% of the data's variance and all following PCAs explain significantly less variance(Figure \@ref(fig:pca-variance)).
 
-```{r}
+```{r, include=FALSE}
  loadings = pca_genes$rotation[,"PC1"]
 pca_df = data.frame(diff_genes_ann_0.01[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
 pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
 ```
 
-```{r}
+```{r, include=FALSE}
 #PCA for Heart transripts
 #tissue = "Heart"
 #bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
@@ -1532,8 +1563,9 @@ ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 
 ranks_pca[order(ranks_pca$sum),]
 
 ```
-For further analyzation, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
-```{r, fig.width=3,fig.height=3}
+For further analysis, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
+
+```{r, fig.width=5,fig.height=5}
 
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -1687,9 +1719,8 @@ heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, 
 ```{r, fig.width=14, fig.height=14}
 
 file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
-download.file(file_heatmap, "/TRA_overlap_edited.png", mode = "wb")
-heatmap = readPNG("/TRA_overlap_edited.png")
-ggdraw() + draw_image(heatmap)
+download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
+ggdraw() + draw_image("TRA_overlap_edited.png")
 ```
 
 
@@ -1736,7 +1767,7 @@ table_spleen1 = gt(spleen1_gene_description_sum)|>  tab_header(title= "Spleen - 
 gtsave(table_spleen1, "spleen_up.png")
 ```
 
-```{r, fig.width = 12, fig.height = 7, fig.cap = "This is just a test..."}
+```{r, eval=FALSE, fig.width = 12, fig.height = 7, fig.cap = "This is just a test..."}
 plot_spleen_up = ggdraw() + draw_image("spleen_up.png")
 grid.arrange(plot_spleen_up)
 ```
@@ -1760,10 +1791,6 @@ gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregu
 ```
 
 
-```{r, fig.width = 12, fig.height = 16, fig.cap = "This is just a test..."}
-plot_spleen_down = ggdraw() + draw_image("spleen_down.png")
-grid.arrange(plot_spleen_down)
-```
 
 ## Brain development
 
@@ -1810,7 +1837,7 @@ volcano
 ```
 
 
-```{r,fig.height=9,fig.width=12}
+```{r,eval=FALSE, fig.height=9,fig.width=12}
 
 # Distribution control for Cerebellar Hemisphere 
 Tissues = embryo_df_tissues$max.tissue
