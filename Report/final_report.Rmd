@@ -1707,14 +1707,18 @@ for (i in 1:33) {
 heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
 ```
 
-```{r heatmap-tissues, fig.width=14, fig.height=12, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
+```{r, include = FALSE}
 
 file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
 download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
  plot = ggdraw() + draw_image("TRA_overlap_edited.png")
+```
 
+```{r heatmap-tissues, fig.width=14, fig.height=12, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
 grid.arrange(plot) + theme(plot.margin = unit(c(0,0,5,0,0.5),"cm"))
 ```
+
+
 
 ```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
 library(ggplot2)
@@ -1842,6 +1846,8 @@ download.file(file_spleen_down, "spleen_down.png", mode = "wb")
 ggdraw() + draw_image("spleen_down.png")
 
 ```
+
+\newpage
 
 ```{r boxplot-Cerebral-Hemisphere, fig.height=9,fig.width=12,fig.cap="A boxplot of all Cerebellar Hemisphere genes was made to evaluate their scattering. For the samples of all weeks at the top and only for the three samples of week 4 on the bottom.", eval = FALSE}
 
