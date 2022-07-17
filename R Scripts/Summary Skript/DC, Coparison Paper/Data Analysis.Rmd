@@ -1,0 +1,1506 @@
+---
+title: "Data Analysis"
+author: "Paul Christmann"
+date: '2022-05-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load useful Libraries
+```{r}
+library(Rcpp)
+library(tidyverse)
+library(affy)
+library(vsn)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
+```
+
+
+## Uses Annotated Dataset with only TRA Genes
+
+Import the annotated dataset with only TRA genes. Information from the TRA data was merged 
+```{r}
+#setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts") #Paul
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts") # Paul Laptop
+
+load("embryo_df_tra.RData")
+load("diff_genes_ann_0.01.RData")
+```
+
+
+
+Overview over the dataset
+
+```{r}
+colnames(embryo_df_tra)
+dim(embryo_df_tra)
+head(embryo_df_tra)
+str(embryo_df_tra)
+```
+
+
+## Changing the Tissues into a vector
+```{r}
+library(tidyverse)
+
+#Make Tissue names more accessible
+ a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+
+embryo_df_tissues = a
+```
+
+```{r}
+save(embryo_df_tissues, file="embryo_df_tissues.RData")
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
+embryo_df_tissues
+```
+
+
+
+## Modify expression data from Week9 to 4 comparison with accessible tissue vector
+```{r}
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("week9-4_diff.RData")
+
+week9_4_diff_tra = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% tra_diff$ensembl.transcript, ]
+
+save(week9_4_diff_tra, file="week9_4_diff_tra.RData")
+
+```
+
+
+
+## Limma Analysis for all different Combinations
+
+```{r}
+library(limma)
+
+#Differential gene expression: Limma Analysis 2, between weeks
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+summary(results_all)
+
+```
+
+### Do not use this block, only a single comparison for test purposes
+```{r}
+# Ausgabe mit Gennamen für einen Vergleich
+
+top.table = topTable(fit_all,1, n = Inf)
+n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+})
+row.names(top.table) = n
+top.table[which(top.table$adj.P.Val < 0.01), ]
+```
+
+
+```{r}
+#Create list of all differentially expressed genes
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+
+```
+
+```{r}
+
+length(diff_genes_list_0.01) #4538
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01) #1818
+
+```
+
+```{r}
+#List with 5%
+
+diff_genes_list_0.05 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.05 = c(diff_genes_list_0.05, rownames(top.table[which(top.table$adj.P.Val < 0.05), ]))
+}
+diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
+```
+
+
+### Final list of differentially expressed genes with an adjusted p-valuelower than 0.01:
+
+```{r}
+#Select differential genes from annotated dataframe
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+save(diff_genes_ann_0.01, file = "diff_genes_ann_0.01.RData")
+```
+
+
+
+
+
+## Test for single differential gene expression Graph: Frontal Cortex
+
+```{r}
+#Select genes only of target tissue
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {"Brain - Frontal Cortex" %in% x})
+diff_genes_ann_0.01[bool_contained,]
+
+#Graph of mean gene expression over time
+frontal_cortex = diff_genes_ann_0.01[bool_contained,]
+frontal_cortex = frontal_cortex[, 1:19]
+frontal_cortex_mean = data.frame(week4=rowMeans(frontal_cortex[,1:3]),week5=rowMeans(frontal_cortex[,4:6]), week6=rowMeans(frontal_cortex[,7:9]),week7=rowMeans(frontal_cortex[,10:12]), week8=rowMeans(frontal_cortex[,13:15]), week9=rowMeans(frontal_cortex[,16:18]))
+frontal_cortex_graph = colMeans(frontal_cortex_mean)
+frontal_cortex_graph = data.frame (Expression_Level = frontal_cortex_graph, Week = c(4:9))
+
+frontal_cortex_plot = ggplot(frontal_cortex_graph, aes(x = Week, y= Expression_Level))  + geom_line(color = "#0000ff") + geom_point(color = "#0000ff") + labs(title = paste("Median expression level of all brain-related genes (GSE15744)"))  + theme_classic() 
+
+frontal_cortex_plot
+frontal_cortex_mean
+```
+
+### Clustering of one tissue 
+
+```{r}
+#New Dataset with median of gene expression
+data_temp = diff_genes_ann_0.01[bool_contained,]
+data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median), Week7 =  apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+row.names(data_abs) = data_temp$ensembl.transcript
+data_abs
+```
+
+```{r}
+# New dataset with difference in gene expression
+
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+row.names(data) = rownames(data_abs)
+```
+
+
+```{r}
+# K-Means für die Werte
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+
+# Daten Skalieren, Distance Matrix
+data = scale(data)
+dist_data = get_dist(data, method = "pearson")
+
+# Find optimal cluster number by silhouette value
+avg_sil = function(k) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k)})) +1
+
+#Plot with clustered genes
+
+km = kmeans(data, centers = n_cluster, nstart = 25)
+data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+plot_data = create_plot_data(data_plot_raw)
+
+
+
+ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) + geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", "Brain - Frontal Cortex", " genes", sep="")) + scale_color_npg() + theme_classic()
+
+
+```
+
+
+
+
+## Integrated function for 12 different plots
+
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra")
+
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {tissue %in% x})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data) = rownames(data_abs)
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", tissue, " genes", sep="")) +
+           scale_color_npg() + theme_classic() )
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+brain_table = grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]))
+```
+
+
+```{r}
+# Get a tissue count for our final gene list
+
+tissues = c("Adipose", "Artery", "Brain",  "Colon", "Esophagus", "Heart", "Kidney", "Liver", "Lung", "Muscle", "Skin", "Stomach", "Testis")
+count_data = data.frame(tissue = tissues, count = NA)
+for (tissue in tissues){
+  
+  count_data[count_data$tissue == tissue, "count"] = sum(bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))}))
+
+}
+count_data
+```
+
+
+
+## Ecactly the same with a cooler tissue selection
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+tissues = c("Adipose", "Artery", "Brain",  "Colon", "Esophagus", "Heart", "Kidney", "Liver", "Lung", "Muscle", "Skin", "Stomach", "Testis")
+
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data) = rownames(data_abs)
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = paste("Expression of ", tissue, " genes", sep="")) +
+           scale_color_npg() + theme_classic() )
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+organs_table = grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]))
+```
+
+
+```{r}
+load(file = "embryo_df_tra.RData")
+head(embryo_df_tra)
+```
+
+
+### Run the algorithm for all the tissues
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+#setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+# List the tissues
+#tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Adipose", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed", "Skin", "Muscle - Skeletal", "Bladder", "Kidney - Cortex") #"Kidney - Medulla", "Kidney"
+#tissues = c("Colon - Sigmoid", "Colon - Transverse", "Colon", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach")
+#tissues = c("Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid")
+tissues = c("Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Artery", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes")
+#tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra", "Brain", "Nerve - Tibial")
+
+
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data) = rownames(data_abs)
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+```
+
+
+
+
+
+### Search for exclusive TRAs
+
+
+```{r}
+
+length_tissues = c()
+for (i in 1:1818) {
+  length_tissues = c(length_tissues, length(diff_genes_ann_0.01$tissue[[i]]))
+}
+single_tissue = (length_tissues==1)
+
+diff_single_df = diff_genes_ann_0.01[single_tissue,]
+
+all_tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Adipose", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed", "Skin", "Muscle - Skeletal", "Bladder", "Kidney - Cortex", "Colon - Sigmoid", "Colon - Transverse", "Colon", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid", "Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Artery", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra", "Brain", "Nerve - Tibial")
+
+
+
+count_data = data.frame(tissue = all_tissues, count = NA)
+for (tissue in all_tissues){
+  
+  count_data[count_data$tissue == tissue, "count"] = sum(bool_contained = sapply(diff_single_df$tissues, function(x) {grepl(tissue, toString(x))}))
+
+}
+count_data
+```
+
+
+# Work with brain gene differentiators: 
+```{r}
+
+brain_tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra")
+for (brain_tiss in brain_tissues) {
+ 
+  assign(str_glue(brain_tiss, "_single_db"), diff_genes_ann_0.01[(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(brain_tiss, toString(x))}) &
+                                                                   !sapply(diff_genes_ann_0.01$tissues, function(x)
+                                                                     {grepl(paste(brain_tissues[!brain_tissues%in%c(brain_tiss)], collapse = "|"),
+                                                                            toString(x))})),])
+
+}
+
+```
+
+
+```{r}
+library(factoextra)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+
+load("diff_genes_ann_0.01.RData")
+
+brain_tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra")
+count = 0
+
+for (brain_tiss in brain_tissues) {
+  count = count +1
+  #Select the specific genes
+  data_temp = diff_genes_ann_0.01[(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(brain_tiss, toString(x))}) &
+                                                                   !sapply(diff_genes_ann_0.01$tissues, function(x)
+                                                                     {grepl(paste(brain_tissues[!brain_tissues%in%c(brain_tiss)], collapse = "|"),
+                                                                            toString(x))})),]
+  if(dim(data_temp)[1] >0) {
+      #Get the data for our plot
+    data_raw = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                          Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+    rownames(data_raw) = data_temp$ensembl.transcript
+    data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, dim(data_raw)[1])})), Transcript = factor(c(rep(rownames(data_raw), 6))), Expression = NA)
+    for(s in 1:6) {
+      for(t in 1:dim(data_raw)[1]) {
+        data_plot$Expression[t + (s-1)*dim(data_raw)[1]] = data_raw[t, s]
+     }
+    }
+  
+    #Plot the data
+    assign(str_glue(brain_tiss, "_plot1"), ggplot(data_plot, aes(x = Week, y= Expression, group = Transcript))   + geom_line(aes(colour = Transcript)) +
+            geom_point(aes(colour = Transcript)) + labs(title = brain_tiss) + theme_classic() )
+  }
+}
+ff = sapply(brain_tissues, function(x){str_glue(x, "_plot1")})
+data_plot
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]))
+  # Brain - Caudata so ff[3] has no unique genes
+```
+
+
+
+```{r}
+ 
+data_temp
+data_raw
+data_plot
+
+
+
+```
+
+
+
+#Look at the differentially expressed genes from the spleen in week4 Grouped by clusters
+
+```{r}
+#Get the dataset with the clusters
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl("Spleen", toString(x))})
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+  row.names(data_abs) = data_temp$ensembl.transcript
+  row.names(data) = rownames(data_abs)
+  
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+
+  spleen_genes_clustered = data_plot_raw
+
+```
+
+
+```{r}
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+boxplot(spleen_genes_clustered_1$Week4, spleen_genes_clustered_2$Week4)
+#boxplot(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9)
+```
+```{r}
+head(spleen_genes_clustered_1)
+head(spleen_genes_clustered_2)
+```
+
+
+### Not used, better method for annotation below
+```{r}
+# Annotate Transcripts with NCBI data
+library(rentrez)
+setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load(Homo_sapiens.gene_info.gz)
+
+```
+
+
+# Annoattion with NCBI data
+```{r}
+get_gene_info = function(transcript_ids){
+  library(rentrez)
+  library(XML)
+  table = data.frame(Transcript = NA, Gene = NA, Protein = NA, Summary = NA)
+  for(x in transcript_ids) {
+    table = rbind(table, get_single_transcript(x))
+  }
+  table
+}
+
+get_single_transcript = function(single_transcript) {
+   res = entrez_search(db = "gene", term = single_transcript)
+   if(!length(res$ids)==0) {
+     results = entrez_summary(db = "gene", id = res$ids)
+      c(single_transcript, as.character(results[2]),  as.character(results[3]),  as.character(results[17]))
+   }
+   else{
+        c(single_transcript, NA, NA, NA)
+   }
+}
+
+spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
+spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
+```
+
+
+```{r}
+#Table verschönern
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_1[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_1[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_1[x,1]), as.numeric(spleen_genes_clustered_1[x,2]), as.numeric(spleen_genes_clustered_1[x,3]),
+           as.numeric(spleen_genes_clustered_1[x,4]),as.numeric(spleen_genes_clustered_1[x,5]),as.numeric(spleen_genes_clustered_1[x,6]))))})
+
+spleen1_gene_description_spl = cbind(spleen1_gene_description[-1,], Expression)
+spleen1_gene_description_spl = spleen1_gene_description_spl[,-5]
+
+
+
+table_spleen1 = gt(spleen1_gene_description_spl)|>  tab_header(title= "Spleen - Upregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "ref_median")
+```
+
+
+```{r}
+# Jetzt noch für Spleen2
+library(gt)
+library(gtExtras)
+library(ggplot2)
+library(tidyverse)
+library(svglite)
+library(webshot)
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+table_spleen2 = gt(spleen2_gene_description_spl)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline( column = Expression_over_time, type = "shaded")
+
+```
+
+
+
+
+
+
+## Create Graphs with percentage of activate genes according to a threshold
+
+```{r}
+load("diff_genes_ann_0.01.RData")
+embryo_df_tissues_median  = data.frame(Week4 = apply(diff_genes_ann_0.01[1:3], 1, median), Week5 =  apply(diff_genes_ann_0.01[4:6], 1, median), Week6 =  apply(diff_genes_ann_0.01[7:9], 1, median), Week7=apply(diff_genes_ann_0.01[10:12], 1, median), Week8 =  apply(diff_genes_ann_0.01[13:15], 1, median), Week9 =  apply(diff_genes_ann_0.01[16:18], 1, median))
+embryo_df_tissues_median = cbind(embryo_df_tissues_median, diff_genes_ann_0.01[,c(19,32)])
+embryo_df_tissues_median
+
+```
+
+```{r}
+# List the tissues
+tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Adipose", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed", "Skin", "Muscle - Skeletal", "Bladder", "Kidney - Cortex") #"Kidney - Medulla", "Kidney"
+#tissues = c("Colon - Sigmoid", "Colon - Transverse", "Colon", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach")
+#tissues = c("Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid")
+#tissues = c("Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Artery", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes")
+#tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra", "Brain", "Nerve - Tibial")
+
+threshold = c(6.6,6.8, 7.0, 7.2, 7.4, 7.6, 7.8,8.0,8.2, 8.4, 9)
+
+
+for (tissue in tissues) {
+  # Select the data from a tissues
+  bool_contained = sapply(embryo_df_tissues_median$tissues, function(x) {grepl(tissue, toString(x))})
+  data_temp = embryo_df_tissues_median[bool_contained,]
+
+  #Determine the percentage of expressed genes
+   count = 0
+  a = c()
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(threshold))})), Threshold = factor(c(rep(threshold, 6))), Percentage = NA)
+    for(s in 4:9) {
+      for(t in 1:length(threshold)) {
+        count = count +1
+        a  = c(a,(sum(data_temp[,str_glue("Week", s)] > threshold[t]))/(dim(data_temp)[1]))
+     }
+    }
+  data_plot$Percentage= a
+
+  
+    #Plot the data
+    assign(str_glue(tissue, "_percentage"), ggplot(data_plot, aes(x = Week, y= Percentage, group = Threshold))   + geom_line(aes(colour = Threshold)) +
+            geom_point(aes(colour = Threshold, shape = Threshold)) + labs(title = tissue) + theme_classic() + ylim(0,1))
+  
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_percentage")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+```
+
+
+
+## Activity with differentially expressed genes 
+
+```{r}
+load("embryo_df_ann_0.01.RData")
+embryo_df_tissues_median  = data.frame(Week4 = apply(embryo_df_tissues[1:3], 1, median), Week5 =  apply(embryo_df_tissues[4:6], 1, median), Week6 =  apply(embryo_df_tissues[7:9], 1, median), Week7=apply(embryo_df_tissues[10:12], 1, median), Week8 =  apply(embryo_df_tissues[13:15], 1, median), Week9 =  apply(embryo_df_tissues[16:18], 1, median))
+embryo_df_tissues_median = cbind(embryo_df_tissues_median, embryo_df_tissues[,c(19,32)])
+embryo_df_tissues_median
+
+```
+
+```{r}
+# List the tissues
+tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Adipose", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed", "Skin", "Muscle - Skeletal", "Bladder", "Kidney - Cortex") #"Kidney - Medulla", "Kidney"
+#tissues = c("Colon - Sigmoid", "Colon - Transverse", "Colon", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach")
+#tissues = c("Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid")
+#tissues = c("Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Artery", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes")
+#tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra", "Brain", "Nerve - Tibial")
+
+threshold = c(6.6,6.8, 7.0, 7.2, 7.4, 7.6, 7.8,8.0,8.2, 8.4, 9)
+
+
+for (tissue in tissues) {
+  # Select the data from a tissues
+  bool_contained = sapply(embryo_df_tissues_median$tissues, function(x) {grepl(tissue, toString(x))})
+  data_temp = embryo_df_tissues_median[bool_contained,]
+
+  #Determine the percentage of expressed genes
+   count = 0
+  a = c()
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, length(threshold))})), Threshold = factor(c(rep(threshold, 6))), Percentage = NA)
+    for(s in 4:9) {
+      for(t in 1:length(threshold)) {
+        count = count +1
+        a  = c(a,(sum(data_temp[,str_glue("Week", s)] > threshold[t]))/(dim(data_temp)[1]))
+     }
+    }
+  data_plot$Percentage= a
+
+  
+    #Plot the data
+    assign(str_glue(tissue, "_percentage"), ggplot(data_plot, aes(x = Week, y= Percentage, group = Threshold))   + geom_line(aes(colour = Threshold)) +
+            geom_point(aes(colour = Threshold, shape = Threshold)) + labs(title = tissue) + theme_classic() + ylim(0,1))
+  
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_percentage")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+```
+
+
+
+
+
+## Differential plots with limma analysis
+
+```{r}
+library(limma)
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+#Differential gene expression: Limma Analysis 2, between weeks
+
+limma_data = data.frame(diff_genes_ann_0.01[1:18])
+rownames(limma_data) = diff_genes_ann_0.01$ensembl.transcript
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8,  week8-week7, week7-week6, week6-week5, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+limma_dat = topTable(fit_all, n = Inf)[,1:5]
+data = cbind(limma_dat, diff_genes_ann_0.01[,c(19,32)] )
+data
+
+```
+
+```{r}
+library(factoextra)
+library(cluster)
+library(stringr)
+library(ggplot2)
+library(ggsci)
+library(grid)
+library(gridExtra)
+library(limma)
+setwd("F:/Data Analysis Project/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+#Differential gene expression: Limma Analysis 2, between weeks
+
+limma_data = data.frame(diff_genes_ann_0.01[1:18])
+rownames(limma_data) = diff_genes_ann_0.01$ensembl.transcript
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8,  week8-week7, week7-week6, week6-week5, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+limma_dat = topTable(fit_all, n = Inf)[,1:5]
+data_l = cbind(limma_dat, diff_genes_ann_0.01[,c(19,32)] )
+
+
+# List the tissues
+#tissues = c("Adipose - Subcutaneous", "Adipose - Visceral", "Adipose", "Cells - Transformed fibroblasts", "Skin - Not Sun Exposed", "Skin - Sun Exposed", "Skin", "Muscle - Skeletal", "Bladder", "Kidney - Cortex") #"Kidney - Medulla", "Kidney"
+#tissues = c("Colon - Sigmoid", "Colon - Transverse", "Colon", "Esophagus - Gastroesophageal Junction", "Esophagus - Mucosa", "Esophagus - Muscularis", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach")
+#tissues = c("Breast - Mammary Tissue", "Cervix - Ectocervix", "Cervix - Endocervix", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid")
+tissues = c("Artery - Aorta", "Artery - Coronary", "Artery - Tibial", "Artery", "Heart - Atrial Appendage", "Heart - Left Ventricle", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes")
+#tissues = c("Brain - Amygdala", "Brain - Anterior cingulate cortex", "Brain - Caudate", "Brain - Cerebellar Hemisphere", "Brain - Cerebellum", "Brain - Cortex", "Brain - Frontal Cortex", "Brain - Hippocampus", "Brain - Hypothalamus", "Brain - Nucleus accumbens", "Brain - Putamen", "Brain - Spinal cord", "Brain - Substantia nigra", "Brain", "Nerve - Tibial")
+
+
+
+# Functions for later use
+
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  # Select an modify the data used for kmeans
+  bool_contained = sapply(data_l$tissues, function(x) {grepl(tissue, toString(x))})
+  data = data_l[bool_contained, 1:5]
+
+  data_temp = diff_genes_ann_0.01[bool_contained,]
+  data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  
+  
+  # Select optimum cluster number
+  data = scale(data)
+  dist_data = get_dist(data, method = "pearson")
+  n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+  # Create the data for our plot
+  km = kmeans(data, centers = n_cluster, nstart = 25)
+  data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+```
+
+
+
+## Geneset enrichment analysis
+
+
+```{r}
+#Differential gene expression mit DESeq2
+
+#????
+
+```
+
+
+
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(gt)
+library(gtExtras)
+library(ggsci)
+deGenes = unlist(diff_genes_ann_0.01$ensembl.entrez[!duplicated(diff_genes_ann_0.01$ensembl.entrez)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_all = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_all = as.data.frame(enr_GO_all)
+enr_GO_all
+enr_GO_print = enr_GO_all[,c(2:4,6)]
+enr_GO_print[,2] = sapply(enr_GO_print[,2], function(txt) {eval(parse(text = txt))*100})
+enr_GO_print[,3] = sapply(enr_GO_print[,3], function(txt) {eval(parse(text = txt))*100})
+colnames(enr_GO_print) = c("Description", "Ratio_Differential", "Ratio_All", "Adj.p.val")
+table_GO_all = gt(enr_GO_print)|>  tab_header(title= "Enriched gene clusters in GSE15744", subtitle = "Comparison of differentially expressed genes with all genes") |> fmt_markdown(columns = Description) |> gt_theme_538() |> gt_hulk_col_numeric(columns = Adj.p.val) |>  gt_plt_bar(column = Ratio_Differential) |> gt_plt_bar (column = Ratio_All)
+table_GO_all
+
+
+
+
+
+```
+## Test enrichment in a tissues DeGenes compared to all Degenes
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+
+# List the tissues
+tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+geneUniverse = as.character(diff_genes_ann_0.01$ensembl.entrez[!duplicated(diff_genes_ann_0.01$ensembl.entrez)])
+enr_GO_tissue = data.frame(test = c(10))
+
+for (tissue in tissues) {
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+  data = diff_genes_ann_0.01[bool_contained,]
+  deGenes = data$ensembl.entrez[!duplicated(data$ensembl.entrez)]
+  tab_ful = as.data.frame(enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05))
+  if(dim(tab_ful)[1] >= 5) {
+    tab = data.frame(Function = tab_ful[1:5, 2], Rank = c(1:5))
+  }
+  else if(dim(tab_ful)[1] != 0) {
+    tab = data.frame(Function = tab_ful[, 2], Rank = c(1:length(tab_ful[,2])))
+  }
+  assign(tissue, c(rep(0, dim(enr_GO_tissue)[2])))
+  enr_GO_tissue = rbind(enr_GO_tissue, get(tissue))
+  if(dim(tab_ful)[1] != 0) {
+    for (i in 1:dim(tab)[1]){
+    if(!tab[i,1] %in% colnames(enr_GO_tissue)) {
+      enr_GO_tissue[,tab[i,1]] =  c(rep(0, dim(enr_GO_tissue)[1]))
+    }
+    enr_GO_tissue[dim(enr_GO_tissue)[1],tab[i,1]] = (6-as.numeric(tab[i,2]))
+  }
+  }
+  
+}
+enr_GO_tissue = enr_GO_tissue[-1,-1]
+row.names(enr_GO_tissue) = tissues
+enr_GO_tissue
+```
+```{r}
+library(pheatmap)
+
+pheatmap(enr_GO_tissue)
+```
+
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+
+setwd("C:/Daten/Data Analysis Projekt/Github Repo/2022-topic-04-team-01/R Scripts")
+load("diff_genes_ann_0.01.RData")
+
+
+# List the tissues
+tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+geneUniverse = as.character(diff_genes_ann_0.01$ensembl.entrez[!duplicated(diff_genes_ann_0.01$ensembl.entrez)])
+enr_GO_tissue = data.frame(test = c(10))
+count = 0
+occurs = c()
+for (tissue in tissues) {
+  count = count +1
+  bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
+  data = diff_genes_ann_0.01[bool_contained,]
+  deGenes = data$ensembl.entrez[!duplicated(data$ensembl.entrez)]
+  tab_ful = as.data.frame(enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05))
+  if(dim(tab_ful)[1] != 0) {
+    occurs = c(occurs, count)
+    if(dim(tab_ful)[1] >= 20) {
+      tab = data.frame(Function = tab_ful[1:20, 2], Rank = c(1:20))
+    } 
+    else {
+      tab = data.frame(Function = tab_ful[, 2], Rank = c(1:length(tab_ful[,2])))
+    }
+    assign(tissue, c(rep(0, dim(enr_GO_tissue)[2])))
+    enr_GO_tissue = rbind(enr_GO_tissue, get(tissue))
+    if(dim(tab_ful)[1] != 0) {
+      for (i in 1:dim(tab)[1]){
+        if(!tab[i,1] %in% colnames(enr_GO_tissue)) {
+          enr_GO_tissue[,tab[i,1]] =  c(rep(0, dim(enr_GO_tissue)[1]))
+        }
+        enr_GO_tissue[dim(enr_GO_tissue)[1],tab[i,1]] = (21-as.numeric(tab[i,2]))
+      }
+    }
+  }
+}
+enr_GO_tissue = enr_GO_tissue[-1,-1]
+row.names(enr_GO_tissue) = tissues[occurs]
+enr_GO_tissue
+```
+
+
+
+## Now to get good GSEA Plots analog to the Clustered per Tissue plots: 
+### 1. With 5 Most Important from Tissue TRAs vs. All TRAs (no differential expression!)
+```{r}
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(org.Hs.eg.db)
+library(ggsci)
+library(ggupset)
+
+load("embryo_df_tissues.RData")
+
+# List the tissues
+tissues = c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+tissue = "Skin"
+
+
+bool_contained = sapply(embryo_df_tissues$tissues, function(x) {grepl(tissue, toString(x))})
+embryo_df_tissue = embryo_df_tissues[bool_contained,]
+deGenes = as.character(embryo_df_tissue$ensembl.entrez[!duplicated(embryo_df_tissue$ensembl.gene)])
+geneUniverse = as.character(embryo_df_tissues$ensembl.entrez[!duplicated(embryo_df_tissues$ensembl.gene)])
+enr_GO_tissue1 = enrichGO(gene = deGenes, ont = "BP",  OrgDb ="org.Hs.eg.db", universe = geneUniverse, readable=TRUE, pvalueCutoff = 0.05)
+enr_GO_tissue = as.data.frame(enr_GO_tissue1)
+enr_GO_tissue$geneID
+
+
+
+
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  data_raw = data.frame(Week4 = )
+  for (i in 1:8) {
+    xx = strsplit(enr_GO_tissue$geneID[i], "/")
+    bool_contained1 = sapply(diff_genes_ann_0.01$tissues, function(x) {x %in% xx})
+    data_temp = diff_genes_ann_0.01[bool_contained1,]
+     data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  }
+ 
+
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+
+
+
+
+
+
+
+```
+
+```{r}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+gse()
+
+```
+
+
+
+
+
+
+
+
+
+
+## Data cleaning
+
+```{r}
+#einige Spalten sind Dublikate
+glimpse(embryo_df_tissues) 
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom", "max.tissue")] #removed duplicates
+dim(embryo_df_tissues)
+
+
+#Chromosome Spalte aufhübschen und unnötiges löschen
+embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
+
+dim(embryo_test$Chromosome.scaffold.name)
+embryo_df_tissues <- embryo_df_tissues %>%
+  filter(Chromosome.scaffold.name != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name!=  "CHR_HSCHR7_2_CTG6" )
+embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
+
+# Nach NA values suchen
+sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+
+embryo_test$tissues <- sapply(embryo_test$tissues, as.factor)
+
+
+embryo_test %>%
+  filter(tissues == str_extract(tissues, "Brain"))
+
+
+embryo_test <- embryo_df_tra %>%
+  mutate(tiss.fct = as.factor(max.tissue))
+
+summary(embryo_test$tiss.fct)
+levels(embryo_test$tiss.fct)
+head(embryo_df_tissues$tissues)
+```
+
+
+
+
+```{r}
+glimpse(diff_genes_ann_0.01)
+
+diff_genes_ann_0.01 %>%
+  count(ensembl.transcript) %>%
+  filter(n>1) # Es sind keine Dublikate mehr vorhanden
+
+summary(as.factor(diff_genes_ann_0.01$max.tissue)) # von jedem tissue existiert noch min 1 differentiell exprimiertes Gen
+
+
+```
+
+
+
+#Comparison between our dataset and dataset from Original paper
+
+Einlesen der Datein und Datacleaning
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(dplyr)
+paper_df_diff <- read_excel("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts/differentially_expressed_transcripts_paper.xls") # 5385 Probe IDs
+for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
+  if(is.na(paper_df_diff$Probe_Set_ID[i])){
+    j=1
+    while (is.na(paper_df_diff$Probe_Set_ID[i-j])) {
+      j = j+1
+    }
+    paper_df_diff$Gene_Title[i-j] <- paste(paper_df_diff$Gene_Title[i-j], paper_df_diff$Gene_Title[i])
+  }
+}
+paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen mit restlichem String entfernt
+paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
+paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
+#Datacleaning complete
+
+```
+
+Annotierung des Datensatzes Paper
+```{r}
+
+setwd("C:/Users/david/Documents/Data Analysis Lokal/2022-topic-04-team-01/R Scripts")
+load("embryo_df_tissues.RData")
+paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+sum(!is.na(paper_df_ann$ensembl.transcript)) # we are able to compare 3203 Transcripts
+paper_df_ann <- paper_df_ann %>% drop_na(ensembl.transcript)
+save(paper_df_ann, file="paper_df_ann.RData")
+```
+
+
+Creating seperate datasets for up, down and arch:
+```{r}
+paper_df_up <- filter(paper_df_ann, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_ann, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_ann, Expression_pattern == "ARCH") # 396
+```
+
+
+```{r}
+sum(is.na(embryo_df_tissues$AFFY.HG.U133.Plus.2.probe))
+embryo_df_tissues <- embryo_df_tissues %>% drop_na(AFFY.HG.U133.Plus.2.probe)
+```
+
+
+```{r}
+library(ggforce)
+library(VennDiagram)
+library(png)
+#colors <- c("#6b7fff", )
+venn.diagram(
+  x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe),
+  category.names = c("dataframe_paper", "dataframe_TRA"),
+  filename = "venn_diagramm_comparison_paper.png",
+  output = TRUE,
+  
+  imagetype = "png",
+  scaled = FALSE,
+  #height = 480,
+  #width = ,
+  resolution = 300,
+  compression = "lzw",
+  
+  lwd = 2,
+  lty = "blank",
+  margin = 0.15
+)
+
+#Display saved image
+options(repr.plot.height=12, repr.plot.width=12)
+pp <- readPNG("venn_diagramm_comparison_paper.png")
+plot.new()
+rasterImage(pp,0,0,1,1)
+```
+
+```{r}
+# Load the VennDiagram package
+library(VennDiagram)
+
+set.seed(12)
+set1 <- sample(1:10000, 2000)
+set2 <- sample(1:10000, 2000)
+set3 <- sample(1:10000, 2000)
+set4 <- sample(1:10000, 2000)
+set5 <- sample(1:10000, 2000)
+colors <- c("#ff4059", "#2cff21")
+
+# Make Venn diagram from list of groups
+display_venn(x = list(paper_df_diff$Probe_Set_ID, embryo_df_tissues$AFFY.HG.U133.Plus.2.probe) ,
+            category.names = c("dataframe_paper", "dataframe_TRA"),
+            filename = 'venn_diagramm_comparison_paper.png',
+            output=TRUE,
+            imagetype="png", 
+            #scaled = FALSE,
+            height = 1000 , 
+            width = 1000 ,
+            resolution = 300,
+            compression = "lzw",
+            col = "black",
+            fill = colors,
+            cat.col = colors,
+            cat.cex = 2,
+            margin = 0
+            
+)
+display_venn()
+
+
+# Display saved image
+#options(repr.plot.height=1000, repr.plot.width= 1000)
+library("png")
+pp <- readPNG("venn_diagramm_comparison_paper.png")
+plot.new() 
+rasterImage(pp,0,0,1,1)
+
+```
+
+
+
+```{r}
+# Libraries
+library(tidyverse)
+library(hrbrthemes)
+library(tm)
+library(proustr)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/14_SeveralIndepLists.csv", header=TRUE) 
+to_remove <- c("_|[0-9]|\\.|function|^id|script|var|div|null|typeof|opts|if|^r$|undefined|false|loaded|true|settimeout|eval|else|artist")
+data <- data %>% filter(!grepl(to_remove, word)) %>% filter(!word %in% stopwords('fr')) %>% filter(!word %in% proust_stopwords()$word)
+
+set1 <- data %>% filter(artist=="booba") %>% select(word) %>% unlist()
+set2 <- data %>% filter(artist=="nekfeu") %>% select(word) %>% unlist() 
+set3 <- data %>% filter(artist=="georges-brassens") %>% select(word) %>% unlist()
+
+# library
+library(VennDiagram)
+ 
+#Make the plot
+venn.diagram(
+  x = list(
+    set1, set2, set3
+    ),
+  category.names = c("Booba (1995)" , "Nekfeu (663)" , "Brassens (471)"),
+  filename = 'test_venn.png',
+  output = TRUE ,
+          imagetype="png" ,
+          height = 480 , 
+          width = 480 , 
+          resolution = 300,
+          compression = "lzw",
+          lwd = 1,
+          col=c("#440154ff", '#21908dff', '#fde725ff'),
+          fill = c(alpha("#440154ff",0.3), alpha('#21908dff',0.3), alpha('#fde725ff',0.3)),
+          cex = 0.5,
+          fontfamily = "sans",
+          cat.cex = 0.3,
+          cat.default.pos = "outer",
+          cat.pos = c(-27, 27, 135),
+          cat.dist = c(0.055, 0.055, 0.085),
+          cat.fontfamily = "sans",
+          cat.col = c("#440154ff", '#21908dff', '#fde725ff'),
+          rotation = 1
+        )
+library("png")
+pp <- readPNG("test_venn.png")
+plot.new() 
+rasterImage(pp,0,0,1,1)
+```
+
+
+
+Vergleich mit unseren Differenziell exprimierten Transcripts
+
+```{r}
+ggplot(paper_df_up, aes())
+```
+
+
+```{r}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], " genes]")
+   }
+  }
+  return(data_plot)
+}
+
+
+for (tissue in tissues) {
+  data_raw = data.frame(Week4 = )
+  for (i in 1:8) {
+    xx = strsplit(enr_GO_tissue$geneID[i], "/")
+    bool_contained1 = sapply(diff_genes_ann_0.01$tissues, function(x) {x %in% xx})
+    data_temp = diff_genes_ann_0.01[bool_contained1,]
+     data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 = apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+  }
+ 
+
+  plot_data = create_plot_data(data_plot_raw)
+  
+  # Create the Plot
+  assign(str_glue(tissue, "_plot"), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +
+           geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = tissue) +
+           scale_color_npg() + theme_classic()  )  # + ylim(6.5,8.5)
+   
+}
+ff = sapply(tissues, function(x){str_glue(x, "_plot")})
+#grid.arrange(get(ff[1]), get(ff[2]), get(ff[3]), get(ff[4]), get(ff[5]), get(ff[6]), get(ff[7]), get(ff[8]), get(ff[9]), get(ff[10]), get(ff[11]), get(ff[12]), get(ff[13]), get(ff[14]), get(ff[15]))
+```
+
+
+
+
+
