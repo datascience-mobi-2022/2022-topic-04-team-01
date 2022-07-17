@@ -1490,7 +1490,7 @@ Principal component analysis (PCA) was performed on a matrix containing all diff
 pca_genes <- prcomp(
   t(diff_genes_ann_0.01[,1:18]), # transposed matrix
   scale. = TRUE # data scaled to have unit variance
-  )
+)
 
 #taking a first look
 summary(pca_genes)
@@ -1498,7 +1498,7 @@ summary(pca_genes)
 
 To get a better grasp of how much variance is explained by each PCA the percentage variance of each PCA (scree plot) together with the cumulative variance of the PCAs together was visualized in a plot.
 
-```{r pca-variance, fig.width = 3.5, fig.height=3.5}
+```{r pca-variance, fig.width = 5, fig.height=5}
 #visualizing the variance of the PCAs
 pc_eigenvalues <- pca_genes$sdev^2
 
@@ -1511,16 +1511,19 @@ pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)),
 
 
 #actual plot
-pc_eigenvalues %>% 
+PCA_contribution <- pc_eigenvalues %>% 
   ggplot(aes(x = PC)) +
   geom_col(aes(y = pct)) +
   geom_line(aes(y = pct_cum, group = 1)) + 
   geom_point(aes(y = pct_cum)) +
+  ggtitle('PCA variance') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold")) +
   labs(x = "Principal component", y = "Fraction variance explained") +
   theme(aspect.ratio = 1)
+
 ```
 
-This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. The first three PCAs already explain over 80% of the data's variance. Notably, the first PCA alone already explains over 60% of the data's variance and all following PCAs explain significantly less variance(Figure \@ref(fig:pca-variance)).
+This visualization helps to determine how many PCAs are needed to explain a significant amount of the data's variation. The chosen PCAs can than be used for further analysis. The first three PCAs already explain over 80% of the data's variance. Notably, the first PCA alone already explains over 60% of the data's variance and all following PCAs explain significantly less variance(Fig. \@ref(fig:PCA_analysis) A).
 
 ```{r, include=FALSE}
  loadings = pca_genes$rotation[,"PC1"]
@@ -1529,9 +1532,6 @@ pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
 ```
 
 ```{r, include=FALSE}
-#PCA for Heart transripts
-#tissue = "Heart"
-#bool_contained = sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissue, toString(x))})
 test_genes = diff_genes_ann_0.01  #[bool_contained,]
 
 #pca on rows (genes)
@@ -1564,7 +1564,7 @@ ranks_pca[order(ranks_pca$sum),]
 ```
 For further analysis, each transcript was awarded a rank depending on how much it contributes to a specific PCA. We took a closer look at the five most contributing transcripts of PCA1, as this PCA alone already explains the brunt of the variance of our data. These five transcripts with the highest contribution encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
 
-```{r, fig.width=4.5,fig.height=4.5}
+```{r, fig.width=5,fig.height=5}
 
 PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
 
@@ -1593,14 +1593,62 @@ week9 <- t(data.frame(apply(PCA1_9,1,median)))
 first_five <- rbind(week4,week5,week6,week7,week8,week9)
 
 #plotting the expression over weeks
-matplot(first_five, type = 'b',pch=16,col = c('black','red','green','blue','orange'), xlab = 'Weeks', ylab = 'Expression Level', main = 'Five transcripts with most contribution to PCA1' , xaxt='n')
-axis(side = 1, at = 1:6, labels = c(4,5,6,7,8,9))
-legend('bottomright', legend = c('ENST00000399848','ENST00000432997','ENST00000452583','ENST00000241274','ENST00000475390'), col=c('black','red','green','blue','orange'), pch=16, cex=1,title="Expressed genes")
+
+png(filename = "PCA1_five.png", res = 100)
+par(mar=c(4, 4, 4, 7), xpd=TRUE)
+matplot(first_five, 
+        type = 'b',
+        pch=16,
+        col = c('black','red','green','blue','orange'), 
+        xlab = 'Weeks', 
+        ylab = 'Expression Level', 
+        main = 'Most contribution to PCA1' , 
+        xaxt='n'
+)
+axis(side = 1,
+     at = 1:6, 
+     labels = c(4,5,6,7,8,9)
+)
+legend('topright', 
+       inset=c(-0.45,0), 
+       legend = c('ENST00000399848 \n (LDLRAD4)\n ','ENST00000432997 \n (KCNMB2) \n','ENST00000452583 \n (KCNMB2) \n','ENST00000241274 \n (SLITRK3)\n','ENST00000475390 \n (SLITRK3)\n'),
+       col=c('black','red','green','blue','orange'), 
+       pch=16, 
+       cex=0.6,
+       title="Expressed genes"
+)
+
+dev.off()
+
+first_five_plot <- ggdraw() + draw_image("PCA1_five.png") 
 
 ```
 
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. 
-The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show near identical expression patterns.
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels.\ The transcripts for LDLRAD4 show the highest overall expression levels. Their expression levels also don't display many similarities to those of KCNMB2 and SLITRK3, as their increase patterns differ. However, KCNMB2 and SLITRK3 show great similarity in their expression levels over all weeks. Especially between weeks 5 to 7  KCNMB2 and SLITRK3 show really similar expression levels (Fig. \@ref(fig:PCA_analysis) B).
+
+```{r PCA_analysis}
+PCA_plots = arrangeGrob(grobs = list(PCA_contribution, first_five_plot),
+                                    nrow=1, 
+                                    widths = c(3,3.5), 
+                                    heights = c(3.5)
+                        )
+
+PCA_plots_output = as_ggplot(PCA_plots) +
+  draw_plot_label(label = c("A", "B"), 
+                  size = 15, 
+                  x = c(0.01, 0.5), 
+                  y = c(0.17, 0.17)
+                  ) 
+
+annotate_figure(PCA_plots_output, 
+                top = text_grob("Principal component analysis", 
+                                color = "black", 
+                                face = "bold", 
+                                size = 16
+                                )
+                )
+```
+
 
 # Discussion
 
@@ -1644,9 +1692,9 @@ We further identified that two transcripts associated to two different tissues s
 The neuronal cell migration is strongly dependent on chemoatractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 and a maintaining high expression level for the following weeks (Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting at week 9 (section \@ref(intro-tissues)).
 A decline in  NUP85 expression is noteable between week 5 to 9 (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in NUP85 genexpression reduce the chances for this binding. A consequence might be that more CCR2  receptors are free for beta type chemokin mediated signals. 
 
-## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
+## No TRAs could be identified as key biomarkers for the development of individual organs
 
-
+Principal component analysis helped to identify transcripts that have a high contribution to our data's variance. The high variance explained by PCA1 alone made it possible to focus our further analysis only on this PCA. Ranking the transcripts according to their contribution led us to identify the three proteins LDLRAD4, KCNMB2 and SLITRK3 as main contributors to our data's variance over the weeks.\ Connecting our findings achieved trough PCA with the TRA data to identify key biomarkers for the development of individual organs throughout the weeks has yet to be successful. The information gained trough PCA was not sufficient enough to determine specific TRAs that could be used to proof our hypotheses. More indepth analyzation needs to be performed to determine wether PCA is not a sufficient method to identify TRAs that can be used as key biomarkers for development, or if TRAs in general can not be used as key biomarkers for tevelopment, therfore disproofing our hypotheses. 
 
 
 # References
