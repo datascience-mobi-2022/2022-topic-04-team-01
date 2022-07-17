@@ -222,7 +222,7 @@ dev.off()
 #} # GSM394501 looks a bit brighter, GSM394527 looks bright
 ```
 
-Furthermore, we tested for low RNA quality chips. Coted matrices degrade under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we compare the different chips (Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)B) and verify the overall chip quality for data analysis.
+Furthermore, we tested for low RNA quality chips. Coated matrices degrade under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we compare the different chips (Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)B) and verify the overall chip quality for data analysis.
 
 ```{r RNA-Degradation-Plot, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data.", include=FALSE}
 data.rnadegradation <- AffyRNAdeg(data.GSE15744)
@@ -477,7 +477,7 @@ df_unique_diff <- diff_genes_ann_0.01[!contain_bool_diff,]
 
 To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagram)).
 
-```{r Vernn-Diagram-code, include=FALSE}
+```{r Venn-Diagram-code, include=FALSE}
 # Make Venn diagram from list of groups
 colors <- c("#ff4059", "#2cff21", "yellow")
 venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
@@ -502,7 +502,7 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
 )
 ```
 
-```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)", eval = FALSE}
+```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
 ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
 ```
 
