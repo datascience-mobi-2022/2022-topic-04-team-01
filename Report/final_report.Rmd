@@ -87,12 +87,16 @@ library(XML)
 \newpage
 # Abstract
 
+A single cell turns into a complex multicellular organism during embryogenesis. The morphological steps behind this process are mostly understood. The role of molecular biological pathways and molecules like chemokines in the embryonic development is quite unknown and has to be investigated. Tissue restricted antigens (TRA) may be a key in understanding the relation between  molecular biological cause and morphological consequence.TRAs originate from negative selection in thymus, where medullary epithelial cells (mTECs) express them on their surface to remove self-antigen reactive T-cells. Those TRA represent a wide range of self-antigen, hence we can use them to determine the gene expression in our dataset (Dinkelacker 2019; Murphy & Weaver 2018).\
+First of all, we want to compare our methods, e.g. limma analysis to the methods of the paper, e.g. **One-way analysis of variance** to find differentially expressed genes. We want validate, if TRAs represent the timeline in the early stage of embryonic development between week 4 to 9. And give us an insight in the molecular biological process in those weeks. Furthermore, we want to identify, if the expression of specific gens can be related to milestones in neurogenesis. Last but not least, we want to illustrate the role of specific TRAs as biomarkers for organogenesis.
+
+
 \newpage
 # Introduction
 
 ## TRAs as a tool to gain insight into embryonic development {#intro-tra}
 
-Tissues specific antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
+Tissues restricted antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
 
 ## Embryonic development during the observed timeframe {#intro-tissues}
 
@@ -1370,12 +1374,12 @@ data.ENST00000579298 =cbind(data.ENST00000579298,week)
 par(mfrow = c(1, 3))
 
 #Plot for ion channel gene
-plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of ion channel gene", xlab = "weeks",ylab = "Expressionlevel",col = "red")
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Ion channel gene", xlab = "weeks",ylab = "Expressionlevel",col = "red")
 legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.8,title="Expressed genes")
 
 
 #Plot for neuronal development and function genes 
-plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of  neuronal development and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Neuronal development and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))
 lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue")
 lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")
 lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")
@@ -1387,7 +1391,7 @@ legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690
 
 
 # Plot for chemokine related genes
-plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of chemokine related genes", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7))
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Chemokine related genes", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7))
 lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")
 legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "blue"), lty=1, cex=0.8,title="Expressed genes")
 
