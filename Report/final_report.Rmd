@@ -12,10 +12,10 @@ geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
 header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
   - \usepackage{float}
-  - \renewcommand{\topfraction}{.9}
-  - \renewcommand{\bottomfraction}{.8}
-  - \renewcommand{\textfraction}{.15}
-  - \renewcommand{\floatpagefraction}{.66}
+  - \renewcommand{\topfraction}{.95}
+  - \renewcommand{\bottomfraction}{.9}
+  - \renewcommand{\textfraction}{.05}
+  - \renewcommand{\floatpagefraction}{.77}
   - \setcounter{topnumber}{3}
   - \setcounter{bottomnumber}{3}
   - \setcounter{totalnumber}{4}
@@ -627,10 +627,10 @@ count_data$color = cols
 treemap = ggplot(count_data, aes(area = count, label = tissue, fill = tissue)) + geom_treemap() + geom_treemap_text(colour = "white", place = "top", reflow = T) + scale_fill_manual(values=cols) + guides(fill = FALSE)
 ```
 
-```{r, fig.width=12, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The plot shows the share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
+```{r bar-tissues, fig.width=13, fig.height=6, fig.cap= "A. The number of transcripts associated with each tissue, including subtissues, is displayed.  B. The plot shows the share of TRAs associated with each tissue. Subtissues are subsumed under their main tissue."}
 lay = rbind(c(1,1,1,2), c(1,1,1, NA))
 plot = arrangeGrob(grobs = list(tissue_count_barplot, treemap),layout_matrix = lay)
-plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.77), y = c(0.1,0.1)) 
+plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B"), size = 15, x = c(0.05, 0.77), y = c(0.1,0.1)) + theme (plot.margin = unit(c(0.2,1.2,0,1.2),"cm"))
 annotate_figure(plot_output, top = text_grob("Differentially expressed transcripts of TRAs by tissue", color = "black", face = "bold", size = 16))
 ```
 
@@ -639,9 +639,10 @@ annotate_figure(plot_output, top = text_grob("Differentially expressed transcrip
 mean(sapply(diff_genes_ann_0.01$tissues, function(x) {length(x)}))
 ```
 
-The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset. The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes.These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all results will be based on our dataset with differentially expressed genes from limma analysis. \
+The TRA dataset covers 53 distinct tissues. For all of those, we found at least 40 differentially expressed transcripts within our dataset (Fig. \@ref(fig:bar-tissues)). The minimum were 46 stomach-linked transcripts, the highest reached 837 TRAs for the testes.These numbers are sufficient for further analysis of the gene expression within individual tissues. Therefore, all results will be based on our dataset with differentially expressed genes from limma analysis. \
 Nonetheless, it should be noted that there is a significant overlap between the TRAs associated with different tissues, especially as each transcript is on average linked to 7.4 different sub-tissues or tissues. This overlap is illustrated by supplementary Fig. \@ref(fig:tissue-links). Furthermore, a detailed heatmap for the shared TRAs between tissues is shown in the supplementary Fig. \@ref(fig:heatmap-tissues).
 
+ 
 ### The expression of all TRAs associated with a tissue cannot be used to infer organ development {#organ-cluster}
 
 In this research, we attempt to draw conclusions about the developmental state of a tissue based on the expression of genes associated with it alone. For all differencially expressed transcripts associated with one tissue, we analyzed the share of transcripts above a certain expression level over time, as shown in Fig. \@ref(fig:expression-plot)A. Furthermore, we observed trends within the median expression of these trascnrips (Fig. \@ref(fig:expression-plot)B). Since both metrics only depicted miniscule changes, we hypothesized that distinct, counteracting trends in expression exist within one tissue. Thus, k-means clustering was used to determine groups of TRAs with similar expression patterns. For each of these clusters, the median expression was plotted as shown in Fig. \@ref(fig:expression-plot)C. The clustering graphs for all tissues can be found on our github repository.
@@ -1385,9 +1386,7 @@ The last group are chemokines, proteins with an important role in the signaling 
 
 ## Hypothesis: Specific TRAs can be used as key biomarkers for the development of individual organs
 
-### Principal component analysis
-
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA-analysis) A).
+Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can then be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (supp. Fig. \@ref(fig:PCA-analysis) A).
 
 ```{r, include=FALSE}
 #pca on rows (genes)
@@ -1526,31 +1525,7 @@ dev.off()
 
 ```
 
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA-analysis) B).
-
-```{r PCA-analysis, fig.width = 10, fig.height = 4}
-file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
-download.file(file_fiveplot, "PC1_five.png", mode = "wb")
-first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
-
-lay = rbind(c(1,2))
-PCA_plots = arrangeGrob(grobs = list(PC_contribution, first_five_plot),layout_matrix = lay)
-
-PCA_plots_output = as_ggplot(PCA_plots) +
-  draw_plot_label(label = c("A", "B"), 
-                  size = 15, 
-                  x = c(0.01, 0.5), 
-                  y = c(0.17, 0.17)
-                  ) 
-
-annotate_figure(PCA_plots_output, 
-                top = text_grob("Principal component analysis", 
-                                color = "black", 
-                                face = "bold", 
-                                size = 16
-                                )
-                )
-```
+The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (supp. Fig. \@ref(fig:PCA-analysis) B).
 
 # Discussion
 
@@ -1929,3 +1904,26 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
+```{r PCA-analysis, fig.width = 10, fig.height = 4}
+file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
+download.file(file_fiveplot, "PC1_five.png", mode = "wb")
+first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
+
+lay = rbind(c(1,2))
+PCA_plots = arrangeGrob(grobs = list(PC_contribution, first_five_plot),layout_matrix = lay)
+
+PCA_plots_output = as_ggplot(PCA_plots) +
+  draw_plot_label(label = c("A", "B"), 
+                  size = 15, 
+                  x = c(0.01, 0.5), 
+                  y = c(0.17, 0.17)
+                  ) 
+
+annotate_figure(PCA_plots_output, 
+                top = text_grob("Principal component analysis", 
+                                color = "black", 
+                                face = "bold", 
+                                size = 16
+                                )
+                )
+```
