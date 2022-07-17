@@ -1,0 +1,566 @@
+---
+title: "Test4"
+author: "Paul Christmann"
+date: '2022-07-12'
+output: pdf_document
+geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
+header-includes:
+  - \usepackage[font={small,it}, labelfont={bf}]{caption}
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+#library(rmdformats)
+## Global options
+#options(max.print="120")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+#opts_knit$set(width=120)
+#opts_knit$set(root.dir  = "~/")
+```
+```{r}
+library(affy)
+library(AnnotationDbi)
+library(hgu133plus2hsenstprobe)
+library(hgu133plus2hsenstcdf) 
+library(Rcpp)
+library(tidyverse)
+library(vsn)
+library(limma)
+library(pheatmap)
+library(hexbin)
+library(biomaRt)
+library(kableExtra)
+library(Rfssa)
+library(ggbiplot)
+library(magrittr) 
+library(dplyr)
+library(stringr)
+library(ggrepel)
+library(readxl)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(cowplot)
+library(RCurl)
+library(readxl)
+library(ggforce)
+library(VennDiagram)
+library(png)
+library(factoextra)
+library(cluster)
+library(ggplot2)
+library(ggsci)
+library(ggplotify)
+library(clusterProfiler)
+library(enrichplot)
+library(org.Hs.eg.db)
+library(ggupset)
+library(gt)
+library(gtExtras)
+library(svglite)
+library(webshot)
+library(rentrez)
+library(XML)
+library(igraph)
+library(ggnet)
+library(viridis)
+library(treemapify)
+library(magick)
+```
+
+\newpage
+
+
+# Abstract
+
+A single cell turns into a complex multicellular organism during embryogenesis. The morphological steps behind this process are mostly understood. The role of molecular biological pathways and molecules like chemokines in the embryonic development is quite unknown and has to be investigated. Tissue restricted antigens (TRA) may be a key in understanding the relation between  molecular biological cause and morphological consequence.TRAs originate from negative selection in thymus, where medullary epithelial cells (mTECs) express them on their surface to remove self-antigen reactive T-cells. Those TRA represent a wide range of self-antigen, hence we can use them to determine the gene expression in our dataset (Dinkelacker 2019; Murphy & Weaver 2018).\
+First of all, we want to compare our methods, e.g. limma analysis to the methods of the paper, e.g. **One-way analysis of variance** to find differentially expressed genes. We want validate, if TRAs represent the timeline in the early stage of embryonic development between week 4 to 9. And give us an insight in the molecular biological process in those weeks. Furthermore, we want to identify, if the expression of specific gens can be related to milestones in neurogenesis. Last but not least, we want to illustrate the role of specific TRAs as biomarkers for organogenesis.
+
+\newpage
+
+# Introduction
+
+## TRAs as a tool to gain insight into embryonic development {#intro-tra}
+
+Tissues restricted antigens (TRAs) are important for the analysis of our dataset. TRAs are connected to the negative selection in thymus, which prevents an immune reaction against selfantigens. TRAs are ordered in clusters and controlled by autoimmune regulator (AIRE) in medullary epithelial cells (mTECs) and represent the diversity of antigens in our different tissues (Dinkelacker 2019; Murphy & Weaver 2018).We use the definition that TRAs are genes, which are expressed more than 5 times the median in less than 5 different tissues (Dinkelacker, 2019). The role of TRAs is the target of this report.
+
+## Embryonic development during the observed timeframe {#intro-tissues}
+
+Our expression data was gained from embryos between week 4 to 9, hence it's essential to know what happens in organogenesis during this week in the most prominent organs: the liver, the gonades, the spleen, the heart, the stomach, the skin, the skeletal muscles and the brain.\
+First, the liver sprout begins to form in week 3 after gestation. From week 4, it develops hepatocyte precursors and is innervated by veins. Between week 5 to 9 the production of gallic acid starts. Furthermore, glycogen granules develop by week 8 and glycogen synthesis starts in the following week (Deutsch 2013).\
+The testis initially develop as non sex-specific gonads. At week 5, the first germ cells appear in the gonades. The gender-specific development into ovaries and testis occurs first by week 7 (Benninghoff 1993).\
+The spleen first appears at week 6 of embryonal development. Blood vessels in the organ develop from week 8 to 9 (James & Jones 1983). Especially important is the spleen's role in the human immune system. To that end, B-lymphocytes are present within this tissue from week 12, while T-cells can be found not earlier than week 14. Previously, these cells develop in the liver starting week 9 and in the thymus from week 7 respectively (Hayward 1983).\
+At week 3, the heart consists only of a preliminary tube. From then on the heart undergoes extensive growth and development, with cambers and ventricles forming. The fundamental layout is already present by week 5. Then, further remodeling takes place until around week 7, when the major steps are already completed (Ulfig 2009; Hikspoors *et al.* 2022).\
+The stomach develops from the foregut. The primitive gut divides into foregut, midgut and hindgut by week 4. At the end of that week, the stomach is first visible (Kluth *et al.* 2013). Gastric pits form by week 8, while most essential cell types (enteroendocrine cells, mucous cells) appear between the 10th and 15th week and stomach acid is only secreted from week 32 onward (Esrefoglu *et al.* 2017).\
+Skin development starts immediately after gastrulation at week 3. The ectoderm further develops to the nervous system and skin epithelium. There, the epidermal differentiation is illustrated through the expression of keratin genes. Adhered cells (periderm) create a protective layer for the ectoderm during weeks 4 to 8 (Hu *et al.* 2018).\
+The skeletal muscles from mesoderm first in form of myoblasts that later (between week 10 and 13) fuse to form myotubes and then differentiated muscle fibers. The proteins necessary for muscle formation appear the earliest at 7 weeks, with more being expressed from week 9 and 10. Muscle fibers only form from week 15 onwards (Romero *et al.*. 2013).\
+While to neurulation happens around week 4, the major parts of the brain are already visible by week 9. Between theses stages, characteristic steps of neuronal development such as neuronal proliferation (starting at week 4), neuronal differentiation (starting at week 4), neuronal migration (starting at week 9), synapse formation (starting at week 9) and programmed cell death (starting at week 20) take place (National Research Council and Institute of Medicine 2009; Müller & Hassel 2018)). These processes are influenced through signals provided for instance by chemokines.
+
+## Chemokines and brain development {#intro-brain}
+
+Chemokines are a group of small proteins, acting as chemoattractors on effector cells. They are classified in 4 groups (alpha to delta), depending on the position of their first cysteines (C). In the alpha group (or CXC), they are separated by a single aminoacid. In the beta group (or CC), they are next to each other. In the gamma group (or C), there is only one cystein present. In the delta group (or CX3C), they are separated by three aminoacids. (Yusuf *et al.* 2005). Chemokines induce cell migration by binding to their respective receptors (a G-Protein coupled receptor), which are often shortened with an R. For example CXCR4, the receptor of the alpha class ligand CXCL12. The function of chemokines during embryonic development is a target of further research. Nevertheless, the CXCL12/CXCR4 signalling pathway plays an important role in the neuronal cell migration (Tiveron & Cremer 2008).
+
+# Methods
+
+## Programming language and Libraries
+
+The freely available programming language R version 4.2.0 and its IDE RStudio were used to draw statistical conclusions and generate informative plots. The used code packages were installed from CRAN, an online network with submitted libraries for specific programming and statistical purpose. More precisely, some packages were downloaded from bioconductor, an open software library build by developers of the community specifically for biological assays and statistical genomics. Packages for annotation purposes of microarrays were provided by brainarray.
+
+Following libraries were used:
+
+```{=latex}
+\begin{table}[htb]
+\caption{All libraries used for the code of this report, libraries installed from CRAN, Bioconductor and brainarray}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}ll|ll|ll|ll@{}}
+\toprule
+\textbf{Library}       & \textbf{Version} & \textbf{Library} & \textbf{Version} & \textbf{Library} & \textbf{Version} & \textbf{Library}     & \textbf{Version} \\ \midrule
+affy                   & 1.74             & AnnotationDbi    & 1.58             & biomaRt          & 2.52             & cluster              & 2.1.3            \\
+clusterProfiler        & 4.4.4            & cowplot          & 1.1.1            & dplyr            & 1.0.9            & enrichplot           & 1.16.1           \\
+factoextra             & 1.0.7            & ggbiplot         & 0.55             & ggforce          & 0.3.3            & GGally               & 2.1.2            \\
+ggplot2                & 3.3.6            & ggplotify        & 0.1.0            & ggpubr           & 0.4.0            & ggrepel              & 0.9.1            \\
+ggsci                  & 2.9              & ggupset          & 0.3.0            & grid             & 4.2.0            & gridExtra            & 2.3              \\
+gt                     & 0.6.0            & gtExtras         & 0.4.1            & hexbin           & 1.28.2           & hgu133plus2hsenstcdf & 25.0             \\
+hgu133plus2hsenstprobe & 25.0             & igraph           & 1.3.2            & kableExtra       & 1.3.4            & limma                & 3.52             \\
+magick                 & 2.7.3            & magrittr         & 2.0.3            & org.Hs.eg.db     & 3.15             & pheatmap             & 1.0.12           \\
+png                    & 0.7              & Rcpp             & 1.0.9            & RCurl            & 1.98             & readxl               & 1.4              \\
+rentrez                & 1.2.3            & Rfssa            & 2.0.1            & stringr          & 1.4              & svglite              & 2.1              \\
+tidyverse              & 1.3.1            & treemapify       & 2.5.5            & VennDiagram      & 1.7.3            & viridis              & 0.6.2            \\
+vsn                    & 3.64             & webshot          & 0.5.3            & XML              & 3.99             &                      &                  \\ \bottomrule
+\end{tabular}}
+\end{table}
+```
+## Dataset
+
+We obtained the data set from Yi H *et al.* (2010). We chose this data set by the following criteria, it contains human embryonic data and it covers every week between the 4th and 9th week, which are interesting stages of embryogenesis and organ development. Three replica at each point in time were tested, hence data from 18 embryos were acquired. The timezone covers the Carnegie stages 10-23, finishing the process of embryogenesis and organogenesis. This peroid of embryogenesis is highly regulated with considerable differential gene expression. Overall, the data set suits the requirements for our purpose.
+
+### Affymetrix U133 plus 2.0 human GeneChip array
+
+The data was generated from embryos by using Affymetrix U133 plus 2.0 human GeneChip arrays. RNA microarrays are slides coted with oligonucleotides as matrices which screen for thousands of transcripts. [The HG-U133 Plus 2.0](https://www.affymetrix.com/support/technical/datasheets/human_datasheet.pdf) allows the detection of about 50,000 transcripts and uses quality control matrices. The Affymetrix chip include 62 control transcripts, whose intensities are imported together with the acquired data.
+
+### Importing the data set
+
+We downloaded the raw data to a local harddrive from the Gene Expression Omnibus with the Accession Number of [GSE15744](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE15744). We imported it with the help of the library *affy* and is connected to the correct Annotation by the brainarray package. The *affy* package allows more manageable data analysis and manipulation of microarray intensity values.
+
+```{r importing-the-data-from-harddrive, eval=FALSE}
+setwd("C:/Users/david/Documents/Data Analysis Lokal/Raw-Data/CEL_files")
+data.GSE15744 <- ReadAffy()
+data.GSE15744@cdfName <- "HGU133Plus2_Hs_ENST"
+```
+
+To access the data remotely, we uploaded it to the cloud-based repository hosting service github. It can be imported with the library *Rfssa*.
+
+```{r loading-data-from-github}
+#make data accessible for everyone
+githubURL <- "https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/data.GSE15744.RData"
+load_github_data(githubURL)
+```
+
+### Quality control of the suface images
+
+To ensure that the microarrays are without surface damaged, we checked their images. We selected two images as an example
+
+As shown in Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)A as an example, the surface of the chips are visible and show no spatial artefacts, fingerprints, irregular dye or stripes. Some differences in overall brightness are visible but marginal.
+
+```{r QC-surface-images, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: a selected surface image of the microarrays showing no damage or artefacts.** The microarray inspection shows no irregularities and every chip is accepted for further data analysis", include=FALSE}
+png(filename = "Surface image.png")
+surfaceimage.GSM394525 <- image(data.GSE15744[,13], col=rainbow(100, start = 0, end = 0.75)[100:1])
+dev.off()
+## To generate all images please use:
+#for (i in 1:18) {
+#  image(data.GSE15744[,i], col=rainbow(100, start = 0, end = 0.75)[100:1])
+#} # GSM394501 looks a bit brighter, GSM394527 looks bright
+```
+
+### Quality control of RNA Degradation
+
+We can further analyse the quality of the microarrays by checking for low RNA quality chips. Coted matrices degrades under unfavorable conditions, which negatively affects raw intensities (Fasold & Binder 2013). By plotting the RNA degradation for 3'--5' strand, we can compare the different chips (Figure \@ref(fig:QC-surface-images-and-RNA-Degradation-Plot)B).
+
+```{r RNA-Degradation-Plot, fig.width= 4, fig.height= 4, fig.cap= "**Quality control: RNA degradation plot shows slight irregularities and verifies the data.** Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data.", include=FALSE}
+data.rnadegradation <- AffyRNAdeg(data.GSE15744)
+
+png(filename = "RNA degradation plot.png")
+plotAffyRNAdeg(data.rnadegradation, col=rainbow(18))
+title(sub="RNA Degradation of 18 microarrays, GSE15744")
+dev.off()
+
+## Not scaled
+#plotAffyRNAdeg(data.rnadegradation, col=rainbow(18), transform = "shift.only")
+#title(sub="Human embryo (GSE15744, Raw data)")
+```
+
+```{r QC-surface-images-and-RNA-Degradation-Plot,  fig.width= 6, fig.height= 3, fig.cap= "**Quality control: Selected surface image of a microarray shows no damage or artefacts and RNA degradation plot shows slight irregularities and verifies the data.** **A**: The microarray inspection shows no irregularities and every chip is accepted for further data analysis. **B**: Some crossing lines can be seen, especally the microarray GSM394519. We decided that the inconsistencies are minor though, and kept all microarrays to avoid the loss of potentionally relevant data."}
+surface_image_plot = ggdraw() + draw_image("Surface image.png")
+RNA_degradation_plot = ggdraw() + draw_image("RNA degradation plot.png")
+
+OC_chip_plot = arrangeGrob(grobs = list(surface_image_plot, RNA_degradation_plot),
+                                    nrow=1, widths = c(3,3), heights = c(3))
+
+OC_chip_plot_output = as_ggplot(OC_chip_plot) +
+  draw_plot_label(label = c("A", "B"), size = 15, x = c(0.01, 0.50), y = c(0.17, 0.17)) 
+
+annotate_figure(OC_chip_plot_output, top = text_grob("Quality control: verifying the surface\nimage and RNA degradation", color = "black", face = "bold", size = 12))
+```
+
+## Normalising the data set
+
+Intensity values of different chips are affected by sstatistical variance and random fluctuation. To access the biological relevant variation the raw data is normalised. We chose the vsn rma normalization with its library *vsn* according to Huber *et al.* (2002). This library is designed to process microarray intensity values. It calibrates data and applies *generalized log*-transformation, which is an adjusted natural logharithm and preserves statistical significance.
+
+```{r vsn-normalization, include=FALSE}
+data.GSE15744.vsnrma <- vsnrma(data.GSE15744)
+```
+
+```{r silent-Data-Cleaning, include=FALSE}
+#adjusting the microarray names by cutting the .cel
+rownames(pData(data.GSE15744.vsnrma)) <- substr(rownames(pData(data.GSE15744)), 1, nchar(rownames(pData(data.GSE15744)))-4)
+colnames(exprs(data.GSE15744.vsnrma)) <- substr(colnames(exprs(data.GSE15744)), 1, nchar(colnames(exprs(data.GSE15744)))-4)
+
+temp_embryo_df = as.data.frame(exprs(data.GSE15744.vsnrma))
+colnames(temp_embryo_df) = rownames(pData(data.GSE15744.vsnrma))
+embryo_df = temp_embryo_df[63:95721,]
+```
+
+### Quality control of the vsn normalization {#QC-normalization}
+
+To verify the transformed data intensity values, some test can be performed (Figure \@ref(fig:QC-normalization-plots)). After the normalization, the rank of the mean of the intensity values and their standard deviation should not correlate. Therefore we can plot the rank of the mean against the standard deviation to control the normalization method and should get a horizontal line indicated in red (Figure \@ref(fig:QC-normalization-plots)A). Another way to control the normalization is to visualize the intensity values. Here we have two options. We used boxplots to compare each of the 18 microarray separately by its mean, median and variance. This allows us to knock out unfitting arrays (Figure \@ref(fig:QC-normalization-plots)B). The second option gives us the ability to zoom in even further. The intensity levels of three replica should be the same, since they were taken at the same time. We can use scatterplots to compare single intensity levels. With one of the replica applied on the x and y axis respectively, we should see a scatterplot following the linear function y = x since the same transcript should show the same intensity in both replica (Figure \@ref(fig:QC-normalization-plots)C).
+
+```{r mean-sd-plot, include=FALSE}
+meansd.GSE15744.vsnrma <- meanSdPlot(data.GSE15744.vsnrma, xlab="Rank (mean)", ylab="Standard Deviation")
+meansdplot.GSE15744.vsnrma <- meansd.GSE15744.vsnrma$gg + ggtitle("Mean-Sd-Plot of vsn normalized data\nGSE15744") + theme(aspect.ratio = 1)
+```
+
+```{r boxplot-vsn-normalization, include=FALSE}
+weeks <- c("Week 4.1", "Week 4.2", "Week 4.3", "Week 5.1", "Week 5.2", "Week 5.3", "Week 6.1", "Week 6.2", "Week 6.3", "Week 7.1", "Week 7.2", "Week 7.3", "Week 8.1", "Week 8.2", "Week 8.3", "Week 9.1", "Week 9.2", "Week 9.3")
+png(filename = "boxplot_GSE15744_vsnrma.png", res = 115)
+boxplot(exprs(data.GSE15744.vsnrma), col = rainbow(15),
+        cex.axis=0.5,
+        las=2,
+        names=weeks,
+        ylab="Relative expression",
+        main="Boxplots of microarrays with\nvsn normalized intensities")
+
+dev.off()
+
+boxplot.GSE15744.vsnrma = ggdraw() + draw_image("boxplot_GSE15744_vsnrma.png") 
+
+
+```
+
+```{r Scatter-plot, include=FALSE}
+exprs.GSE15744.vsnrma <- as.data.frame(exprs(data.GSE15744.vsnrma))
+scatterplot.GSE15744.vsnrma <- ggplot(data = exprs.GSE15744.vsnrma) +
+  theme_bw() +
+  geom_point(mapping = aes(exprs.GSE15744.vsnrma[,4], exprs.GSE15744.vsnrma[,5]), size = 0.5) +
+  geom_abline(intersept = 0, slope = 1, col = "red", aes(size=1)) +
+  labs(title = "Scatterplot of microarrays,\ntwo replica of week 5",
+       x = colnames(data.GSE15744.vsnrma)[4],
+       y = colnames(data.GSE15744.vsnrma)[5])+ theme(aspect.ratio = 1) 
+```
+
+```{r QC-normalization-plots, fig.width=12, fig.height=3.5, fig.cap= "The plots support the use of the vsn normalization on our data set. A: The red line is close to horizontal, although it shows some correlation at high intensity leves. B: The boxplots show nice allignment of the mean intensity values. Some outliers are given but can neglected given the 0.25 and 0.75 quantile. C: A selected Scatterplot is shown. Very slight banana shaped structure can be seen, but only marginal. Overall the quality control confirmes successful vsn normalization"}
+
+
+OC_normalization_plot = arrangeGrob(grobs = list(meansdplot.GSE15744.vsnrma, boxplot.GSE15744.vsnrma, scatterplot.GSE15744.vsnrma),
+                                    nrow=1, widths = c(3,3,3), heights = c(3.5))
+
+OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
+  draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.01, 0.36, 0.71), y = c(0.13, 0.13, 0.13)) 
+
+annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
+```
+
+## Annotation
+
+To make sense out of the intensity values they need to be associated to common data with known properties. We applied the data frame *ensembl_103.txt* provided by Dr. Dinkelacker, to annotate our data and yield the appropriate transcript ID for the Probe ID of the microarray. To annotate for TRAs, we applied another data frame by Dr Dinkelacker called *tra.2017.human.gtex.5x.table.tsv*.
+
+```{r Annotation, include=FALSE}
+file_annotation = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/ensembl_103_human.txt")
+ensembl = as.data.frame(read.csv(text=file_annotation, sep = ","))   # Load the ensembl annotation data
+TranscriptID_orig = rownames(embryo_df)
+ensembl = ensembl %>% distinct(Transcript.stable.ID, .keep_all = TRUE) # Remove duplicate transcripts
+
+
+embryo_df["Transcript.stable.ID"] = gsub("[//._].*$" ,"", rownames(embryo_df)) # Add column for mergign
+embryo_df_ann = left_join(embryo_df, ensembl, by="Transcript.stable.ID")   # Combine the Datasets by their Transcript ID
+rownames(embryo_df_ann) <- embryo_df_ann$Transcript.stable.ID
+colnames(embryo_df_ann) = c("Week4_1", "Week4_2", "Week4_3", "Week5_1", "Week5_2", "Week5_3", "Week6_1", "Week6_2", "Week6_3", "Week7_1", "Week7_2", "Week7_3", "Week8_1", "Week8_2", "Week8_3", "Week9_1", "Week9_2", "Week9_3", "Transcript.stable.ID", "Gene.stable.ID", "Chromosome.scaffold.name", "HGNC.symbol", "AFFY.HG.U133.Plus.2.probe")
+
+
+file_tra = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/R%20Scripts/tra.2017.human.gtex.5x.table.tsv")
+tra_gtex = as.data.frame(read.csv(text = file_tra, sep = "\t"))
+embryo_df_tra = embryo_df_ann[embryo_df_ann$Transcript.stable.ID %in% tra_gtex$ensembl.transcript ,]
+embryo_df_tra = embryo_df_tra %>%  dplyr::rename(ensembl.transcript = Transcript.stable.ID)
+embryo_df_tra =  left_join(embryo_df_tra, tra_gtex, by="ensembl.transcript") 
+
+
+#Make Tissue names more accessible by creating a vector for them
+a = separate(embryo_df_tra, tissues, into = as.character(c(1:30)), sep="/")
+create_tissue_vector = function(f) {
+  f = unlist(f)
+  f = f[!is.na(f)]
+  return(f)
+}
+tissues = apply(a[,31:60],1, create_tissue_vector)
+tissues = sapply(tissues, unlist)
+a = a[,c(1:30, 61)] 
+a %>% add_column(tissues = NA)
+a$tissues = tissues
+embryo_df_tissues = a
+```
+
+```{r further-silent-Data-Cleaning}
+embryo_df_tissues <- embryo_df_tissues[,!names(embryo_df_tissues) %in% c("ensembl.gene", "ensembl.symbol", "ensembl.chrom")] 
+
+#Chromosome Spalte aufhübschen und unnötiges löschen
+embryo_df_tissues$Chromosome.scaffold.name <- as.factor(embryo_df_tissues$Chromosome.scaffold.name) 
+embryo_df_tissues <- embryo_df_tissues %>%
+  filter(Chromosome.scaffold.name != "CHR_HSCHR10_1_CTG2" & Chromosome.scaffold.name != "CHR_HSCHR11_1_CTG7"& Chromosome.scaffold.name!= "CHR_HSCHR15_4_CTG8"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG3"& Chromosome.scaffold.name!= "CHR_HSCHR22_1_CTG7"& Chromosome.scaffold.name!=  "CHR_HSCHR4_6_CTG12"& Chromosome.scaffold.name!= "CHR_HSCHR7_2_CTG4_4"& Chromosome.scaffold.name!=  "CHR_HSCHR7_2_CTG6" )
+embryo_df_tissues$Chromosome.scaffold.name <- factor(embryo_df_tissues$Chromosome.scaffold.name, levels = c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19", "20", "21","22", "X","Y"))
+
+# Nach NA values suchen
+#sum(is.na(embryo_df_tissues$ensembl.entrez)) # diese Spalte enthält 501 NA - Values
+```
+
+## Limma package
+
+The *limma* package determines among many other things the changes of gene expression over time in intensity values of microarrays. It facilitates advanced statistical algorithms to calculate the necessary coefficients of a linear model for every intensity value in the data set. It uses information borrowing, quantitative weighting, variance modelling and data preprocessing, while not subset the data (Ritchie. *et al.* 2015). Because the linear model was casted on every intensity value, statistical tests called Empirical Bayes can determine differential expressed genes via t-statistics and their associated p-values. 
+
+## Over representation analysis
+
+The statistical method over-representation analysis determines among other thing the over represented function of genes with associated transcripts in a subset of a mother data set with annotated transcripts and known functions. Categories for functions can be accessed via gene ontology.
+
+# Results
+
+## Limma analysis {#limma}
+
+To filter our data for biological interesting data, we performed *limma* analysis to extract differentially expressed genes. Our threshold for significance is an Benjamini-Hochberg adjusted p-value of 0.01 or below. We found changes of gene expression in 1,814 transcripts.
+
+```{r, include = FALSE}
+
+limma_data = as.data.frame(embryo_df_tissues[1:18], rownames = embryo_df_tissues$ensembl.transcript)
+
+weeks = c("week4", "week5", "week6", "week7", "week8", "week9")
+f = factor(c("week4", "week4", "week4", "week5", "week5", "week5", "week6", "week6", "week6", "week7", "week7", "week7", "week8", "week8", "week8", "week9", "week9", "week9"), levels =weeks)
+design = model.matrix(~0+f)
+colnames(design) =  weeks
+fit_2 = lmFit(limma_data, design)
+contrast_all = makeContrasts(week9-week8, week9-week7, week9-week6, week9-week5, week9-week4, week8-week7,week8-week6, week8-week5, week8-week4, week7-week6, week7-week5, week7-week4, week6-week5, week6-week4, week5-week4, levels = design)
+fit_all = contrasts.fit(fit_2, contrast_all)
+fit_all = eBayes(fit_all)
+results_all = decideTests(fit_all)
+#summary(results_all)
+
+
+#Create list of all differentially expressed genes
+diff_genes_list_0.01 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.01 = c(diff_genes_list_0.01, rownames(top.table[which(top.table$adj.P.Val < 0.01), ]))
+}
+length(diff_genes_list_0.01) #4522
+diff_genes_list_0.01 = diff_genes_list_0.01[!duplicated(diff_genes_list_0.01)]
+length(diff_genes_list_0.01) #1814
+
+#Select differential genes from annotated dataframe
+diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in% diff_genes_list_0.01, ]
+
+```
+
+```{r, eval = FALSE}
+#List with 5%
+
+diff_genes_list_0.05 = c()
+
+for (i in 1:15) {
+ top.table = topTable(fit_all,i, n = Inf)
+ n = sapply(rownames(top.table), function(x){
+  embryo_df_tissues$ensembl.transcript[as.numeric(x)]
+  })
+  row.names(top.table) = n
+  diff_genes_list_0.05 = c(diff_genes_list_0.05, rownames(top.table[which(top.table$adj.P.Val < 0.05), ]))
+}
+diff_genes_list_0.05 = diff_genes_list_0.05[!duplicated(diff_genes_list_0.05)]
+```
+
+The gathered dataset from limma analysis of the differential expression between weeks 4 to 9 was used to created a volcano plot. The negativ log10 of the adjusted P-value was ploted against the logFC value. The -log10 (adjusted P-value) boundary was set at 2 which equals our targeted adjusted P-value of 0.01. The logFC boundarys were -1 and 1, which reflects a doubling in the expression (Supplementary: Figure \@ref(fig:Volcano-Plot)). The genes were categorized in two groups:
+
+1.  up-regulated if the logFC value is larger than 1 and the adjusted P-value is smaller than 0.01
+2.  down-regulated if the logFC value is smaller than 1 and the adjusted P-value is smaller than 0.01
+
+Genes which didn't belong in those groups were declared as not differentially expressed. The differentially expressed genes between all weeks with an adjusted P-value smaller then 0.01 were further used.
+
+## Comparison of differential expressed genes between the original paper and our method {#paper-comp}
+
+We acquired the data from the original paper from the supplemental materials. We imported it into a data frame annotated it with the use of our data set because the both have the same probe set IDs from the same microarray.
+
+```{r importing-data-paper}
+#importing the data from xls file
+file_paper = getURL("https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/differentially_expressed_transcripts_paper.csv")
+paper_df_diff <- as.data.frame(read.csv(text = file_paper, sep = ";")) # 5385 Probe IDs
+for (i in 1:length(paper_df_diff)) {
+  vec1 <- sapply(paper_df_diff[,i], function(x){x==""})
+  paper_df_diff[vec1,i] = NA
+}
+for (i in seq.int(1,length(paper_df_diff$Probe_Set_ID))) { # die abgeschnittenen Zellen hinzugefügt
+  if(is.na(paper_df_diff$Probe_Set_ID[i])){
+    j=1
+    while (is.na(paper_df_diff$Probe_Set_ID[i-j])) {
+      j = j+1
+    }
+    paper_df_diff$Gene_Title[i-j] <- paste(paper_df_diff$Gene_Title[i-j], paper_df_diff$Gene_Title[i])
+  }
+}
+paper_df_diff <- paper_df_diff %>% drop_na(Probe_Set_ID) # überflüssige Reihen mit restlichem String entfernt
+paper_df_diff$Gene_Title[paper_df_diff$Gene_Title == "---"] <- NA # set missing values to NA
+paper_df_diff$Gene_Symbol[paper_df_diff$Gene_Symbol == "---"] <- NA
+#Datacleaning complete
+
+#Annotation:
+paper_df_ann <- left_join(paper_df_diff, embryo_df_tissues, by = c("Probe_Set_ID" = "AFFY.HG.U133.Plus.2.probe"))
+paper_df_intersec <- paper_df_ann %>% drop_na(ensembl.transcript) # we are able to compare 3203 Transcripts with TRA data
+
+our_df_diff <- as.data.frame(diff_genes_list_0.01)
+our_df_diff$select <- "diff"
+paper_df_ann_diff <- left_join(paper_df_ann, our_df_diff, by = c("ensembl.transcript" = "diff_genes_list_0.01"))
+paper_df_intersec_diff <- paper_df_ann_diff %>% drop_na(select)
+
+number_vec = sapply(c(1:sum(is.na(paper_df_ann$ensembl.transcript))), function(x){str_glue("no_value", x)} )
+paper_df_ann$ensembl.transcript[is.na(paper_df_ann$ensembl.transcript)] <- number_vec
+
+string_ENST <- toString(paper_df_ann$ensembl.transcript)
+contain_bool_diff = sapply(diff_genes_list_0.01, function(x) {grepl(x, string_ENST)})
+df_unique_diff <- diff_genes_ann_0.01[!contain_bool_diff,]
+```
+
+### Venn diagram
+
+To determine the number of transcripts which overlap between the data of the paper and our data, we plotted a Venn diagram (Figure \@ref(fig:Venn-Diagram)).
+
+```{r Vernn-Diagram-code, include=FALSE}
+# Make Venn diagram from list of groups
+colors <- c("#ff4059", "#2cff21", "yellow")
+venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, diff_genes_ann_0.01$ensembl.transcript) ,
+            category.names = c("data from paper", "our TRA data", "our diff. data"),
+            filename = 'venn_diagramm_comparison_paper.png',
+            output=TRUE,
+            imagetype="png",
+            #na = "none",
+            #scaled = FALSE,
+            height = 1000 , 
+            width = 1000 ,
+            resolution = 300,
+            compression = "lzw",
+            col = "black",
+            fill = colors,
+            cat.col = colors,
+            cat.cex = 1.4,
+            cat.pos = c(350,10,0),
+            #margin = 0
+            main = "Venn diagramm of differentially expressed genes\nfrom our TRA data and data of the original paper"
+            
+)
+```
+
+```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+ggdraw() + draw_image("venn_diagramm_comparison_paper.png")
+```
+
+The intersection showed a number of transcripts worth for further analysis.
+
+### Verifing the trends postulated in the paper with our data
+
+In contrast to our method using limma, the authors of the original paper used *One-way analysis of variance* with a p-value of 0.05 to determine the differential expressed genes (Yi H *et. al*, 2010). In the paper they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. We used k-means clustering to determine, if we see these trends in our data aswell (Figure \@ref(fig:paper-trends-cluster)).
+
+```{r paper-trends-cluster, fig.width=17, fig.height=8, fig.cap = "**Clustering of the common transcripts reveals similar trends and but our additional data shows missing differentially expressed genes.** We chose data with transcript IDs both in the data set of the original paper and in our TRA data. Additionally they had to be annotated as *up, *down*, or *arch* by the authors of the paper. The *up* and *down* regulated transcript-data (**A** and **B**) follow the same pattern as postulated in the paper. For the *arch* regulated transcript-data (**C**) we see clusters, with same matching the *arch* pattern and some who are rather undetermined. Of 396 transcripts only 39 of our differentially expressed genes by *limma* analyis share this *arch* property (**D**). Here we clearly see differential gene expression. In **E** we plotted data of our differntially expressed genes. There are *up* and *down* regulated genes determined by our *limma* analysis, that are not included in the data set of the authors of the original paper"}
+
+#Clustered plot of expression levels over time for the spleen
+paper_df_up <- filter(paper_df_intersec, Expression_pattern == "UP") # 759
+paper_df_down <- filter(paper_df_intersec, Expression_pattern == "DOWN") # 1096
+paper_df_arch <- filter(paper_df_intersec, Expression_pattern == "ARCH") # 396
+paper_df_arch_diff <- filter(paper_df_intersec_diff, Expression_pattern == "ARCH")
+
+# Functions for later use
+expression_difference = function(x,y) {
+  return ((x-y)/((x+y)*0.5))
+}
+
+avg_sil = function(k, data) {
+  km = kmeans(data, centers = k, nstart = 25)
+  ss = silhouette(km$cluster, dist_data)
+  mean(ss[, 3])
+}
+
+create_plot_data = function(dataset) {
+  data_plot = data.frame(Week = c(sapply(c(4:9), function(x) {rep(x, n_cluster)})), Cluster = as.character(c(rep(c(1:n_cluster), 6))), Expression = NA)
+  count = 0
+  for(s in 4:9) {
+    for(t in 1:n_cluster) {
+      count = count + 1
+      values = dataset[dataset$Cluster == t, str_glue("Week", s)]
+      data_plot[count, "Expression"] = median(values)
+      data_plot[count, "Cluster"] = str_glue(data_plot[count, "Cluster"], " [", km$size[t], "]")
+   }
+  }
+  return(data_plot)
+}
+
+paper_df_diff_list = list(as.data.frame(paper_df_up[8:25]),as.data.frame(paper_df_down[8:25]),as.data.frame(paper_df_arch[8:25]),as.data.frame(paper_df_arch_diff[8:25]),  as.data.frame(df_unique_diff[,1:18]))
+# Select an modify the data used for kmeans
+i = 0
+names <- c("Up-regulated", "Down-regulated","Arch-regulated","Arch-regulated which intersect our differentially expressed genes","Differentially expressed genes not included" )
+for (data_temp in paper_df_diff_list){
+  i= i+1
+data_abs = data.frame(Week4 = apply(data_temp[1:3], 1, median), Week5 =  apply(data_temp[4:6], 1, median), Week6 =  apply(data_temp[7:9], 1, median),
+                        Week7=apply(data_temp[10:12], 1, median), Week8 =  apply(data_temp[13:15], 1, median), Week9 =  apply(data_temp[16:18], 1, median))
+data = data.frame("5_4" = expression_difference(data_abs[,"Week5"], data_abs[,"Week4"]), 
+                  "6_5" = expression_difference(data_abs[,"Week6"], data_abs[,"Week5"]),
+                  "7_6" = expression_difference(data_abs[,"Week7"], data_abs[,"Week6"]),
+                  "8_7" = expression_difference(data_abs[,"Week8"], data_abs[,"Week7"]),
+                  "9_8" = expression_difference(data_abs[,"Week9"], data_abs[,"Week8"]))
+row.names(data) = rownames(data_abs)
+  
+# Select optimum cluster number
+data = scale(data)
+dist_data = get_dist(data, method = "pearson")
+n_cluster = which.max(sapply(c(2:10), function(k) {avg_sil(k, data)})) +1
+  
+# Create the data for our plot
+km = kmeans(data, centers = n_cluster, nstart = 25)
+data_plot_raw = cbind(data_abs, Cluster = km$cluster)
+plot_data = create_plot_data(data_plot_raw)
+
+assign(str_glue( "plot_", i), ggplot(plot_data, aes(x = Week, y= Expression, group = Cluster))  + geom_line(aes(colour = Cluster)) +geom_point(aes(colour = Cluster, shape = Cluster)) + labs(title = names[i]) + scale_color_npg() + theme_classic()  + ylim(6.5,8.5) + theme(aspect.ratio = 1, plot.margin = unit(c(0.5,0,0.5,0),"cm")))
+}
+
+#Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3),
+#                                    nrow=1, widths = c(5,5,5), heights = c(5))
+
+lay = rbind(c(1,2,3), c(4,5,NA))
+
+Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3, plot_4, plot_5),
+                                    layout_matrix = lay)
+
+Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
+  draw_plot_label(label = c("A", "B", "C", "D", "E"), size = 15, x = c(0.01, 0.34, 0.68, 0.01, 0.34), y = c(0.55, 0.55, 0.55, 0.05, 0.05)) 
+
+annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be differentially expressed by authors of the paper and supplimented by our data", color = "black", face = "bold", size = 16))
+
+
+```
+
+We repeated the Figure\@ref(fig:paper-trends-cluster)A and B with our differentially expressed genes aswell and the results were highly similar. The Figure can be found on our github (Report/Comparison with paper differentially expressed.png).
+
+For Figure \@ref(fig:paper-trends-cluster)C cluster 1, 6, 7, 8 clearly show an *arch* regulated pattern, but for clusters 4 and 5 the data rather appears to be *down* regulated, or *up* regulated in the case of cluster 10. And the final clusters 2, 3 and 9 with a total of 156 transcripts are not differentially expressed at all. When we cluster our differentially expressed genes annotated with the *arch* pattern (Figure \@ref(fig:paper-trends-cluster)D), we recieve only 10% of the amount of transcripts which are clearly clusters.
+
+Figure \@ref(fig:paper-trends-cluster)E reveals, that there clearly *up* and *down* regulated genes of 646 transcripts or about 10%, that are missed by the method used by the authors of the paper.
