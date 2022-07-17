@@ -11,7 +11,14 @@ output:
 geometry: "left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm"
 header-includes:
   - \usepackage[font={small,it}, labelfont={bf}]{caption}
-  #- \usepackage{float}
+  - \usepackage{float}
+  - \renewcommand{\topfraction}{.9}
+  - \renewcommand{\bottomfraction}{.8}
+  - \renewcommand{\textfraction}{.15}
+  - \renewcommand{\floatpagefraction}{.66}
+  - \setcounter{topnumber}{3}
+  - \setcounter{bottomnumber}{3}
+  - \setcounter{totalnumber}{4}
   #- \floatplacement{figure}{H}
   - \usepackage{caption}
   - \captionsetup[figure]{font=footnotesize}
@@ -757,7 +764,7 @@ spleen_clustered_plot =  ggplot(plot_data, aes(x = Week, y= Expression, group = 
 
 plot = arrangeGrob(grobs = list(spleen_percentage_plot, spleen_genes_plot, spleen_clustered_plot), nrow=1, widths = c(3.3,2.7, 4), heights = c(0.7))
 plot_output = as_ggplot(plot) + draw_plot_label(label = c("A", "B", "C"), size = 15, x = c(0.03, 0.35, 0.63), y = c(0.13, 0.13, 0.13)) 
-annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 16))
+annotate_figure(plot_output, top = text_grob("Expression over time of Spleen-related differentially expressed transcripts", color = "black", face = "bold", size = 14))
 ```
 
 For many tissues, as shown here exemplary with the spleen, the clustering revealed two or more clusters that could be characterized as either an upregulation or a downregulation. In order to determine the indications for organ development, we analyzed the functions of the transcripts belonging to the two clusters.
@@ -1652,7 +1659,7 @@ OC_normalization_plot_output = as_ggplot(OC_normalization_plot) +
 annotate_figure(OC_normalization_plot_output, top = text_grob("Quality control: verifying the normalization at different levels of detail", color = "black", face = "bold", size = 16))
 ```
 
-```{r Volcano-Plot, fig.cap="Volcanoplot for differential gene expression between week 4 and 9. The adjusted P-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+```{r, fig.width = 18, fig.height = 10, include = FALSE}
 # Create a dataset for the volcano plot from the limma analysis
 # Ausgabe der Toptabel vom Vergleich Woche 4/9
 top.table = topTable(fit_all,5, n = Inf)
@@ -1691,9 +1698,60 @@ volcanizator <- function(data, logFC_thresh_upper, logFC_thresh_lower, max_pValu
     ylab("-log10(adj.P.Val)")
 }
 volcano <- volcanizator(top.table, 1, -1, 0.01)
+png(filename = "volcano.png", width = 1000, height = 600)
 volcano
+dev.off()
 ```
-\newpage
+
+```{r Volcano-Plot,fig.width = 12, fig.height = 6, fig.cap="Volcano plot for differential gene expression between week 4 and 9. The adjusted p-value boundary was set at 0.01. The logFC boundarys were -1 and 1."}
+ggdraw() + draw_image("volcano.png")
+```
+
+```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
+
+tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
+
+node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
+
+weights = matrix(nrow =length(tissues), ncol = length(tissues))
+rownames(weights) = tissues
+colnames(weights) = tissues
+for (i in 1:33) {
+  for (j in 1:33) {
+    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
+  }
+} 
+
+heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
+```
+
+```{r heatmap-tissues, fig.width=14, fig.height=12, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
+
+file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
+download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
+ plot = ggdraw() + draw_image("TRA_overlap_edited.png")
+
+grid.arrange(plot) + theme(plot.margin = unit(c(0,0,5,0,0.5),"cm"))
+```
+
+```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
+library(ggplot2)
+#Compare the initial expression values of both clusters
+spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
+spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
+spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
+i = 0
+for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
+  i = i+1
+  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
+    {"Down"}),length(genelist)))
+  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
+}
+spleen_boxplot_data = spleen_boxplot_data[-1,]
+spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
+spleen_boxplot
+
+```
 
 ```{r tissue-links,fig.width= 10, fig.height=5, fig.cap= "Each tissue is displayed as a node with its size representing the number of transcripts associated with it. The edges show the shared TRAs between the linked tissues, with only links corresponding to more than 100 common TRAs visible."}
 
@@ -1725,53 +1783,6 @@ graph2 = ggnet2(edge_weight_cleared[,1:2], color = graph2$data$label, label = TR
 graph2
 ```
 
-```{r spleen-boxplot, fig.width= 12, fig.height= 3, fig.cap = "A further look on the expression of transcripts in the up- and downregulated clusters shows that the upregulated transcripts are close to the minimum expression level between 6 and 7 in week 4 and showing expressions between 7 and 8.5 by week 9. In contrast, the downregulated genes have very high expression levels (8-9) by week 4 and decrease to a more moderate expression between 7 and 8.5 analogous to the upregulated transcripts."}
-library(ggplot2)
-#Compare the initial expression values of both clusters
-spleen_genes_clustered_1 = spleen_genes_clustered[spleen_genes_clustered$Cluster==1, ]
-spleen_genes_clustered_2 = spleen_genes_clustered[spleen_genes_clustered$Cluster==2, ]
-spleen_boxplot_data = data.frame(Expression = NA, Week = NA, Cluster = NA)
-i = 0
-for (genelist in list(spleen_genes_clustered_1$Week4, spleen_genes_clustered_1$Week9, spleen_genes_clustered_2$Week4,  spleen_genes_clustered_2$Week9)) {
-  i = i+1
-  spleen_df = data.frame(Expression = genelist, Week = factor(rep((if(i%%2 == 0) {9} else {4}),length(genelist))), Cluster = rep((if(i<3) {"Up"} else
-    {"Down"}),length(genelist)))
-  spleen_boxplot_data = rbind(spleen_boxplot_data, spleen_df)
-}
-spleen_boxplot_data = spleen_boxplot_data[-1,]
-spleen_boxplot = ggplot(spleen_boxplot_data, aes(x = Cluster, y = Expression, fill = Week)) + geom_boxplot(position=position_dodge(0.8)) + theme_classic() + labs(title = "Expression of spleen-associated transcripts") + theme(aspect.ratio = 1, plot.title = element_text(hjust = 0.5))
-spleen_boxplot
-
-```
-
-\newpage
-
-```{r heatmap-code, fig.width=14, fig.height=14, include = FALSE, eval = FALSE}
-
-tissues =  c("Adipose", "Cells - Transformed fibroblasts", "Skin",  "Muscle - Skeletal", "Bladder", "Kidney - Cortex",  "Colon", "Esophagus", "Liver", "Minor Salivary Gland", "Pancreas", "Small Intestine - Terminal Ileum", "Spleen", "Stomach", "Breast - Mammary Tissue", "Cervix", "Fallopian Tube", "Ovary", "Uterus", "Vagina", "Prostate", "Testis", "Adrenal Gland", "Pituitary", "Thyroid",  "Artery", "Heart", "Lung", "Whole Blood", "Cells - EBV-transformed lymphocytes", "Brain - Spinal cord", "Brain", "Nerve - Tibial")
-
-node_weight = data.frame(tissue = tissue, weight = sapply(nodes, function(y) {sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(y, toString(x))}))}))
-
-weights = matrix(nrow =length(tissues), ncol = length(tissues))
-rownames(weights) = tissues
-colnames(weights) = tissues
-for (i in 1:33) {
-  for (j in 1:33) {
-    weights[i,j] = (sum(sapply(diff_genes_ann_0.01$tissues, function(x) {grepl(tissues[i], toString(x)) && grepl(tissues[j], toString(x))}))/node_weight[i,2])
-  }
-} 
-
-heatmap_links <- pheatmap(weights, display_numbers = TRUE, fontsize_number = 8, legend = TRUE, breaks = c(seq(0,0.4,0.005), seq(0.41, 0.8, 0.025), 0.85, 0.9, 0.95,1))
-```
-
-```{r heatmap-tissues, fig.width=14, fig.height=14, fig.cap = "For each of the tissues on the right, the share of its TRAs that are also associated with the tissue in the respective column is displayed."}
-
-file_heatmap = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Plots/Organ%20development/General%20Explanation/Heatmap%20TRA%20Overlap_edited.png"
-download.file(file_heatmap, "TRA_overlap_edited.png", mode = "wb")
-ggdraw() + draw_image("TRA_overlap_edited.png")
-```
-
-\newpage
 
 ```{r spleen-tables-basics, eval=FALSE}
 get_gene_info = function(transcript_ids){
@@ -1797,29 +1808,6 @@ spleen1_gene_description = get_gene_info(rownames(spleen_genes_clustered_1))
 spleen2_gene_description = get_gene_info(rownames(spleen_genes_clustered_2))
 ```
 
-```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
-# Table for downregulated genes
-
-Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
-Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
-           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
-
-spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
-spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
-
-
-spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
-functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
-spleen2_gene_description_sum$Summary = functions_2
-gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
-```
-
-```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
-file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
-download.file(file_spleen_down, "spleen_down.png", mode = "wb")
-ggdraw() + draw_image("spleen_down.png")
-
-```
 
 ```{r spleen-up-code, include = FALSE, eval = FALSE}
 # Create a useful table for all upregulated genes
@@ -1844,6 +1832,33 @@ gtsave(table_spleen1, "spleen_up.png")
 file_spleen_up = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_up.png"
 download.file(file_spleen_up, "spleen_up.png", mode = "wb")
 ggdraw() + draw_image("spleen_up.png")
+```
+
+
+ \newpage
+
+```{r spleen-down-code, fig.width=12, include = FALSE, eval = FALSE}
+# Table for downregulated genes
+
+Expression =  data.frame(c(1:length(spleen_genes_clustered_2[,1])))
+Expression$Expression_over_time = sapply(c(1:length(spleen_genes_clustered_2[,1])), function(x) {list(as.numeric(c(as.numeric(spleen_genes_clustered_2[x,1]), as.numeric(spleen_genes_clustered_2[x,2]), as.numeric(spleen_genes_clustered_2[x,3]),
+           as.numeric(spleen_genes_clustered_2[x,4]),as.numeric(spleen_genes_clustered_2[x,5]),as.numeric(spleen_genes_clustered_2[x,6]))))})
+
+spleen2_gene_description_spl = cbind(spleen2_gene_description[-1,], Expression)
+spleen2_gene_description_spl = spleen2_gene_description_spl[,-5]
+
+
+spleen2_gene_description_sum = spleen2_gene_description_spl[c(2,3,7,8,9,15,20,22,23,25,27,29,31,34,35,37,38,39,40,41,43,45,46,50,54,56,57,58,59,64,65,67,69,72,73,75,77,78,83,113,114,116,121,122,143),]
+functions_2 = c("Component of  the centromere", "Interphase chromosome condensation", "Chromosome condensation and stabilization", "Spindle microtubule organization", "Spindle dynamics", "Spindle checkpoint function", "Highly expressed during mitosis", "Central role in mitosis", "", "Nuclear movement in the cell cycle", "Stabilization of the mitotic spindle", "Regulator of mitosis", "Stem cell pluripotency", "Involved with cellular proliferation", "Mismatch repair", "Regulates G1/S transition", "Moves chromosomes", "Anaphase-promoting complex substrate", "Unwinds Holliday junction", "Induces apoptotic chromatin condensation", "Promotes cell growth", "Transcriptional activator in proliferation", "Associates with centromer-kinetochore complex", "Initiation of DNA replication", "Regulatory in the cell cycle", "Maintaining chromosome integrity in mitosis", "Stable spindle microtubule capture", "CpG methylation", "Initiation of DNA replication", "Subunit of M-phase promoting factor", "Involved in kinetochore function", "Cell cycle progression", "Cell cycle checkpoint regulator", "Spindle checkpoint function", "Spindle microtubule organisation", "Inducing cell cycle arrest", "Subunit of condensin complex","Cell division cycle protein", "DNA polymerase accessory", "Centromere-microtubule complex", "Mismatch repair","Anaphase-promoting complex substrate","Segregation of chromosomes", "Central role in mitosis", "Contributor to developmental programs")
+spleen2_gene_description_sum$Summary = functions_2
+gtsave((gt(spleen2_gene_description_sum)|>  tab_header(title= "Spleen - Downregulated", subtitle = "List of differentially epxressed genes") |> fmt_markdown(columns = c(Transcript, Gene, Protein, Summary)) |> gt_theme_538() |> gt_plt_sparkline(column = Expression_over_time, type = "shaded") |> tab_options(container.width = 1300, container.height = 1800)), "spleen_down.png")
+```
+
+```{r spleen-down-table, fig.width = 12, fig.height = 16, fig.cap = "Table of all spleen-associated genes from the downregulated cluster with a function related to the cell cycle of cellular division"}
+file_spleen_down = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/spleen_down.png"
+download.file(file_spleen_down, "spleen_down.png", mode = "wb")
+ggdraw() + draw_image("spleen_down.png")
+
 ```
 
 ```{r boxplot-Cerebral-Hemisphere, fig.height=9,fig.width=12,fig.cap="A boxplot of all Cerebellar Hemisphere genes was made to evaluate their scattering. For the samples of all weeks at the top and only for the three samples of week 4 on the bottom.", eval = FALSE}
