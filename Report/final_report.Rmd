@@ -1543,7 +1543,7 @@ dev.off()
 The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA_analysis) B).
 
 ```{r PCA_analysis, fig.width = 10, fig.height = 4}
-file_fiveplot = ""
+file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
 download.file(file_fiveplot, "PC1_five.png", mode = "wb")
 first_five_plot <- ggdraw() + draw_image("PC1_five.png") 
 

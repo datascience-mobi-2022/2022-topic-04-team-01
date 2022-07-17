@@ -185,164 +185,266 @@ diff_genes_ann_0.01 = embryo_df_tissues[embryo_df_tissues$ensembl.transcript %in
 ```
 
 \newpage
-## Using Principal component analysis to find biomarkes for developmental progression
+## Brain subtissue-specific gene expression reflects neuronal development processes
 
-Principal component analysis (PCA) was performed on a matrix containing all differentially expressed genes throughout the 6 weeks. This was performed to reduce dimension while keeping most of the data's variance. To get a better grasp of how much variance is explained by each principal component (PC), the percentage variance of each PC together as well as the cumulative variance were plotted. This visualization helps to determine how many PCs are needed to explain a significant amount of the data's variation. The chosen PCs can than be used for further analysis. The first three PCs already explain over 80% of the data's variance, with the first PC alone accounting for over 60% (Fig. \@ref(fig:PCA_analysis) A).
+There was a signifikant overlap between the genes in the different brain tissues, hence we decide to investigate the genes in the tissues with their maximal expression. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:\
+1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
 
-```{r, include=FALSE}
-#pca on rows (genes)
-pca_genes <- prcomp(
-  t(diff_genes_ann_0.01[,1:18]), # transposed matrix
-  scale. = TRUE # data scaled to have unit variance
-)
+```{r gene-expression-brain,fig.height=4,fig.width=12,fig.cap="Geneexpression of different genes for ion channel (left), neuronal development and function (middle) and related to chemokine (right) was plotted for week 4 to 9."}
+# A vektor of ENST numbers and weeks was created
+ENST = embryo_df_tissues$ensembl.transcript
+week = c(4,5,6,7,8,9)
 
-#taking a first look
-summary(pca_genes)
+# Data for Ion channel geneexpression was generated
+# ENST00000531293
+data.ENST00000531293 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000531293")))
+data.ENST00000531293 = data.ENST00000531293[,1:18]
+week_4 =data.ENST00000531293[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000531293[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000531293[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000531293[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000531293[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000531293[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000531293 = c(week_4,week_5,week_6,week_7,week_8,week_9)
+data.ENST00000531293 =cbind(data.ENST00000531293,week)
+
+# Data for neuronal development and function geneexpression was generated
+# ENST00000602349
+data.ENST00000602349 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000602349")))
+data.ENST00000602349 = data.ENST00000602349[,1:18]
+week_4 =data.ENST00000602349[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000602349[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000602349[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000602349[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000602349[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000602349[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000602349 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000602349 =cbind(data.ENST00000602349,week)
+
+# ENST00000276646 & ENST00000529690
+data.ENST00000276646 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000276646")))
+data.ENST00000276646 = data.ENST00000276646[,1:18]
+week_4 =data.ENST00000276646[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000276646[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000276646[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000276646[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000276646[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000276646[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000276646 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000276646 =cbind(data.ENST00000276646,week)
+
+data.ENST00000529690 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000529690")))
+data.ENST00000529690 = data.ENST00000529690[,1:18]
+week_4 =data.ENST00000529690[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000529690[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000529690[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000529690[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000529690[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000529690[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000529690 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000529690 =cbind(data.ENST00000529690,week)
+
+# ENST00000356660
+data.ENST00000356660 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000356660")))
+data.ENST00000356660 = data.ENST00000356660[,1:18]
+week_4 =data.ENST00000356660[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000356660[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000356660[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000356660[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000356660[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000356660[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000356660 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000356660 =cbind(data.ENST00000356660,week)
+
+# ENST00000518312 & ENST00000521485
+data.ENST00000518312 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000518312")))
+data.ENST00000518312 = data.ENST00000518312[,1:18]
+week_4 =data.ENST00000518312[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000518312[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000518312[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000518312[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000518312[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000518312[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000518312 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000518312 =cbind(data.ENST00000518312,week)
+
+data.ENST00000521485 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000521485")))
+data.ENST00000521485 = data.ENST00000521485[,1:18]
+week_4 =data.ENST00000521485[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000521485[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000521485[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000521485[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000521485[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000521485[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000521485 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000521485 =cbind(data.ENST00000521485,week)
+
+# ENST00000439476
+data.ENST00000439476 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000439476")))
+data.ENST00000439476 = data.ENST00000439476[,1:18]
+week_4 =data.ENST00000439476[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000439476[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000439476[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000439476[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000439476[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000439476[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000439476 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000439476 =cbind(data.ENST00000439476,week)
+
+
+# ENST00000539563
+data.ENST00000539563 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000539563")))
+data.ENST00000539563 = data.ENST00000539563[,1:18]
+week_4 =data.ENST00000539563[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000539563[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000539563[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000539563[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000539563[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000539563[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000539563 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000539563 =cbind(data.ENST00000539563,week)
+
+# Data for chemokine geneexpression was generated 
+# ENST00000337225
+data.ENST00000337225 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000337225")))
+data.ENST00000337225 = data.ENST00000337225[,1:18]
+week_4 =data.ENST00000337225[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000337225[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000337225[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000337225[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000337225[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000337225[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000337225 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000337225 =cbind(data.ENST00000337225,week)
+
+# ENST00000579298
+data.ENST00000579298 = as.data.frame(embryo_df_tissues %>%
+                             filter(ensembl.transcript == str_extract(ENST, "ENST00000579298")))
+data.ENST00000579298 = data.ENST00000579298[,1:18]
+week_4 =data.ENST00000579298[1:3]
+week_4 = apply(week_4,1,median)
+week_5 =data.ENST00000579298[4:6]
+week_5 = apply(week_5,1,median)
+week_6 =data.ENST00000579298[7:9]
+week_6 = apply(week_6,1,median)
+week_7 =data.ENST00000579298[10:12]
+week_7 = apply(week_7,1,median)
+week_8 =data.ENST00000579298[13:15]
+week_8 = apply(week_8,1,median)
+week_9 =data.ENST00000579298[16:18]
+week_9 = apply(week_9,1,median)
+data.ENST00000579298 = c(week_4,week_5,week_6,week_7,week_8,week_9) 
+data.ENST00000579298 =cbind(data.ENST00000579298,week)
+
+
+# Plotting of the gained geneexpression data
+par(mfrow = c(1, 3))
+
+#Plot for ion channel gene
+plot(data.ENST00000531293[,2],data.ENST00000531293[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of ion channel gene", xlab = "weeks",ylab = "Expressionlevel",col = "red")
+legend(3.8, 9.25, legend=c("ENST00000531293"),col=c("red"), lty=1, cex=0.8,title="Expressed genes")
+
+
+
+#Plot for neuronal development and function genes 
+plot(data.ENST00000602349[,2],data.ENST00000602349[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of  neuronal development and function genes", xlab = "weeks",ylab = "Expressionlevel",col = "red", ylim = c(6.3,8.4))+lines(data.ENST00000276646[,2],data.ENST00000276646[,1],type = "b",lwd=1,pch=19, col = "blue") +lines(data.ENST00000529690[,2],data.ENST00000529690[,1],type = "b",lwd=1,pch=19, col = "orange")
+lines(data.ENST00000356660[,2],data.ENST00000356660[,1],type = "b",lwd=1,pch=19,col = "green")
+lines(data.ENST00000518312[,2],data.ENST00000518312[,1],type = "b",lwd=1,pch=19,col = "black")
+lines(data.ENST00000521485[,2],data.ENST00000521485[,1],type = "b",lwd=1,pch=19,col = "pink") lines(data.ENST00000439476[,2],data.ENST00000439476[,1],type = "b",lwd=1,pch=19,col = "purple")
+lines(data.ENST00000539563[,2],data.ENST00000539563[,1],type = "b",lwd=1,pch=19,col = "yellowgreen")
+legend(3.8, 8.5, legend=c("ENST00000602349", "ENST00000276646", "ENST00000529690", "ENST00000356660", "ENST00000518312", "ENST00000521485",  "ENST00000439476", "ENST00000539563"),col=c("red", "blue", "orange", "green","black", "pink", "purple", "yellowgreen"), lty=1, cex=0.8,title="Expressed genes")
+
+
+# Plot for chemokine related genes
+plot(data.ENST00000337225[,2],data.ENST00000337225[,1],type = "b",lwd=1,pch=19, main = "Geneexpression level of chemokine related genes", xlab = "weeks",ylab = "Expressionlevel",col = "red",ylim = c(7.6,9.7)) 
+lines(data.ENST00000579298[,2],data.ENST00000579298[,1],type = "b",lwd=1,pch=19,col = "blue")
+legend(3.8, 9.8, legend=c("ENST00000337225", "ENST00000579298"),col=c("red", "blue"), lty=1, cex=0.8,title="Expressed genes")
+
 ```
 
-```{r pca-variance, fig.width = 5, fig.height=5}
-#visualizing the variance of the PCAs
-pc_eigenvalues <- pca_genes$sdev^2
+### Ion channel 
 
-pc_eigenvalues <- tibble(PC = factor(1:length(pc_eigenvalues)), 
-                         variance = pc_eigenvalues) %>% 
-  #column with percent variance
-  mutate(pct = variance/sum(variance)*100) %>% 
-  #column with cumulative variance explained
-  mutate(pct_cum = cumsum(pct))
+Ion channels play an important role in the function of neurons. We discovered that ENST00000531293 is highly expressed in Nucleus accumbens. It shows a significant increase between weeks 7 to 9 and codes for SLN sarcolipin which is a Sarcoplasmic reticulum Ca(2+)-ATPase.
 
+### Genes for neuronal development and function
 
-#actual plot
-PCA_contribution <- pc_eigenvalues %>% 
-  ggplot(aes(x = PC)) +
-  geom_col(aes(y = pct)) +
-  geom_line(aes(y = pct_cum, group = 1)) + 
-  geom_point(aes(y = pct_cum)) +
-  ggtitle('PCA variance') +
-  theme(plot.title = element_text(hjust = 0.5,face = "bold")) +
-  labs(x = "Principal component", y = "Fraction variance explained") +
-  theme(aspect.ratio = 1)
+The second group are genes with a specific function in the neuronal development and function. Therefore we discovered that ENST00000276646 and ENST00000529690 show an significant increase in gene expression over the weeks. Both genes were connected to the Cerebellar Hemisphere and were associated with SYBU (syntabulin). SYBU plays an important role as it contributes to activity-dependent presynaptic assembly in neuronal development.\
+Filtering mentioned four genes for axon guidance:\
+ENST00000602349 codes for NXPH1 (neurexophilin 1) which forms a tight complex with neurexins. Neurexins promote the adhesion between axons and dendrites. ENST00000602349 shows a strong increase, especially between weeks 7 to 8 and is connected to Anterior cingulate cortex.\
+ENST00000518312 and ENST00000521485 encode for SNAP91 (synaptosome associated protein 91) which plays a role in regulation of clathrin-dependent endocytosis. Therefore SNAP91 is important for axonal functions of neurons like postsynaptic density, which is essential for functional neurons (Overhoff et al. 2020). ENST00000518312 & ENST00000521485 were associated with Cerebellar Hemisphere and also show significant increase between weeks 7 to 8.\
+In addition ENST00000539563, encoding for LSAMP (limbic system associated membrane protein), plays a role in axon guidance. The encoded preprotein is processed into neuronal surface glycoprotein which interacts as an adhesion molecule during axon guidance and neuronal growth in the developing limbic system. ENST00000539563 is associated with Putamen which is grouped in basal ganglia. Basal ganglia were associated with the lymbic system.\
+ENST00000356660 and ENST00000439476 code for BDNF (brain derived neurotrophic factor). A binding of BDNF to its receptor promotes neuronal survival. Both genes show an identical decline in expression over the weeks. Nevertheless, ENST00000356660 is connected to Cerebellar Hemisphere and ENST00000439476 to Hippocampus.
 
-```
+### Chemokine related genes
 
-```{r, include=FALSE}
- loadings = pca_genes$rotation[,"PC1"]
-pca_df = data.frame(diff_genes_ann_0.01[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
-pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
-```
-
-```{r, include=FALSE}
-test_genes = diff_genes_ann_0.01  #[bool_contained,]
-
-#pca on rows (genes)
-pca_genes <- prcomp(
-  t(test_genes[,1:18]), # transposed matrix
-  scale. = TRUE # data scaled to have unit variance
-  )
-
-#taking a first look
-summary(pca_genes)
-
-loadings = pca_genes$rotation[,"PC1"]
-pca_df = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol", "tissues")], Loadings = loadings)
-pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
-test_genes
-ranks_pca = data.frame(test_genes[,c("ensembl.transcript", "HGNC.symbol")], PC1 = NA, PC2 = NA, PC3 = NA, PC4 = NA, PC5 = NA)
-PC_vector = c("PC1", "PC2", "PC3", "PC4", "PC5")
-for (i in PC_vector) {
-  loadings = pca_genes$rotation[,i]
-  pca_df = data.frame(test_genes$ensembl.transcript, Loadings = loadings, Order = c(1:length(test_genes$ensembl.transcript)))
-  pca_df = pca_df[order(abs(pca_df$Loadings), decreasing = TRUE),]
-  pca_df$rank = c(1:length(test_genes$ensembl.transcript))
-  pca_df = pca_df[order(pca_df$Order),]
-  ranks_pca[,i] =  pca_df$rank
-}
-
-ranks_pca$sum = ranks_pca$PC1*4 - ranks_pca$PC2 - ranks_pca$PC3 - ranks_pca$PC4 - ranks_pca$PC5
-ranks_pca[order(ranks_pca$sum),]
-
-```
-
-For further analysis, each transcript was awarded a rank depending on how much it contributes to each PC. Then, a score was calculated for maximum contribution to PC1 and minimal loadings for all other relevant PCs (PC2-5). We took a closer look at the five best socring transcripts for PC1, as this PC alone already explains the brunt of the variance of our data. These transcripts encode for three different proteins: Low-Density Lipoprotein Receptor Class A Domain-Containing Protein 4 (LDLRAD4) encoded by ENST00000399848, Calcium-activated potassium channel subunit beta-2 (KCNMB2) encoded by ENST00000432997 and ENST00000452583 and SLIT And NTRK-Like Protein 3 (SLITRK3) encoded by ENST00000241274 and ENST00000475390.
-
-```{r, fig.width=5,fig.height=5, include = FALSE}
-
-PCA1_first_five <- diff_genes_ann_0.01[c('9703','11797','13044','616','15025'),0:19]
-
-
-#median of the transcripts for each week
-PCA1_4 <- PCA1_first_five[,c(1,2,3)]
-week4 <- t(data.frame(apply(PCA1_4,1,median)))
-
-PCA1_5 <- PCA1_first_five[,c(4,5,6)]
-week5 <- t(data.frame(apply(PCA1_5,1,median)))
-
-PCA1_6 <- PCA1_first_five[,c(7,8,9)]
-week6 <- t(data.frame(apply(PCA1_6,1,median)))
-
-PCA1_7 <- PCA1_first_five[,c(10,11,12)]
-week7 <- t(data.frame(apply(PCA1_7,1,median)))
-
-PCA1_8 <- PCA1_first_five[,c(13,14,15)]
-week8 <- t(data.frame(apply(PCA1_8,1,median)))
-
-PCA1_9 <- PCA1_first_five[,c(16,17,18)]
-week9 <- t(data.frame(apply(PCA1_9,1,median)))
-
-
-#combining in a dataframe
-first_five <- rbind(week4,week5,week6,week7,week8,week9)
-
-#plotting the expression over weeks
-
-png(filename = "PCA1_five.png", res = 100)
-par(mar=c(4, 4, 4, 7), xpd=TRUE)
-matplot(first_five, 
-        type = 'b',
-        pch=16,
-        col = c('black','red','green','blue','orange'), 
-        xlab = 'Weeks', 
-        ylab = 'Expression Level', 
-        main = 'Most contribution to PC1' , 
-        xaxt='n'
-)
-axis(side = 1,
-     at = 1:6, 
-     labels = c(4,5,6,7,8,9)
-)
-legend('topright', 
-       inset=c(-0.45,0), 
-       legend = c('ENST00000399848 \n (LDLRAD4)\n ','ENST00000432997 \n (KCNMB2) \n','ENST00000452583 \n (KCNMB2) \n','ENST00000241274 \n (SLITRK3)\n','ENST00000475390 \n (SLITRK3)\n'),
-       col=c('black','red','green','blue','orange'), 
-       pch=16, 
-       cex=0.6,
-       title="Expressed genes"
-)
-
-dev.off()
-
-first_five_plot <- ggdraw() + draw_image("PCA1_five.png") 
-
-```
-
-The transcripts of ENST00000432997 and ENST00000452583 encode for the same Protein (KCNMB2). Fitting to that, both transcripts consistently display the same expression level over all weeks. The same applies to the transcripts of ENST00000241274 and ENST00000475390, as they also encode for the same protein (SLITRK3) and therefore also display the same expression levels. The transcripts for LDLRAD4 show the highest overall expression levels. Their expression pattern also does not display many similarities to those of KCNMB2 and SLITRK3. However, KCNMB2 and SLITRK3 show a highl similar curve over all weeks (Fig. \@ref(fig:PCA_analysis) B).
-
-```{r PCA_analysis, fig.width = 10, fig.height = 4}
-lay = rbind(c(1,2))
-PCA_plots = arrangeGrob(grobs = list(PCA_contribution, first_five_plot),layout_matrix = lay)
-
-PCA_plots_output = as_ggplot(PCA_plots) +
-  draw_plot_label(label = c("A", "B"), 
-                  size = 15, 
-                  x = c(0.01, 0.5), 
-                  y = c(0.17, 0.17)
-                  ) 
-
-annotate_figure(PCA_plots_output, 
-                top = text_grob("Principal component analysis", 
-                                color = "black", 
-                                face = "bold", 
-                                size = 16
-                                )
-                )
-```
+The last groupe are chemokine, they take up an important part in the signaling process during neuronal development (Tiveron 2008). We discovered ENST00000337225, which encodes for CXCL14 (alpha class chemokin ligand). ENST00000337225 shows a significant increase in expression between weeks 4 to 6 and is related to Anterior cingulate cortex. ENST00000579298 encodes for NUP85 (nucleoporin 85), a protein component of the Nup107-160 subunit of the nuclear pore complex. NUP85 can bind to CCR2 (a receptor for beta class chemokines) and promotes chemotaxis of monocytes. ENST00000579298 is related to the Frontal Cortex and shows a decline between weeks 5 to 9.
