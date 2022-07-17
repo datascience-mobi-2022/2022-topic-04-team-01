@@ -1124,8 +1124,6 @@ Finally, the skin-associated functions (Fig. \@ref(fig:ORA-plot)H) all displayed
 
 ## Hypothesis: Neural TRA expression patterns reflect morphological brain development {#brain}
 
-The annotated dataset after limma analysis was filtered to determine which genes are differentially expressed in a certain tissue. The discovered genes were examined with NCBI to determine their function. The genes of interest are categorized in three groups:
-
 Our data covered 13 different brain subtissues, whose TRAs showed a signficant overlap. Hence, we filtered the differentially expressed transcripts for those that are only related to one of all 13 subtissues. The discovered genes were examined using the NCBI database. The resulting genes of interest can be categorized as follows: \
 1.Genes of Ion channels 2.Genes for neuronal development 3.Genes of cytokines
 
@@ -1535,14 +1533,14 @@ The transcripts of ENST00000432997 and ENST00000452583 encode for the same Prote
 
 # Discussion
 
-### Comparison with original paper
+## Comparison with original paper
 
 In contrast to our *limma* analysis to generate data with biological relevance, the authors of the original paper (Yi H *et al.*, 2010) of our data set used *One-way analysis of variance* to acquire differential expressed transcripts. We compared both data subsets by k-means clustering and plotting the overlapping Intensity values (Fig. \@ref(fig:paper-trends-cluster)). By looking at the trends of the cluster for *up* and *down* regulated gene expression, we can validate the method used by the authors. In contrast the *arch* regulated genes-clusters do not present a clear result and show a weakness of the method used. It falsely detects some genes as differentially expressed, assuming our *vsn* normalization is correct, which is indicated by the quality control (section \@ref(QC-normalization)).\
 Furthermore, we showed in our Venn diagram (Fig. \@ref(fig:Venn-Diagram)), that our method detected differentially expressed transcripts not included in their data. This questions the significance of either the papers results or again our *vsn* normalization and subsequent *limma* analysis, which is rather unlikely given our quality control and plots.\
 The discrepancy can be explained by the publication date, which is year 2010. Now there are more advanced algorithms that determine differentially expressed transcripts more precisely. The *vsn* and the *limma* package are up to date with frequent advances (Ritchie. et al. 2015).\
 Overall, this ensured the quality of our data set and differentially expressed transcripts while also pointing out some flaws of the data set of the paper.
 
-### TRAs can infer a basic timeline of organ development {#dis-organ}
+## TRAs can infer a basic timeline of organ development {#dis-organ}
 
 In our analysis, we have shown that a number of TRAs are differentially expressed (section \@ref(organ-overview)) between week 4 and 9 of human embryonic development in each of the analyzed tissues. Nonetheless, the expression levels of TRAs associated with one tissue do not constitute a useful metric for the organ's development (section \@ref(organ-clustering)). This can be explained by the fact that within one tissue's TRAs, there are multiple groups of genes both distinct in expression patterns (clustering in section \@ref(organ-clustering)) and function (analysis of spleen gene functions in section \@ref(organ-tables)). Thus, we determined that the expression over time of functional gene sets linked to specific tissues through overrepresentation analysis is a more meaningful metric for organ development.
 
@@ -1565,11 +1563,11 @@ We further identified a strong LSAMP expression associated to the putamen as wel
 The neuronal cell migration is strongly dependent on chemoattractors like chemokines (Tiveron 2008). We identified a significant increase in CXCL14 between weeks 5 to 6 that maintains a high expression level afterwards. Fig. \@ref(fig:gene-expression-brain) right). This could be an accumulation for neuronal migration, starting by week 9 (section \@ref(intro-tissues)). A decline in  NUP85 expression is also notable (Fig. \@ref(fig:gene-expression-brain) right). NUP85 can bind to CCR2, hence a decline in reduce the chances for this binding. A consequence might be that more CCR2  receptors are free for beta type chemokin mediated signals. 
 Overall, there were two cases were two closely related transcripts (linked to the same gene) showed identical expression values. This phenomenon could be caused by failures in annotation, e.g. associating two transcripts with one probe. 
 
-### No TRAs could be identified as key biomarkers for developmental progression {#dis-pca}
+## No TRAs could be identified as key biomarkers for developmental progression {#dis-pca}
 
 Principal component analysis helped to identify transcripts that have a high contribution to our data's variance. The high variance explained by PC1 alone made it possible to focus our further analysis only on this PC. Ranking the transcripts according to their contribution led us to identify the three proteins LDLRAD4, KCNMB2 and SLITRK3 as main contributors to only principal component 1. Nonetheless, the loadings for these genes are not significantly larger than those of other genes. Therefore, the information gained trough PCA was not sufficient to reliably classify these or any TRAs as biomarkers for embryonic development. More in-depth analysis is necessary to determine whether PCA is an insufficient method to identify TRAs these biomarkers, or if using TRAs as markers is an unsuccessful approach in general.
 
-### Conclusion
+## Conclusion
 
 The overarching goal of this research was to gain insight on human embryonic development between week 4 and 9 through the expression patterns of tissue-restricted antigens (TRAs). Under this main objective, we divided our research into distinct parts. First, we managed to find differentially expressed TRAs associated with all tissues (section \@ref(limma)) and determined that our method of analysis even has advantages compared to the original paper (section \@ref(paper-comp)). Then, we used these results to try to determine the developmental steps occurring during the observed time frame (section \@ref(organ)). While not all TRA-specific expression patterns could be linked to morphological events, we were able to show that the expression patterns for some organ-specific gene sets are highly correlated with milestones in development (section \@ref(dis-organ)). An in-depth analysis of brain subtissues proved diffcult due to the high degree of TRA overlap between them. Still, we found genes related to neuronal function that were TRAs for only one subtissue (section \@ref(brain)). Based on their expression, we could draw some conclusions on neuronal development (section \@ref(dis-brain)). Finally, we tried to define individual genes as biomarkers for embryonic development through PCA (section \@ref(dis-pca)). There, we could not define such markers effectively based on the selection of genes through principal component loadings. All in all, we were still able to show that the morphological events during embryogenesis are reflected in gene expression and prove that differential expression analysis can be a valid method for embryonic research.
 
@@ -1845,6 +1843,11 @@ ggdraw() + draw_image("spleen_down.png")
 
 \newpage
 
+```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
+ggdraw() + draw_image("venn_diagram_comparison_paper.png")
+```
+
+
 ```{r boxplot-Cerebral-Hemisphere, fig.height=9,fig.width=12,fig.cap="A boxplot of all Cerebellar Hemisphere genes was made to evaluate their scattering. For the samples of all weeks at the top and only for the three samples of week 4 on the bottom.", eval = FALSE}
 
 # Distribution control for Cerebellar Hemisphere 
@@ -1868,11 +1871,6 @@ Cerebellar_Hemisphere_week4= Cerebellar_Hemisphere_sorted[1:3,]
 par(mfrow=c(2,1))
 boxplot(Cerebellar_Hemisphere_sorted, main="Expression of Brain - Cerebellar Hemisphere genes",col= rainbow(542),cex.axis=0.5)
 boxplot(Cerebellar_Hemisphere_week4, main="Expression of Brain - Cerebellar Hemisphere genes (week 4)",col= rainbow(542),cex.axis=0.5)
-```
-
-
-```{r Venn-Diagram, fig.width=12, fig.height=3, fig.cap = "**The Venn diagram shows overlapping sections between our data and the data from the original paper.** According to the paper, of the its 6,833 transcripts are differentially expressed. This overlapps with our general data with all TRAs (24,749 transcripts) and with our differentially expressed (diff.) data according to our limma analysis with a p-value of 0.01 (1,837 transcripts)"}
-ggdraw() + draw_image("venn_diagram_comparison_paper.png")
 ```
 
 ```{r Cerebellar-Hemisphere-specific,fig.height=4,fig.width=12,fig.cap="A boxplot of ENST00000276646, ENST00000518312 and ENST00000521485 was made to evaluate the scattering of the three samples per week for the 6 weeks from our dataset."}
@@ -1922,7 +1920,7 @@ boxplot(data.ENST00000518312, main="Expression of ENST00000518312",col= rainbow(
 boxplot(data.ENST00000521485, main="Expression of ENST00000521485",col= rainbow(6),cex.axis=0.5)
 ```
 
-```{r PCA-analysis, fig.width = 10, fig.height = 4}
+```{r PCA-analysis, fig.width = 10, fig.height = 4, fig.cap = "A. Variance explained by each individual PC as well as cumulative variance explained by the PCs together. B. Expression levels of the five transcripts that contribute the most to PC1."}
 file_fiveplot = "https://raw.githubusercontent.com/datascience-mobi-2022/2022-topic-04-team-01/main/Report/PC1_five.png"
 download.file(file_fiveplot, "PC1_five.png", mode = "wb")
 first_five_plot <- ggdraw() + draw_image("PC1_five.png") 

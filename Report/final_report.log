@@ -1,5 +1,4 @@
-
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.17)  17 JUL 2022 23:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  18 JUL 2022 00:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -387,15 +386,15 @@ Package caption Info: longtable package is loaded.
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 )) (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count303
-\float@exts=\toks29
-\float@box=\box62
-\@float@everytoks=\toks30
-\@floatcapt=\box63
-) (c:/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+\c@float@type=\count300
+\float@exts=\toks27
+\float@box=\box61
+\@float@everytoks=\toks28
+\@floatcapt=\box62
+) (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-07-01 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count304
-\l__pdf_internal_box=\box64
+\l__color_backend_stack_int=\count301
+\l__pdf_internal_box=\box63
 ) (./final_report.aux)
 \openout1 = `final_report.aux'.
 
@@ -417,44 +416,17 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 88.
 LaTeX Font Info:    ... okay on input line 88.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 88.
 LaTeX Font Info:    ... okay on input line 88.
-LaTeX Info: Redefining \microtypecontext on input line 88.
-Package microtype Info: Applying patch `item' on input line 88.
-Package microtype Info: Applying patch `toc' on input line 88.
-Package microtype Info: Applying patch `eqnum' on input line 88.
-Package microtype Info: Applying patch `footnote' on input line 88.
-Package microtype Info: Generating PDF output.
-Package microtype Info: Character protrusion enabled (level 2).
-Package microtype Info: Using protrusion set `basicmath'.
-Package microtype Info: Automatic font expansion enabled (level 2),
-(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
-Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 88.
-Package microtype Info: No adjustment of tracking.
-Package microtype Info: No adjustment of interword spacing.
-Package microtype Info: No adjustment of character kerning.
-(c:/texlive/2022/texmf-dist/tex/latex/microtype/mt-cmr.cfg
-File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
-(RS)
-) (c:/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count305
-\scratchdimen=\dimen190
-\scratchbox=\box65
-\nofMPsegments=\count306
-\nofMParguments=\count307
-\everyMPshowfont=\toks31
-\MPscratchCnt=\count308
-\MPscratchDim=\dimen191
-\MPnumerator=\count309
-\makeMPintoPDFobject=\count310
-\everyMPtoPDFconversion=\toks32
-) (c:/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
 (c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring OFF on input line 88.
+(./final_report.out) (./final_report.out)
+\@outlinefile=\write3
+\openout3 = `final_report.out'.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -533,146 +505,115 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 100.
 [1
-{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4]
-<final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.p
-df, id=76, 578.16pt x 216.81pt>
-File: final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plo
-t-1.pdf Graphic file (type pdf)
-<use final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot
--1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/QC-surface-images-and-
-RNA-Degradation-Plot-1.pdf  used on input line 219.
+
+{c:/Users/User/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4]
+<final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.pdf, id=133, 578.16pt x 216.81pt>
+File: final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.pdf Graphic file (type pdf)
+<use final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.pdf>
+Package pdftex.def Info: final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.pdf  used on input line 219.
 (pdftex.def)             Requested size: 528.9671pt x 198.36266pt.
 [5] [6 <./final_report_files/figure-latex/QC-surface-images-and-RNA-Degradation-Plot-1.pdf>]
-<final_report_files/figure-latex/Venn-Diagram-1.pdf, id=176, 867.24pt x 216.81pt>
-File: final_report_files/figure-latex/Venn-Diagram-1.pdf Graphic file (type pdf)
-<use final_report_files/figure-latex/Venn-Diagram-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/Venn-Diagram-1.pdf  us
-ed on input line 270.
-(pdftex.def)             Requested size: 528.9627pt x 132.24066pt.
-<final_report_files/figure-latex/paper-trends-cluster-1.pdf, id=182, 1228.59pt x 578.16pt>
+<final_report_files/figure-latex/paper-trends-cluster-1.pdf, id=181, 1228.59pt x 578.16pt>
 File: final_report_files/figure-latex/paper-trends-cluster-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/paper-trends-cluster-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/paper-trends-cluster-1
-.pdf  used on input line 284.
+Package pdftex.def Info: final_report_files/figure-latex/paper-trends-cluster-1.pdf  used on input line 278.
 (pdftex.def)             Requested size: 528.93954pt x 248.91272pt.
-<final_report_files/figure-latex/bar-tissues-1.pdf, id=183, 939.51pt x 433.62pt>
+<final_report_files/figure-latex/bar-tissues-1.pdf, id=182, 939.51pt x 433.62pt>
 File: final_report_files/figure-latex/bar-tissues-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/bar-tissues-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/bar-tissues-1.pdf  use
-d on input line 296.
+Package pdftex.def Info: final_report_files/figure-latex/bar-tissues-1.pdf  used on input line 290.
 (pdftex.def)             Requested size: 528.93182pt x 244.12238pt.
-[7 <./final_report_files/figure-latex/Venn-Diagram-1.pdf>] [8 <./final_report_files/figure-latex/paper-trends-cluster-1.pdf> <./final_report_files/figure-latex/bar-tissues-1.pdf>]
-<final_report_files/figure-latex/expression-plot-1.pdf, id=229, 722.7pt x 216.81pt>
+[7] [8 <./final_report_files/figure-latex/paper-trends-cluster-1.pdf> <./final_report_files/figure-latex/bar-tissues-1.pdf>]
+<final_report_files/figure-latex/expression-plot-1.pdf, id=228, 722.7pt x 216.81pt>
 File: final_report_files/figure-latex/expression-plot-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/expression-plot-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/expression-plot-1.pdf 
- used on input line 310.
+Package pdftex.def Info: final_report_files/figure-latex/expression-plot-1.pdf  used on input line 304.
 (pdftex.def)             Requested size: 528.93402pt x 158.68019pt.
-<final_report_files/figure-latex/ORA-plot-1.pdf, id=234, 867.24pt x 1084.05pt>
+<final_report_files/figure-latex/ORA-plot-1.pdf, id=233, 867.24pt x 1084.05pt>
 File: final_report_files/figure-latex/ORA-plot-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/ORA-plot-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/ORA-plot-1.pdf  used o
-n input line 328.
+Package pdftex.def Info: final_report_files/figure-latex/ORA-plot-1.pdf  used on input line 322.
 (pdftex.def)             Requested size: 528.9627pt x 661.20338pt.
 
-LaTeX Warning: Float too large for page by 16.59164pt on input line 330.
+LaTeX Warning: Float too large for page by 16.59164pt on input line 324.
 
 [9 <./final_report_files/figure-latex/expression-plot-1.pdf>] [10 <./final_report_files/figure-latex/ORA-plot-1.pdf>]
-<final_report_files/figure-latex/gene-expression-brain-1.pdf, id=284, 867.24pt x 289.08pt>
+<final_report_files/figure-latex/gene-expression-brain-1.pdf, id=281, 867.24pt x 289.08pt>
 File: final_report_files/figure-latex/gene-expression-brain-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/gene-expression-brain-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/gene-expression-brain-
-1.pdf  used on input line 350.
+Package pdftex.def Info: final_report_files/figure-latex/gene-expression-brain-1.pdf  used on input line 344.
 (pdftex.def)             Requested size: 528.9627pt x 176.32089pt.
 [11 <./final_report_files/figure-latex/gene-expression-brain-1.pdf>]
 
-LaTeX Warning: Reference `fig:PCA-analysis' on page 12 undefined on input line 
-376.
+LaTeX Warning: Reference `organ-clustering' on page 12 undefined on input line 390.
 
 
-LaTeX Warning: Reference `fig:PCA-analysis' on page 12 undefined on input line 
-380.
-
-
-LaTeX Warning: Reference `organ-clustering' on page 12 undefined on input line 
-396.
-
-
-LaTeX Warning: Reference `organ-clustering' on page 12 undefined on input line 
-396.
+LaTeX Warning: Reference `organ-clustering' on page 12 undefined on input line 390.
 
 [12] [13] [14] [15]
-<final_report_files/figure-latex/QC-normalization-plots-1.pdf, id=320, 867.24pt
- x 361.35pt>
-File: final_report_files/figure-latex/QC-normalization-plots-1.pdf Graphic file
- (type pdf)
+<final_report_files/figure-latex/QC-normalization-plots-1.pdf, id=375, 867.24pt x 361.35pt>
+File: final_report_files/figure-latex/QC-normalization-plots-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/QC-normalization-plots-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/QC-normalization-plots
--1.pdf  used on input line 482.
+Package pdftex.def Info: final_report_files/figure-latex/QC-normalization-plots-1.pdf  used on input line 476.
 (pdftex.def)             Requested size: 528.9627pt x 220.40112pt.
-<final_report_files/figure-latex/Volcano-Plot-1.pdf, id=378, 867.24pt x 433.62pt>
+<final_report_files/figure-latex/Volcano-Plot-1.pdf, id=376, 867.24pt x 433.62pt>
 File: final_report_files/figure-latex/Volcano-Plot-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/Volcano-Plot-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/Volcano-Plot-1.pdf  us
-ed on input line 488.
+Package pdftex.def Info: final_report_files/figure-latex/Volcano-Plot-1.pdf  used on input line 482.
 (pdftex.def)             Requested size: 528.9627pt x 264.48134pt.
-<final_report_files/figure-latex/heatmap-tissues-1.pdf, id=379, 1011.78pt x 867.24pt>
+<final_report_files/figure-latex/heatmap-tissues-1.pdf, id=377, 1011.78pt x 867.24pt>
 File: final_report_files/figure-latex/heatmap-tissues-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/heatmap-tissues-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/heatmap-tissues-1.pdf 
- used on input line 494.
+Package pdftex.def Info: final_report_files/figure-latex/heatmap-tissues-1.pdf  used on input line 488.
 (pdftex.def)             Requested size: 528.93843pt x 453.37581pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-98.
-(c:/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 492.
+(c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<final_report_files/figure-latex/spleen-boxplot-1.pdf, id=380, 867.24pt x 216.81pt>
+<final_report_files/figure-latex/spleen-boxplot-1.pdf, id=378, 867.24pt x 216.81pt>
 File: final_report_files/figure-latex/spleen-boxplot-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/spleen-boxplot-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/spleen-boxplot-1.pdf  
-used on input line 504.
+Package pdftex.def Info: final_report_files/figure-latex/spleen-boxplot-1.pdf  used on input line 498.
 (pdftex.def)             Requested size: 528.9627pt x 132.24066pt.
-<final_report_files/figure-latex/tissue-links-1.pdf, id=381, 722.7pt x 361.35pt>
+<final_report_files/figure-latex/tissue-links-1.pdf, id=379, 722.7pt x 361.35pt>
 File: final_report_files/figure-latex/tissue-links-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/tissue-links-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/tissue-links-1.pdf  us
-ed on input line 510.
+Package pdftex.def Info: final_report_files/figure-latex/tissue-links-1.pdf  used on input line 504.
 (pdftex.def)             Requested size: 528.93402pt x 264.46701pt.
-<final_report_files/figure-latex/spleen-up-table-1.pdf, id=382, 867.24pt x 505.89pt>
+<final_report_files/figure-latex/spleen-up-table-1.pdf, id=380, 867.24pt x 505.89pt>
 File: final_report_files/figure-latex/spleen-up-table-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/spleen-up-table-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/spleen-up-table-1.pdf 
- used on input line 516.
+Package pdftex.def Info: final_report_files/figure-latex/spleen-up-table-1.pdf  used on input line 510.
 (pdftex.def)             Requested size: 528.9627pt x 308.56155pt.
 [16 <./final_report_files/figure-latex/QC-normalization-plots-1.pdf> <./final_report_files/figure-latex/Volcano-Plot-1.pdf>] [17 <./final_report_files/figure-latex/heatmap-tissues-1.pdf> <./final_report_files/figure-latex/spleen-boxplot-1.pdf>] [18 <./final_report_files/figure-latex/tissue-links-1.pdf> <./final_report_files/figure-latex/spleen-up-table-1.pdf>]
-<final_report_files/figure-latex/spleen-down-table-1.pdf, id=429, 867.24pt x 1156.32pt>
+<final_report_files/figure-latex/spleen-down-table-1.pdf, id=427, 867.24pt x 1156.32pt>
 File: final_report_files/figure-latex/spleen-down-table-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/spleen-down-table-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/spleen-down-table-1.pd
-f  used on input line 524.
+Package pdftex.def Info: final_report_files/figure-latex/spleen-down-table-1.pdf  used on input line 518.
 (pdftex.def)             Requested size: 528.9627pt x 705.2836pt.
 
-LaTeX Warning: Float too large for page by 27.67186pt on input line 526.
+LaTeX Warning: Float too large for page by 27.67186pt on input line 520.
 
-<final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf, id=430, 867.24pt x 289.08pt>
+<final_report_files/figure-latex/Venn-Diagram-1.pdf, id=428, 867.24pt x 216.81pt>
+File: final_report_files/figure-latex/Venn-Diagram-1.pdf Graphic file (type pdf)
+<use final_report_files/figure-latex/Venn-Diagram-1.pdf>
+Package pdftex.def Info: final_report_files/figure-latex/Venn-Diagram-1.pdf  used on input line 526.
+(pdftex.def)             Requested size: 528.9627pt x 132.24066pt.
+<final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf, id=429, 867.24pt x 289.08pt>
 File: final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/Cerebellar-Hemisphere-
-specific-1.pdf  used on input line 530.
+Package pdftex.def Info: final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf  used on input line 532.
 (pdftex.def)             Requested size: 528.9627pt x 176.32089pt.
-<final_report_files/figure-latex/PCA-analysis-1.pdf, id=431, 722.7pt x 289.08pt>
+<final_report_files/figure-latex/PCA-analysis-1.pdf, id=430, 722.7pt x 289.08pt>
 File: final_report_files/figure-latex/PCA-analysis-1.pdf Graphic file (type pdf)
 <use final_report_files/figure-latex/PCA-analysis-1.pdf>
-Package pdftex.def Info: final_report_files/figure-latex/PCA-analysis-1.pdf  us
-ed on input line 534.
+Package pdftex.def Info: final_report_files/figure-latex/PCA-analysis-1.pdf  used on input line 538.
 (pdftex.def)             Requested size: 528.93402pt x 211.5736pt.
 
 Package caption Warning: Unused \captionsetup[Fig.] on input line 80.
 See the caption package documentation for explanation.
 
-[19 <./final_report_files/figure-latex/PCA-analysis-1.pdf>] [20 <./final_report_files/figure-latex/spleen-down-table-1.pdf>] [21 <./final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf>] (./final_report.aux)
+[19 <./final_report_files/figure-latex/spleen-down-table-1.pdf>] [20 <./final_report_files/figure-latex/Venn-Diagram-1.pdf> <./final_report_files/figure-latex/Cerebellar-Hemisphere-specific-1.pdf> <./final_report_files/figure-latex/PCA-analysis-1.pdf>] (./final_report.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -680,25 +621,17 @@ Package rerunfilecheck Info: File `final_report.out' has not changed.
 (rerunfilecheck)             Checksum: 542FCE86B1001D2A551CCD36C6FFDD30;4196.
  ) 
 Here is how much of TeX's memory you used:
- 15569 strings out of 478023
- 255985 string characters out of 5842667
- 597612 words of memory out of 5000000
- 33423 multiletter control sequences out of 15000+600000
- 545651 words of font info for 187 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 74i,9n,81p,1696b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/texlive/2022/tex
-mf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2022/texmf-dist/fonts/type
-1/public/lm/lmbx12.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbxi1
-0.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/texlive/2
-022/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/texlive/2022/texmf-dist/font
-s/type1/public/lm/lmr17.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/l
-mr9.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/texliv
-e/2022/texmf-dist/fonts/type1/public/lm/lmri9.pfb><c:/texlive/2022/texmf-dist/f
-onts/type1/public/lm/lmtt10.pfb>
-Output written on final_report.pdf (21 pages, 6321679 bytes).
+ 12905 strings out of 479983
+ 212998 string characters out of 5886474
+ 515540 words of memory out of 5000000
+ 30773 multiletter control sequences out of 15000+600000
+ 533685 words of font info for 72 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 72i,9n,77p,1696b,522s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}<c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on final_report.pdf (20 pages, 6319482 bytes).
 PDF statistics:
- 534 PDF objects out of 1000 (max. 8388607)
+ 533 PDF objects out of 1000 (max. 8388607)
  436 compressed objects within 5 object streams
  114 named destinations out of 1000 (max. 500000)
  233 words of extra memory for PDF output out of 10000 (max. 10000000)
