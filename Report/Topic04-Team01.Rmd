@@ -510,7 +510,7 @@ venn.diagram(x = list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl
 ```
 
 In contrast to our method using limma, the authors of the original paper used *one-way analysis of variance* with a p-value of 0.05 to determine the differentially expressed transcripts (Yi H *et. al*, 2010). In the paper, they provided an annotation of transcripts that were regulated *up*, *down* or showed an *arch*. To verify this dataset, we looked at the trends of the pattern-annotated data. We used k-means clustering to confirm whether we see these trends in our data (Fig. \@ref(fig:paper-trends-cluster)). \
-Fig. \@ref(fig:paper-trends-cluster)A and B show high conformity to the annotated pattern. We repeated both plots with our differentially expressed transcripts and the results were very similar. The figure can be found on our github (Report/Comparison with paper differentially expressed.png). \
+Fig. \@ref(fig:paper-trends-cluster)A and B show high conformity to the annotated pattern. We repeated both plots with our differentially expressed transcripts and the results were very similar. The figure can be found on our github. \
 For Fig. \@ref(fig:paper-trends-cluster)C, clusters 1, 6, 7, 8 clearly show an *arch* regulated pattern, but for clusters 4 and 5 the transcripts appear to be *down* regulated or in the case of cluster 10 *up* regulated. The final clusters 2, 3 and 9 with a total of 156 transcripts are not differentially expressed at all. When we cluster our differentially expressed transcripts annotated with the *arch* pattern (Fig. \@ref(fig:paper-trends-cluster)D), we receive only 10% of the amount of transcripts which are clearly *arch* regulated. \
 Additionally, Fig. \@ref(fig:paper-trends-cluster)E reveals, that there a clearly *up* and *down* regulated genes of 646 transcripts or about 10% that are missed by the method used by the paper's authors.
 
@@ -589,7 +589,7 @@ Paper_clustering_plot = arrangeGrob(grobs = list(plot_1, plot_2, plot_3, plot_4,
 Paper_clustering_plot_output = as_ggplot(Paper_clustering_plot) +
   draw_plot_label(label = c("A", "B", "C", "D", "E"), size = 15, x = c(0.01, 0.34, 0.68, 0.01, 0.34), y = c(0.55, 0.55, 0.55, 0.05, 0.05)) 
 
-annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be differentially expressed by authors of the paper and supplimented by our data", color = "black", face = "bold", size = 16))
+annotate_figure(Paper_clustering_plot_output, top = text_grob("Intensity values of transcripts determined to be differentially expressed by authors of the paper and supplemented by our data", color = "black", face = "bold", size = 16))
 
 
 ```
