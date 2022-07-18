@@ -1,0 +1,49 @@
+INFO [2022-07-18 03:27:19] $x
+INFO [2022-07-18 03:27:19] list(paper_df_ann$ensembl.transcript, embryo_df_tissues$ensembl.transcript, 
+INFO [2022-07-18 03:27:19]     diff_genes_ann_0.01$ensembl.transcript)
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $category.names
+INFO [2022-07-18 03:27:19] c("data from paper", "our TRA data", "our diff. data")
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $filename
+INFO [2022-07-18 03:27:19] [1] "venn_diagram_comparison_paper.png"
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $output
+INFO [2022-07-18 03:27:19] [1] TRUE
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $imagetype
+INFO [2022-07-18 03:27:19] [1] "png"
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $height
+INFO [2022-07-18 03:27:19] [1] 1000
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $width
+INFO [2022-07-18 03:27:19] [1] 1000
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $resolution
+INFO [2022-07-18 03:27:19] [1] 300
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $compression
+INFO [2022-07-18 03:27:19] [1] "lzw"
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $col
+INFO [2022-07-18 03:27:19] [1] "black"
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $fill
+INFO [2022-07-18 03:27:19] colors
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $cat.col
+INFO [2022-07-18 03:27:19] colors
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $cat.cex
+INFO [2022-07-18 03:27:19] [1] 1.4
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $cat.pos
+INFO [2022-07-18 03:27:19] c(350, 10, 0)
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $main
+INFO [2022-07-18 03:27:19] [1] "Venn diagram of \n differentially expressed transcripts"
+INFO [2022-07-18 03:27:19] 
+INFO [2022-07-18 03:27:19] $main.fontface
+INFO [2022-07-18 03:27:19] [1] "bold"
+INFO [2022-07-18 03:27:19] 
