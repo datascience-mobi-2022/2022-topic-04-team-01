@@ -13,7 +13,7 @@ expression patterns for some of the analyzed organs. Furthermore, we found indiv
 neurogenesis. Finally, we attempted without success to deĄne speciĄc TRAs as biomarkers for organogenesis.
 
 ### Important documents
- - **Final report**                                         [PDF](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Topic04_Team01.pdf)   [Rmd](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/Topic04-Team01.Rmd)
+ - **Final report**                                         [PDF](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Topic04-Team01.pdf)   [Rmd](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/Topic04-Team01.Rmd)
  - Tables with differentially expressed genes               [Folder](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/tree/main/Limma_Tables)
  - Clustering tables for each tissue                        [PDF](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Plots/Organ%20development/Differential%20expression%20clustered%20by%20tissue/All%20expr%20plots%20compiled.pdf)
  - Comparison with paper differentially expressed genes     [PNG](https://github.com/datascience-mobi-2022/2022-topic-04-team-01/blob/main/Report/Comparison%20with%20paper%20differentially%20expressed.png)
